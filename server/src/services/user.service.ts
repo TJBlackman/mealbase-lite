@@ -7,7 +7,6 @@ import { GetUsersQuery, ExistingUserData, NewUserData, JWTUser, Roles } from '..
 export const queryAllUsers = async (queryString: GetUsersQuery, user: JWTUser) => {
   if (userHasRole(Roles.Admin, user)) {
     const result = await queryUsers(queryString);
-    console.log(JSON.stringify(queryString));
     return result;
   }
   if (userHasRole(Roles.Support, user)) {
@@ -45,7 +44,6 @@ export const registerNewUser = async (data: NewUserData) => {
 export const editExistingUser = async (data: ExistingUserData, user: JWTUser) => {
   if (data.newPassword) {
     // overwrite password with hash
-    console.log('hashing a new password...')
     data.password = await createHash(data.newPassword);
   }
   if (data.email) {

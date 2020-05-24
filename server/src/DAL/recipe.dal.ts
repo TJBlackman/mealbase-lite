@@ -21,7 +21,6 @@ export const queryRecipes = async (query: RecipeQuery) => {
     }
     return conditions;
   })();
-  console.log(filter)
 
   // set min and max limit, 1 - 100, default 20
   const queryLimit = (() => {

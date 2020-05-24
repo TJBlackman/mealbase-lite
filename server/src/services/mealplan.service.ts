@@ -44,8 +44,7 @@ export const editMealPlans = async (data: MealPlanRecord, user: JWTUser) => {
   if (mp.length < 1) {
     throw Error('No recipe with _id: ' + data._id);
   }
-  console.log(mp[0]);
-  console.log(user);
+
   if (mp[0].owner.toString() !== user._id) {
     throw Error('You do not have permission to edit this mealplan.');
   }

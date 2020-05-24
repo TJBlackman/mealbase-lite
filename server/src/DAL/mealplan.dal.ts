@@ -15,7 +15,6 @@ export const queryMealPlans = async (query: MealPlanQuery) => {
     }
     return conditions;
   })();
-  console.log(filter)
 
   // set min and max limit, 1 - 100, default 20
   const queryLimit = (() => {
