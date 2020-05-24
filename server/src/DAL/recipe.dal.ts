@@ -4,7 +4,7 @@ import { RecipeRecord, RecipeQuery } from '../types/type-definitions'
 export const queryRecipes = async (query: RecipeQuery) => {
   // create filter to match documents against
   const filter = (() => {
-    const conditions: RecipeQuery = {
+    const conditions: RecipeRecord = {
       deleted: false
     };
     if (query._id) {
@@ -17,7 +17,7 @@ export const queryRecipes = async (query: RecipeQuery) => {
       conditions.deleted = query.deleted;
     }
     if (query.search) {
-      conditions.search = query.search;
+      conditions.title = { $regex: query.search, $options: 'i' };;
     }
     return conditions;
   })();

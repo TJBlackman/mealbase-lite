@@ -66,7 +66,7 @@ export enum Roles {
   User = 'user'
 };
 export interface RecipeRecord extends basicRecordOptions {
-  title?: string;
+  title?: string | any;
   description?: string;
   image?: string;
   url?: string;
