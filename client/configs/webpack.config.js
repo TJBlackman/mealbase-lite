@@ -13,6 +13,8 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, '../build'),
     open: true,
+    hot: true,
+    historyApiFallback: true,
   },
   plugins: [
     // create html file from template
@@ -35,7 +37,7 @@ module.exports = {
         test: /\.(tsx|ts)?$/,
         loader: 'ts-loader',
         options: {
-          configFile: 'configs/tsconfig.json',
+          configFile: path.join(__dirname, './tsconfig.json'),
         },
       },
       {
