@@ -4,9 +4,10 @@ import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
 
-interface ILoginFormValues {
+interface IRegisterFormValues {
   email: string;
   password: string;
+  confirmPw: string;
   loading: boolean;
   error: string | null;
 }
@@ -16,9 +17,10 @@ interface Action {
 }
 
 // form default values
-const defaultValues: ILoginFormValues = {
+const defaultValues: IRegisterFormValues = {
   email: '',
   password: '',
+  confirmPw: '',
   loading: false,
   error: null,
 };
@@ -27,6 +29,7 @@ const defaultValues: ILoginFormValues = {
 const actions = {
   UPDATE_EMAIL: 'UPDATE EMAIL',
   UPDATE_PASSWORD: 'UPDATE PASSWORD',
+  UPDATE_CONFIRM_PW: 'UPDATE CONFIRM PASSWORD',
   LOADING_FALSE: 'LOADING FALSE',
   LOADING_TRUE: 'LOADING TRUE',
   RESET: 'RESET',
@@ -35,8 +38,8 @@ const actions = {
 };
 
 // form state reducer
-const reducer = (state: ILoginFormValues, action: Action) => {
-  const newState: ILoginFormValues = { ...state };
+const reducer = (state: IRegisterFormValues, action: Action) => {
+  const newState: IRegisterFormValues = { ...state };
   switch (action.type) {
     case actions.UPDATE_EMAIL: {
       newState.email = action.value;
@@ -44,6 +47,10 @@ const reducer = (state: ILoginFormValues, action: Action) => {
     }
     case actions.UPDATE_PASSWORD: {
       newState.password = action.value;
+      break;
+    }
+    case actions.UPDATE_CONFIRM_PW: {
+      newState.confirmPw = action.value;
       break;
     }
     case actions.LOADING_FALSE: {
@@ -73,13 +80,13 @@ const reducer = (state: ILoginFormValues, action: Action) => {
 };
 
 // component
-export const LoginForm = () => {
+export const RegisterForm = () => {
   const [state, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
     networkRequest({
-      url: '/api/v1/auth/local',
+      url: '/api/v1/users',
       method: 'POST',
       body: {
         email: state.email,
@@ -107,6 +114,7 @@ export const LoginForm = () => {
         fullWidth
         label='Email Address'
         variant='outlined'
+        type='email'
         value={state.email}
         onChange={(e) =>
           dispatch({
@@ -126,6 +134,21 @@ export const LoginForm = () => {
         onChange={(e) =>
           dispatch({
             type: actions.UPDATE_PASSWORD,
+            value: e.target.value,
+          })
+        }
+      />
+      <TextField
+        className={textFieldClass}
+        required
+        fullWidth
+        label='Confirm Password'
+        variant='outlined'
+        type='password'
+        value={state.confirmPw}
+        onChange={(e) =>
+          dispatch({
+            type: actions.UPDATE_CONFIRM_PW,
             value: e.target.value,
           })
         }

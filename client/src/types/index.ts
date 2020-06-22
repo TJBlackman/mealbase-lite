@@ -14,3 +14,15 @@ export interface IContextValue {
   state: IAppContext;
   updateUserData: (value: IUserData) => void;
 }
+
+// network request
+export interface INetworkRequestOptions {
+  url: string;
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  headers?: object;
+  body?: object;
+  before?: () => void;
+  success?: (json: object) => void;
+  error?: (error: Error) => void;
+  after?: () => void;
+}

@@ -15,6 +15,9 @@ module.exports = {
     open: true,
     hot: true,
     historyApiFallback: true,
+    proxy: {
+      '/api': 'http://localhost:3050',
+    },
   },
   plugins: [
     // create html file from template
