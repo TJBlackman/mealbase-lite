@@ -1,27 +1,32 @@
 import React, { createContext, useReducer, useEffect } from 'react';
 import { appReducer } from './reducer';
 import { ACTIONS } from './actions';
-import { IContextValue, IAppContext } from '../types';
+import { IContextValue, IAppContext, IUserData } from '../types';
 
-export const defaultContext: IAppContext = {
+export const defaultAppContext: IAppContext = {
   user: {
+    _id: '',
     email: '',
-    authenticated: false,
+    roles: [],
   },
 };
 
 // reference to context itself
-export const AppContext = createContext(defaultContext as IContextValue);
+export const AppContext = createContext(defaultAppContext as IContextValue);
 
 export const GlobalContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, defaultContext);
-  const value: IContextValue = {
+  const [state, dispatch] = useReducer(appReducer, defaultAppContext);
+  const contextValue: IContextValue = {
     state: state,
-    updateUserData: (value) =>
+    updateUserData: (value: Partial<IUserData>) =>
       dispatch({
-        action: ACTIONS.UPDATE_USER,
+        type: ACTIONS.UPDATE_USER,
         value,
       }),
   };
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+
+  // console.log('New Global App Context:');
+  // console.log(JSON.stringify(state, null, 2));
+
+  return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 };

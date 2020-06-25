@@ -1,7 +1,8 @@
 // User information
 export interface IUserData {
+  _id: string;
   email: string;
-  authenticated: boolean;
+  roles: string[];
 }
 
 // App Context
@@ -15,6 +16,13 @@ export interface IContextValue {
   updateUserData: (value: IUserData) => void;
 }
 
+// network response from server
+export interface INetworkResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}
+
 // network request
 export interface INetworkRequestOptions {
   url: string;
@@ -22,7 +30,7 @@ export interface INetworkRequestOptions {
   headers?: object;
   body?: object;
   before?: () => void;
-  success?: (json: object) => void;
-  error?: (error: Error) => void;
+  success?: (json: INetworkResponse) => void;
+  error?: (error: INetworkResponse) => void;
   after?: () => void;
 }

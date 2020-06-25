@@ -1,8 +1,9 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useContext } from 'react';
 import { TextField, Button, CircularProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
+import { AppContext } from '../context';
 
 interface ILoginFormValues {
   email: string;
@@ -74,6 +75,7 @@ const reducer = (state: ILoginFormValues, action: Action) => {
 
 // component
 export const LoginForm = () => {
+  const { updateUserData } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
@@ -90,7 +92,7 @@ export const LoginForm = () => {
         dispatch({ type: actions.CLEAR_ERROR });
       },
       success: (json) => {
-        alert(JSON.stringify(json));
+        updateUserData(json.data);
         dispatch({ type: actions.LOADING_FALSE });
       },
       error: (err) => {
@@ -161,7 +163,7 @@ const useStyles = makeStyles({
     margin: '0 0 20px 20px',
   },
   errorClass: {
-    flex: '1 1 auto',
+    flex: '1 1 100%',
     marginBottom: '20px',
   },
 });

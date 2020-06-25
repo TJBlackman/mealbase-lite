@@ -1,4 +1,4 @@
-import { INetworkRequestOptions } from '../types';
+import { INetworkRequestOptions, INetworkResponse } from '../types';
 
 export const networkRequest = (options: INetworkRequestOptions) => {
   const {
@@ -31,7 +31,7 @@ export const networkRequest = (options: INetworkRequestOptions) => {
     body: JSON.stringify(body)
   })
     .then(response => response.json())
-    .then(json => {
+    .then((json: INetworkResponse) => {
       if (json.success) {
         success(json);
         after();

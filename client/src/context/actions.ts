@@ -1,4 +1,4 @@
-export const ACTIONS = {
-  UPDATE_USER: 'UPDATE USER',
-  LOG_OUT: 'LOG OUT'
+export enum ACTIONS {
+  UPDATE_USER,
+  LOG_OUT
 }
