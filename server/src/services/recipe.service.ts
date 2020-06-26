@@ -11,7 +11,7 @@ export const getRecipes = async (query: RecipeQuery, user: JWTUser) => {
 }
 
 export const postNewRecipe = async (data: RecipeRecord, user: JWTUser) => {
-  let { url } = data;
+  const { url } = data;
   if (!url) {
     throw Error('URL is required.');
   }

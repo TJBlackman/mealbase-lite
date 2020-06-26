@@ -5,7 +5,8 @@ import { defaultAppContext } from './index'
 const getNewState = (state: IAppContext): IAppContext => {
   return {
     ...state,
-    user: { ...state.user }
+    user: { ...state.user },
+    sidemenu: { ...state.sidemenu }
   }
 }
 
@@ -18,17 +19,21 @@ export const appReducer = (state: IAppContext, action) => {
         ...newState.user,
         ...action.value
       };
-      return newState;
+      break;
+    }
+    case ACTIONS.TOGGLE_SIDEMENU: {
+      newState.sidemenu.visible = !newState.sidemenu.visible;
+      break;
     }
     case ACTIONS.LOG_OUT: {
       newState.user = {
         ...defaultAppContext.user
       };
-      return newState;
+      break;
     }
     default: {
       console.error('Unknown Action: ' + action.type);
-      return state;
     }
   }
+  return newState;
 }

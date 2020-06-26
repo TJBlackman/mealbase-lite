@@ -10,10 +10,24 @@ interface ILoginFormValues {
   password: string;
   loading: boolean;
   error: string | null;
+  success: string | null;
 }
-interface Action {
-  type: string;
+interface ReducerAction {
+  type: number;
   value?: string;
+}
+enum ActionType {
+  UPDATE_EMAIL,
+  UPDATE_PASSWORD,
+  LOADING_FALSE,
+  LOADING_TRUE,
+  RESET,
+  SET_ERROR,
+  CLEAR_ERROR,
+  SHOW_SUCCESS,
+}
+interface ComponentProps {
+  onSuccess?: () => void;
 }
 
 // form default values
@@ -22,48 +36,42 @@ const defaultValues: ILoginFormValues = {
   password: '',
   loading: false,
   error: null,
-};
-
-// reducer action types
-const actions = {
-  UPDATE_EMAIL: 'UPDATE EMAIL',
-  UPDATE_PASSWORD: 'UPDATE PASSWORD',
-  LOADING_FALSE: 'LOADING FALSE',
-  LOADING_TRUE: 'LOADING TRUE',
-  RESET: 'RESET',
-  SET_ERROR: 'SET ERROR',
-  CLEAR_ERROR: 'CLEAR ERROR',
+  success: null,
 };
 
 // form state reducer
-const reducer = (state: ILoginFormValues, action: Action) => {
+const reducer = (state: ILoginFormValues, action: ReducerAction) => {
   const newState: ILoginFormValues = { ...state };
   switch (action.type) {
-    case actions.UPDATE_EMAIL: {
+    case ActionType.UPDATE_EMAIL: {
       newState.email = action.value;
       break;
     }
-    case actions.UPDATE_PASSWORD: {
+    case ActionType.UPDATE_PASSWORD: {
       newState.password = action.value;
       break;
     }
-    case actions.LOADING_FALSE: {
+    case ActionType.LOADING_FALSE: {
       newState.loading = false;
       break;
     }
-    case actions.LOADING_TRUE: {
+    case ActionType.LOADING_TRUE: {
       newState.loading = true;
       break;
     }
-    case actions.SET_ERROR: {
+    case ActionType.SET_ERROR: {
       newState.error = action.value;
       break;
     }
-    case actions.CLEAR_ERROR: {
+    case ActionType.CLEAR_ERROR: {
       newState.error = null;
       break;
     }
-    case actions.RESET: {
+    case ActionType.SHOW_SUCCESS: {
+      newState.success = 'Login Successful!';
+      break;
+    }
+    case ActionType.RESET: {
       return { ...defaultValues };
     }
     default: {
@@ -74,7 +82,7 @@ const reducer = (state: ILoginFormValues, action: Action) => {
 };
 
 // component
-export const LoginForm = () => {
+export const LoginForm = ({ onSuccess }: ComponentProps) => {
   const { updateUserData } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
@@ -88,16 +96,17 @@ export const LoginForm = () => {
         password: state.password,
       },
       before: () => {
-        dispatch({ type: actions.LOADING_TRUE });
-        dispatch({ type: actions.CLEAR_ERROR });
+        dispatch({ type: ActionType.LOADING_TRUE });
+        dispatch({ type: ActionType.CLEAR_ERROR });
       },
       success: (json) => {
         updateUserData(json.data);
-        dispatch({ type: actions.LOADING_FALSE });
+        dispatch({ type: ActionType.SHOW_SUCCESS });
+        setTimeout(onSuccess, 1000);
       },
       error: (err) => {
-        dispatch({ type: actions.LOADING_FALSE });
-        dispatch({ type: actions.SET_ERROR, value: err.message });
+        dispatch({ type: ActionType.LOADING_FALSE });
+        dispatch({ type: ActionType.SET_ERROR, value: err.message });
       },
     });
   };
@@ -112,7 +121,7 @@ export const LoginForm = () => {
         value={state.email}
         onChange={(e) =>
           dispatch({
-            type: actions.UPDATE_EMAIL,
+            type: ActionType.UPDATE_EMAIL,
             value: e.target.value,
           })
         }
@@ -127,17 +136,27 @@ export const LoginForm = () => {
         value={state.password}
         onChange={(e) =>
           dispatch({
-            type: actions.UPDATE_PASSWORD,
+            type: ActionType.UPDATE_PASSWORD,
             value: e.target.value,
           })
         }
       />
       {state.error && (
-        <Alert severity='error' variant='filled' className={errorClass} elevation={3}>
+        <Alert
+          severity='error'
+          className={errorClass}
+          elevation={2}
+          onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
+        >
           {state.error}
         </Alert>
       )}
-      <Button variant='contained' className={btnClass} onClick={() => dispatch({ type: actions.RESET })}>
+      {state.success && (
+        <Alert severity='success' className={errorClass} elevation={2}>
+          {state.success}
+        </Alert>
+      )}
+      <Button variant='contained' className={btnClass} onClick={() => dispatch({ type: ActionType.RESET })}>
         Reset
       </Button>
       <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={state.loading}>

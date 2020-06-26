@@ -5,15 +5,21 @@ export interface IUserData {
   roles: string[];
 }
 
-// App Context
+// Application State
+// Data ONLY, no handlers. This can be serialized and saved between sessions if needed
 export interface IAppContext {
-  user?: IUserData;
+  user: IUserData;
+  sidemenu: {
+    visible: boolean;
+  }
 }
 
 // Context Provider Value
+// State (from above) is in it's own property; also included are handlers for updating state
 export interface IContextValue {
-  state: IAppContext;
+  globalState: IAppContext;
   updateUserData: (value: IUserData) => void;
+  toggleSideMenu: () => void;
 }
 
 // network response from server

@@ -32,13 +32,15 @@ export const networkRequest = (options: INetworkRequestOptions) => {
   })
     .then(response => response.json())
     .then((json: INetworkResponse) => {
-      if (json.success) {
-        success(json);
-        after();
-      } else {
-        error(json);
-        after();
-      }
+      setTimeout(() => {
+        if (json.success) {
+          success(json);
+          after();
+        } else {
+          error(json);
+          after();
+        }
+      }, 2000)
     })
     .catch(err => {
       error(err);

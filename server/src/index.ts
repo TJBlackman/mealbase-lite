@@ -16,9 +16,7 @@ import MealPlanController from './controllers/mealplan.controller'
 // initialize express server
 const server = express();
 
-// mongoose config for deprecations fixes
-// https://mongoosejs.com/docs/deprecations.html#-findandmodify-
-mongoose.set('useCreateIndex', true);
+// mongoose
 mongoose.connect(process.env.DB_CONNECTION_STR, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -33,6 +31,7 @@ mongoose.connection.once('open', () => {
 });
 
 // middleware
+server.use(express.static('public'))
 server.use(bodyParser.json());
 server.use(cookieParser());
 server.use(passport.initialize());

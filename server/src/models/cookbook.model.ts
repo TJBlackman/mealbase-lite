@@ -43,4 +43,4 @@ const CookbookSchema = new mongoose.Schema({
 });
 
 const CookbookModel = mongoose.model('Cookbook', CookbookSchema);
-export default CookbookModel; 
+export default CookbookModel;

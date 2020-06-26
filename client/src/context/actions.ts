@@ -1,4 +1,5 @@
 export enum ACTIONS {
   UPDATE_USER,
-  LOG_OUT
+  LOG_OUT,
+  TOGGLE_SIDEMENU
 }

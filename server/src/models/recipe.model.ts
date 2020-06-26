@@ -49,4 +49,4 @@ RecipeSchema.index('siteName');
 
 const RecipeModel = mongoose.model('Recipe', RecipeSchema);
 
-export default RecipeModel; 
+export default RecipeModel;

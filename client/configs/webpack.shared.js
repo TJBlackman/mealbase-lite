@@ -1,31 +1,19 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
   entry: path.join(__dirname, '../src/index.tsx'),
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, '../build'),
   },
-  devtool: 'inline-source-map',
-  devServer: {
-    contentBase: path.join(__dirname, '../build'),
-    open: true,
-    hot: true,
-    historyApiFallback: true,
-    proxy: {
-      '/api': 'http://localhost:3050',
-    },
-  },
   plugins: [
-    // create html file from template
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../src/html/index.html'),
-    }),
     // rm -rf for output folder
     new CleanWebpackPlugin(),
+    new webpack.EnvironmentPlugin({
+      APP_SESSION_STORAGE_KEY: 'MBL_APP_STATE',
+    }),
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
