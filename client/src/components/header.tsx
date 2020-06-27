@@ -1,20 +1,43 @@
 import React, { useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu';
-import { AppBar, Toolbar, Typography, IconButton, Container } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, IconButton, Container, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppContext } from '../context';
 
 export default function Header() {
-  const { toggleSideMenu } = useContext(AppContext);
-  const { wrapper } = getStyles();
+  const { toggleSideMenu, globalState } = useContext(AppContext);
+  const history = useHistory();
+  const { wrapper, link } = getStyles();
   return (
     <AppBar position='static'>
       <Container maxWidth='lg' disableGutters>
         <Toolbar className={wrapper}>
           <Typography variant='h6'>MealBase Lite</Typography>
-          <IconButton onClick={toggleSideMenu} color='inherit' aria-label='menu'>
-            <MenuIcon />
-          </IconButton>
+          <div>
+            {globalState.user.email !== '' ? (
+              <>
+                <Typography variant='body2' component='span' style={{ marginRight: '4px', userSelect: 'none' }}>
+                  Welcome,
+                </Typography>
+                <Link onClick={() => history.push('/account')} color='inherit'>
+                  {globalState.user.email}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link onClick={() => history.push('/login')} color='inherit' className={link}>
+                  Login
+                </Link>
+                <Link onClick={() => history.push('/register')} color='inherit' className={link}>
+                  Register
+                </Link>
+              </>
+            )}
+            <IconButton onClick={toggleSideMenu} color='inherit' aria-label='menu'>
+              <MenuIcon />
+            </IconButton>
+          </div>
         </Toolbar>
       </Container>
     </AppBar>
@@ -26,5 +49,9 @@ const getStyles = makeStyles({
   wrapper: {
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  link: {
+    padding: '10px',
+    margin: '0 5px',
   },
 });

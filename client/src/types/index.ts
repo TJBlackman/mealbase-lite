@@ -20,6 +20,7 @@ export interface IContextValue {
   globalState: IAppContext;
   updateUserData: (value: IUserData) => void;
   toggleSideMenu: () => void;
+  logout: () => void;
 }
 
 // network response from server
@@ -39,4 +40,17 @@ export interface INetworkRequestOptions {
   success?: (json: INetworkResponse) => void;
   error?: (error: INetworkResponse) => void;
   after?: () => void;
+}
+
+// recipe from DB
+export interface IRecipe {
+  createdAt: string;
+  description: string;
+  image: string;
+  siteName: string;
+  title: string;
+  updatedAt: string;
+  url: string;
+  __v: number;
+  _id: string;
 }
