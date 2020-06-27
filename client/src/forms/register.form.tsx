@@ -122,9 +122,9 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label='Email Address'
-        variant='outlined'
-        type='email'
+        label="Email Address"
+        variant="outlined"
+        type="email"
         value={state.email}
         onChange={(e) =>
           dispatch({
@@ -137,9 +137,9 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label='Password'
-        variant='outlined'
-        type='password'
+        label="Password"
+        variant="outlined"
+        type="password"
         value={state.password}
         onChange={(e) =>
           dispatch({
@@ -152,9 +152,9 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label='Confirm Password'
-        variant='outlined'
-        type='password'
+        label="Confirm Password"
+        variant="outlined"
+        type="password"
         value={state.confirmPw}
         onChange={(e) =>
           dispatch({
@@ -165,7 +165,7 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
       />
       {state.error && (
         <Alert
-          severity='error'
+          severity="error"
           className={errorClass}
           elevation={2}
           onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
@@ -174,15 +174,30 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         </Alert>
       )}
       {state.success && (
-        <Alert severity='success' className={errorClass} elevation={2}>
+        <Alert severity="success" className={errorClass} elevation={2}>
           {state.success}
         </Alert>
       )}
-      <Button variant='contained' className={btnClass} onClick={() => dispatch({ type: ActionType.RESET })}>
+      <Button
+        variant="contained"
+        className={btnClass}
+        onClick={() => dispatch({ type: ActionType.RESET })}
+        disabled={state.loading}
+      >
         Reset
       </Button>
-      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={state.loading}>
-        {state.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
+      <Button
+        variant="contained"
+        className={btnClass}
+        color="primary"
+        type="submit"
+        disabled={state.loading}
+      >
+        {state.loading ? (
+          <CircularProgress color="primary" size="20px" />
+        ) : (
+          'Submit'
+        )}
       </Button>
     </form>
   );

@@ -6,8 +6,7 @@ import { networkRequest } from '../utils/network-request';
 import { AppContext } from '../context';
 
 interface ILoginFormValues {
-  email: string;
-  password: string;
+  url: string;
   loading: boolean;
   error: string | null;
   success: string | null;
@@ -17,8 +16,7 @@ interface ReducerAction {
   value?: string;
 }
 enum ActionType {
-  UPDATE_EMAIL,
-  UPDATE_PASSWORD,
+  UPDATE_URL,
   LOADING_FALSE,
   LOADING_TRUE,
   RESET,
@@ -32,8 +30,7 @@ interface ComponentProps {
 
 // form default values
 const defaultValues: ILoginFormValues = {
-  email: '',
-  password: '',
+  url: '',
   loading: false,
   error: null,
   success: null,
@@ -43,12 +40,8 @@ const defaultValues: ILoginFormValues = {
 const reducer = (state: ILoginFormValues, action: ReducerAction) => {
   const newState: ILoginFormValues = { ...state };
   switch (action.type) {
-    case ActionType.UPDATE_EMAIL: {
-      newState.email = action.value;
-      break;
-    }
-    case ActionType.UPDATE_PASSWORD: {
-      newState.password = action.value;
+    case ActionType.UPDATE_URL: {
+      newState.url = action.value;
       break;
     }
     case ActionType.LOADING_FALSE: {
@@ -68,7 +61,7 @@ const reducer = (state: ILoginFormValues, action: ReducerAction) => {
       break;
     }
     case ActionType.SHOW_SUCCESS: {
-      newState.success = 'Login Successful!';
+      newState.success = 'Recipe Found!';
       break;
     }
     case ActionType.RESET: {
@@ -82,18 +75,17 @@ const reducer = (state: ILoginFormValues, action: ReducerAction) => {
 };
 
 // component
-export const LoginForm = ({ onSuccess }: ComponentProps) => {
+export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
   const { updateUserData } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
     networkRequest({
-      url: '/api/v1/auth/local',
+      url: '/api/v1/recipes',
       method: 'POST',
       body: {
-        email: state.email,
-        password: state.password,
+        url: state.url,
       },
       before: () => {
         dispatch({ type: ActionType.LOADING_TRUE });
@@ -116,27 +108,13 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label="Email Address"
+        label="Recipe URL"
         variant="outlined"
-        value={state.email}
+        helperText="The web address of any recipe! Example: https://www.recipes.com/tacos"
+        value={state.url}
         onChange={(e) =>
           dispatch({
-            type: ActionType.UPDATE_EMAIL,
-            value: e.target.value,
-          })
-        }
-      />
-      <TextField
-        className={textFieldClass}
-        required
-        fullWidth
-        label="Password"
-        variant="outlined"
-        type="password"
-        value={state.password}
-        onChange={(e) =>
-          dispatch({
-            type: ActionType.UPDATE_PASSWORD,
+            type: ActionType.UPDATE_URL,
             value: e.target.value,
           })
         }

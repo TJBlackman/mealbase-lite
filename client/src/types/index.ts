@@ -11,7 +11,7 @@ export interface IAppContext {
   user: IUserData;
   sidemenu: {
     visible: boolean;
-  }
+  };
 }
 
 // Context Provider Value
@@ -33,7 +33,7 @@ export interface INetworkResponse {
 // network request
 export interface INetworkRequestOptions {
   url: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE',
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   headers?: object;
   body?: object;
   before?: () => void;
@@ -53,4 +53,10 @@ export interface IRecipe {
   url: string;
   __v: number;
   _id: string;
+}
+
+// generic reducer action
+export interface IGenericAction<T, P> {
+  type: T;
+  payload: P;
 }
