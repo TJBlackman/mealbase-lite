@@ -13,6 +13,17 @@ export const defaultAppContext: IAppContext = {
   sidemenu: {
     visible: false,
   },
+  browse: {
+    recipes: [],
+    filters: {
+      search: '',
+      filter: 'all',
+      sort: 'most likes',
+      limit: 20,
+      page: 1,
+      loading: false,
+    },
+  },
 };
 
 // use state from sessionStorage or default
@@ -36,9 +47,10 @@ export const GlobalContextProvider = ({ children }) => {
 
   const contextValue: IContextValue = {
     globalState: state,
-    updateUserData: (value: Partial<IUserData>) => dispatch({ type: A.UPDATE_USER, value }),
+    updateUserData: (payload) => dispatch({ type: A.UPDATE_USER, payload }),
     toggleSideMenu: () => dispatch({ type: A.TOGGLE_SIDEMENU }),
     logout: () => dispatch({ type: A.LOG_OUT }),
+    updateBrowseFilter: (payload) => dispatch({ type: A.UPDATE_BROWSE_FILTERS, payload }),
   };
 
   console.log('NEW Global Context - ', new Date().toLocaleTimeString());

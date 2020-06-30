@@ -1,23 +1,16 @@
 import { ACTIONS } from './actions'
-import { IAppContext } from "../types";
+import { IAppContext, IAction } from "../types";
 import { defaultAppContext } from './index'
+import { getNewState } from "../utils/copy-state";
 
-const getNewState = (state: IAppContext): IAppContext => {
-  return {
-    ...state,
-    user: { ...state.user },
-    sidemenu: { ...state.sidemenu }
-  }
-}
-
-export const appReducer = (state: IAppContext, action) => {
+export const appReducer = (state: IAppContext, action: IAction) => {
   // generate new state
   const newState = getNewState(state);
   switch (action.type) {
     case ACTIONS.UPDATE_USER: {
       newState.user = {
         ...newState.user,
-        ...action.value
+        ...action.payload
       };
       break;
     }
@@ -29,6 +22,13 @@ export const appReducer = (state: IAppContext, action) => {
       newState.user = {
         ...defaultAppContext.user
       };
+      break;
+    }
+    case ACTIONS.UPDATE_BROWSE_FILTERS: {
+      newState.browse.filters = {
+        ...newState.browse.filters,
+        ...action.payload
+      }
       break;
     }
     default: {

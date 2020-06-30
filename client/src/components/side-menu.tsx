@@ -81,7 +81,7 @@ export const SideMenu = () => {
         <Divider className={classes.divider} />
         {userIsLoggedIn ? (
           <>
-            <ListItem button onClick={() => goTo('/')}>
+            <ListItem button onClick={() => goTo('/account')}>
               <ListItemIcon>
                 <AccountBoxIcon />
               </ListItemIcon>

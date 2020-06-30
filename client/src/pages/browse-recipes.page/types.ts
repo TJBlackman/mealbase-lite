@@ -1,9 +1,10 @@
-export enum BrowseRecipeActions {
-  LOADING_TRUE,
-  LOADING_FALSE,
-  SET_RECIPES
-}
+import { IRecipe } from '../../types'
+
+export enum ActionTypes {
+  SET_LOADING
+};
 
 export interface IBrowseRecipeState {
   loading: boolean;
+  recipes: IRecipe[];
 }

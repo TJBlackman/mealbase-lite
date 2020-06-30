@@ -1,129 +1,126 @@
-import React, { useReducer } from 'react';
-import {
-  Grid,
-  TextField,
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
-} from '@material-ui/core';
+import React, { useContext, useReducer } from 'react';
+import { Grid, TextField, Select, FormControl, InputLabel, MenuItem, Button } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { AppContext } from '../context';
+import { IFilterRecipesState } from '../types';
 
-interface IAction {
-  type: string;
-  payload: any;
-}
-
-interface IFilterRecipesState {
-  search: string;
-  filter: '' | 'liked' | 'not liked';
-  sort: 'newest' | 'oldest' | 'most likes' | 'fewest likes';
-  page: number;
-  loading: boolean;
-}
-
-enum ActionTypes {
-  UPDATE_SEARCH,
-  UPDATE_FILTER,
-  UPDATE_SORT,
-  UPDATE_PAGE,
-  UPDATE_LOADING,
-}
-
-// default state
-const defaultFilterRecipeState: IFilterRecipesState = {
-  search: '',
-  filter: '',
-  sort: 'most likes',
-  page: 1,
-  loading: false,
-};
-
-// reducer
-const FilterRecipesReducer = (state: IFilterRecipesState, action) => {
-  const newState: IFilterRecipesState = { ...state };
+const SET_FORM = 'SET FORM';
+const reducer = (state: IFilterRecipesState, action: { type: string; payload: Partial<IFilterRecipesState> }) => {
   switch (action.type) {
-    case ActionTypes.UPDATE_SEARCH: {
-      newState.search = action.payload;
-      break;
-    }
-    case ActionTypes.UPDATE_FILTER: {
-      newState.filter = action.payload;
-      break;
-    }
-    case ActionTypes.UPDATE_SORT: {
-      newState.sort = action.payload;
-      break;
-    }
-    case ActionTypes.UPDATE_PAGE: {
-      newState.page = action.payload;
-      break;
-    }
-    case ActionTypes.UPDATE_LOADING: {
-      newState.loading = action.payload;
-      break;
+    case SET_FORM: {
+      return {
+        ...state,
+        ...action.payload,
+      };
     }
     default: {
-      console.error('Error! Unknown ActionType: ' + action.type);
+      return state;
     }
   }
-  return newState;
 };
 
-// search field
-// filter; all, liked, not-liked,
-// sort; newest, oldest, Most liked, fewest liked,
-// page; 1 - 92929292
 export const FilterRecipeForm = () => {
-  const [state, dispatch] = useReducer(
-    FilterRecipesReducer,
-    defaultFilterRecipeState
-  );
-
+  const { globalState, updateBrowseFilter } = useContext(AppContext);
+  const [localState, dispatch] = useReducer(reducer, globalState.browse.filters);
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateBrowseFilter(localState);
+    // make api call
+  };
+  const updateForm = (payload: Partial<IFilterRecipesState>) => {
+    dispatch({
+      type: SET_FORM,
+      payload,
+    });
+  };
+  const styles = useStyles();
   return (
-    <div>
-      <Grid container>
-        <Grid item sm={12}>
-          <TextField
-            label="Search Recipes"
-            value={state.search}
-            fullWidth
-            variant="outlined"
-            onChange={(e) =>
-              dispatch({
-                type: ActionTypes.UPDATE_SEARCH,
-                payload: e.target.value,
-              })
-            }
-          />
-        </Grid>
-        <Grid item md={4}>
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel id="filter-label">Filter</InputLabel>
+    <form onSubmit={onSubmit}>
+      <Grid container className={styles.searchRow}>
+        <TextField
+          label='Search Recipes'
+          value={localState.search}
+          fullWidth
+          variant='outlined'
+          className={styles.searchInput}
+          onChange={(e) => updateForm({ search: e.target.value })}
+        />
+        <Button type='submit' variant='contained' size='large' className={styles.btn}>
+          Search
+        </Button>
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item sm={4}>
+          <FormControl variant='outlined' fullWidth size='small'>
+            <InputLabel id='filter-label'>Filter Recipes</InputLabel>
             <Select
               fullWidth
-              labelId="filter-label"
-              value={state.filter}
-              onChange={(e) =>
-                dispatch({
-                  type: ActionTypes.UPDATE_FILTER,
-                  payload: e.target.value,
-                })
-              }
-              label="Filter"
+              labelId='filter-label'
+              value={localState.filter}
+              // @ts-ignore
+              onChange={(e) => updateForm({ filter: e.target.value })}
+              label='Filter Recipes'
             >
-              <MenuItem value="">All Recipes</MenuItem>
-              <MenuItem value="liked">Liked</MenuItem>
-              <MenuItem value="not liked">Not Liked</MenuItem>
+              <MenuItem value='all'>All Recipes</MenuItem>
+              <MenuItem value='liked'>Liked</MenuItem>
+              <MenuItem value='not liked'>Not Liked</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-        <Grid item md={4}>
-          two
+        <Grid item sm={4}>
+          <FormControl variant='outlined' fullWidth size='small'>
+            <InputLabel id='filter-label'>Sort Recipes</InputLabel>
+            <Select
+              fullWidth
+              labelId='filter-label'
+              value={localState.sort}
+              // @ts-ignore
+              onChange={(e) => updateForm({ sort: e.target.value })}
+              label='Sort Recipes'
+            >
+              <MenuItem value='newest'>Newest</MenuItem>
+              <MenuItem value='oldest'>Oldest</MenuItem>
+              <MenuItem value='most likes'>Most Popular</MenuItem>
+              <MenuItem value='fewest likes'>Least Popular</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
-        <Grid item md={4}>
-          three
+        <Grid item sm={4}>
+          <FormControl variant='outlined' fullWidth size='small'>
+            <InputLabel id='filter-label'>Results Per Page</InputLabel>
+            <Select
+              fullWidth
+              labelId='filter-label'
+              value={localState.limit}
+              // @ts-ignore
+              onChange={(e) => updateForm({ limit: e.target.value })}
+              label='Results Per Page'
+            >
+              <MenuItem value='10'>10</MenuItem>
+              <MenuItem value='20'>20</MenuItem>
+              <MenuItem value='50'>50</MenuItem>
+              <MenuItem value='100'>100</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
       </Grid>
-    </div>
+    </form>
   );
 };
+
+const useStyles = makeStyles({
+  searchRow: {
+    display: 'flex',
+    flexFlow: 'row nowrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: '0 0 20px 0',
+  },
+  searchInput: {
+    flex: '1 1 auto',
+  },
+  btn: {
+    marginLeft: '20px',
+    height: '56px',
+  },
+});

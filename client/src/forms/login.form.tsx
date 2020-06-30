@@ -14,7 +14,7 @@ interface ILoginFormValues {
 }
 interface ReducerAction {
   type: number;
-  value?: string;
+  payload?: string;
 }
 enum ActionType {
   UPDATE_EMAIL,
@@ -44,11 +44,11 @@ const reducer = (state: ILoginFormValues, action: ReducerAction) => {
   const newState: ILoginFormValues = { ...state };
   switch (action.type) {
     case ActionType.UPDATE_EMAIL: {
-      newState.email = action.value;
+      newState.email = action.payload;
       break;
     }
     case ActionType.UPDATE_PASSWORD: {
-      newState.password = action.value;
+      newState.password = action.payload;
       break;
     }
     case ActionType.LOADING_FALSE: {
@@ -60,7 +60,7 @@ const reducer = (state: ILoginFormValues, action: ReducerAction) => {
       break;
     }
     case ActionType.SET_ERROR: {
-      newState.error = action.value;
+      newState.error = action.payload;
       break;
     }
     case ActionType.CLEAR_ERROR: {
@@ -106,7 +106,7 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
       },
       error: (err) => {
         dispatch({ type: ActionType.LOADING_FALSE });
-        dispatch({ type: ActionType.SET_ERROR, value: err.message });
+        dispatch({ type: ActionType.SET_ERROR, payload: err.message });
       },
     });
   };
@@ -116,13 +116,13 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label="Email Address"
-        variant="outlined"
+        label='Email Address'
+        variant='outlined'
         value={state.email}
         onChange={(e) =>
           dispatch({
             type: ActionType.UPDATE_EMAIL,
-            value: e.target.value,
+            payload: e.target.value,
           })
         }
       />
@@ -130,20 +130,20 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label="Password"
-        variant="outlined"
-        type="password"
+        label='Password'
+        variant='outlined'
+        type='password'
         value={state.password}
         onChange={(e) =>
           dispatch({
             type: ActionType.UPDATE_PASSWORD,
-            value: e.target.value,
+            payload: e.target.value,
           })
         }
       />
       {state.error && (
         <Alert
-          severity="error"
+          severity='error'
           className={errorClass}
           elevation={2}
           onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
@@ -152,30 +152,20 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         </Alert>
       )}
       {state.success && (
-        <Alert severity="success" className={errorClass} elevation={2}>
+        <Alert severity='success' className={errorClass} elevation={2}>
           {state.success}
         </Alert>
       )}
       <Button
-        variant="contained"
+        variant='contained'
         className={btnClass}
         disabled={state.loading}
         onClick={() => dispatch({ type: ActionType.RESET })}
       >
         Reset
       </Button>
-      <Button
-        variant="contained"
-        className={btnClass}
-        color="primary"
-        type="submit"
-        disabled={state.loading}
-      >
-        {state.loading ? (
-          <CircularProgress color="primary" size="20px" />
-        ) : (
-          'Submit'
-        )}
+      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={state.loading}>
+        {state.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
       </Button>
     </form>
   );
