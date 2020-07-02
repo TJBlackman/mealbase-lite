@@ -24,10 +24,16 @@ export const appReducer = (state: IAppContext, action: IAction) => {
       };
       break;
     }
-    case ACTIONS.UPDATE_BROWSE_FILTERS: {
-      newState.browse.filters = {
-        ...newState.browse.filters,
+    case ACTIONS.UPDATE_BROWSE_PAGE: {
+      newState.browse = {
+        ...newState.browse,
         ...action.payload
+      };
+      if (action.payload.filters) {
+        newState.browse.filters = {
+          ...newState.browse.filters,
+          ...action.payload.filters
+        }
       }
       break;
     }

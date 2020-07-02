@@ -1,9 +1,21 @@
-import React, { useContext, useReducer } from 'react';
-import { Grid, TextField, Select, FormControl, InputLabel, MenuItem, Button } from '@material-ui/core';
+import React, { useContext, useReducer, useEffect } from 'react';
+import {
+  Grid,
+  TextField,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Button,
+  CircularProgress,
+  LinearProgress,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppContext } from '../context';
 import { IFilterRecipesState } from '../types';
+import { networkRequest } from '../utils/network-request';
 
+// reducer
 const SET_FORM = 'SET FORM';
 const reducer = (state: IFilterRecipesState, action: { type: string; payload: Partial<IFilterRecipesState> }) => {
   switch (action.type) {
@@ -19,23 +31,60 @@ const reducer = (state: IFilterRecipesState, action: { type: string; payload: Pa
   }
 };
 
+const makeParamsFromState = (state: IFilterRecipesState) => {
+  return `?search=${state.search}&limit=${state.limit}`;
+};
+
 export const FilterRecipeForm = () => {
-  const { globalState, updateBrowseFilter } = useContext(AppContext);
+  const { globalState, updateBrowsePage } = useContext(AppContext);
   const [localState, dispatch] = useReducer(reducer, globalState.browse.filters);
+  const { loading } = globalState.browse;
+  // recipe api call
+  const getRecipes = () => {
+    const queryParams = makeParamsFromState(localState);
+    networkRequest({
+      url: '/api/v1/recipes' + queryParams,
+      before: () => {
+        updateBrowsePage({
+          filters: { ...localState },
+          loading: true,
+        });
+      },
+      success: (json) => {
+        updateBrowsePage({
+          loading: false,
+          recipes: json.data,
+        });
+      },
+      error: (err) => {
+        updateBrowsePage({ loading: false });
+        alert(err.message);
+      },
+    });
+  };
+  // submit form
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateBrowseFilter(localState);
-    // make api call
+    getRecipes();
   };
+  // easy educer handler
   const updateForm = (payload: Partial<IFilterRecipesState>) => {
     dispatch({
       type: SET_FORM,
       payload,
     });
   };
+  // get recipes on mount
+  useEffect(() => {
+    if (globalState.browse.recipes.length === 0) {
+      getRecipes();
+    }
+  }, []);
+  // styles
   const styles = useStyles();
+
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className={styles.form}>
       <Grid container className={styles.searchRow}>
         <TextField
           label='Search Recipes'
@@ -44,21 +93,22 @@ export const FilterRecipeForm = () => {
           variant='outlined'
           className={styles.searchInput}
           onChange={(e) => updateForm({ search: e.target.value })}
+          disabled={loading}
         />
-        <Button type='submit' variant='contained' size='large' className={styles.btn}>
-          Search
+        <Button type='submit' variant='contained' size='large' className={styles.btn} disabled={loading}>
+          {loading ? 'Loading...' : 'Search'}
         </Button>
       </Grid>
       <Grid container spacing={3}>
-        <Grid item sm={4}>
-          <FormControl variant='outlined' fullWidth size='small'>
+        <Grid item sm={4} xs={12}>
+          <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
             <InputLabel id='filter-label'>Filter Recipes</InputLabel>
             <Select
               fullWidth
               labelId='filter-label'
               value={localState.filter}
               // @ts-ignore
-              onChange={(e) => updateForm({ filter: e.target.value })}
+              onChange={(e: React.ChangeEvent<InputEvent>) => updateForm({ filter: e.target.value })}
               label='Filter Recipes'
             >
               <MenuItem value='all'>All Recipes</MenuItem>
@@ -67,8 +117,8 @@ export const FilterRecipeForm = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item sm={4}>
-          <FormControl variant='outlined' fullWidth size='small'>
+        <Grid item sm={4} xs={12}>
+          <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
             <InputLabel id='filter-label'>Sort Recipes</InputLabel>
             <Select
               fullWidth
@@ -85,8 +135,8 @@ export const FilterRecipeForm = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item sm={4}>
-          <FormControl variant='outlined' fullWidth size='small'>
+        <Grid item sm={4} xs={12}>
+          <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
             <InputLabel id='filter-label'>Results Per Page</InputLabel>
             <Select
               fullWidth
@@ -104,11 +154,15 @@ export const FilterRecipeForm = () => {
           </FormControl>
         </Grid>
       </Grid>
+      <div className={styles.loading}>{loading && <LinearProgress />}</div>
     </form>
   );
 };
 
 const useStyles = makeStyles({
+  form: {
+    marginTop: '20px',
+  },
   searchRow: {
     display: 'flex',
     flexFlow: 'row nowrap',
@@ -122,5 +176,8 @@ const useStyles = makeStyles({
   btn: {
     marginLeft: '20px',
     height: '56px',
+  },
+  loading: {
+    padding: '20px 0',
   },
 });

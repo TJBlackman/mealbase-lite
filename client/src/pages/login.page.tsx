@@ -12,7 +12,7 @@ export const LoginPage = () => {
         <Grid item sm={8} md={6}>
           <Typography variant='h4'>Login Page!</Typography>
           <Typography variant='body2'>Use the form below to login.</Typography>
-          <LoginForm onSuccess={() => history.push('/dashboard')} />
+          <LoginForm onSuccess={() => history.push('/browse')} />
         </Grid>
       </Grid>
     </Layout>

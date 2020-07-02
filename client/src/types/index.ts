@@ -22,7 +22,7 @@ export interface IContextValue {
   updateUserData: (payload: Partial<IUserData>) => void;
   toggleSideMenu: () => void;
   logout: () => void;
-  updateBrowseFilter: (payload: Partial<IFilterRecipesState>) => void;
+  updateBrowsePage: (payload: Partial<IBrowseRecipePage>) => void;
 }
 
 // network response from server
@@ -74,11 +74,11 @@ export interface IFilterRecipesState {
   sort: 'newest' | 'oldest' | 'most likes' | 'fewest likes';
   limit: number;
   page: number;
-  loading: boolean;
 }
 
 // browse recipes page
 export interface IBrowseRecipePage {
   recipes: IRecipe[];
   filters: IFilterRecipesState;
+  loading: boolean;
 }

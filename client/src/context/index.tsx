@@ -15,13 +15,13 @@ export const defaultAppContext: IAppContext = {
   },
   browse: {
     recipes: [],
+    loading: false,
     filters: {
       search: '',
       filter: 'all',
       sort: 'most likes',
       limit: 20,
       page: 1,
-      loading: false,
     },
   },
 };
@@ -50,7 +50,7 @@ export const GlobalContextProvider = ({ children }) => {
     updateUserData: (payload) => dispatch({ type: A.UPDATE_USER, payload }),
     toggleSideMenu: () => dispatch({ type: A.TOGGLE_SIDEMENU }),
     logout: () => dispatch({ type: A.LOG_OUT }),
-    updateBrowseFilter: (payload) => dispatch({ type: A.UPDATE_BROWSE_FILTERS, payload }),
+    updateBrowsePage: (payload) => dispatch({ type: A.UPDATE_BROWSE_PAGE, payload }),
   };
 
   console.log('NEW Global Context - ', new Date().toLocaleTimeString());

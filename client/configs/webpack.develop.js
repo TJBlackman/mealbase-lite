@@ -14,6 +14,7 @@ const development = {
     proxy: {
       '/api': 'http://localhost:3050',
     },
+    clientLogLevel: 'warn',
   },
   plugins: [
     new HtmlWebpackPlugin({
