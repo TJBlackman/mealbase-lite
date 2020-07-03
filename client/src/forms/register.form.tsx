@@ -90,7 +90,7 @@ const reducer = (state: IRegisterFormValues, action: Action) => {
 // component
 export const RegisterForm = ({ onSuccess }: ComponentProps) => {
   const { updateUserData } = useContext(AppContext);
-  const [state, dispatch] = useReducer(reducer, defaultValues);
+  const [localState, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
@@ -98,8 +98,8 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
       url: '/api/v1/users',
       method: 'POST',
       body: {
-        email: state.email,
-        password: state.password,
+        email: localState.email,
+        password: localState.password,
       },
       before: () => {
         dispatch({ type: ActionType.LOADING_TRUE });
@@ -122,10 +122,10 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label='Email Address'
-        variant='outlined'
-        type='email'
-        value={state.email}
+        label="Email Address"
+        variant="outlined"
+        type="email"
+        value={localState.email}
         onChange={(e) =>
           dispatch({
             type: ActionType.UPDATE_EMAIL,
@@ -137,10 +137,10 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label='Password'
-        variant='outlined'
-        type='password'
-        value={state.password}
+        label="Password"
+        variant="outlined"
+        type="password"
+        value={localState.password}
         onChange={(e) =>
           dispatch({
             type: ActionType.UPDATE_PASSWORD,
@@ -152,10 +152,10 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label='Confirm Password'
-        variant='outlined'
-        type='password'
-        value={state.confirmPw}
+        label="Confirm Password"
+        variant="outlined"
+        type="password"
+        value={localState.confirmPw}
         onChange={(e) =>
           dispatch({
             type: ActionType.UPDATE_CONFIRM_PW,
@@ -163,31 +163,41 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
           })
         }
       />
-      {state.error && (
+      {localState.error && (
         <Alert
-          severity='error'
+          severity="error"
           className={errorClass}
           elevation={2}
           onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
         >
-          {state.error}
+          {localState.error}
         </Alert>
       )}
-      {state.success && (
-        <Alert severity='success' className={errorClass} elevation={2}>
-          {state.success}
+      {localState.success && (
+        <Alert severity="success" className={errorClass} elevation={2}>
+          {localState.success}
         </Alert>
       )}
       <Button
-        variant='contained'
+        variant="contained"
         className={btnClass}
         onClick={() => dispatch({ type: ActionType.RESET })}
-        disabled={state.loading}
+        disabled={localState.loading}
       >
         Reset
       </Button>
-      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={state.loading}>
-        {state.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
+      <Button
+        variant="contained"
+        className={btnClass}
+        color="primary"
+        type="submit"
+        disabled={localState.loading}
+      >
+        {localState.loading ? (
+          <CircularProgress color="primary" size="20px" />
+        ) : (
+          'Submit'
+        )}
       </Button>
     </form>
   );

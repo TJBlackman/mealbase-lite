@@ -4,6 +4,7 @@ import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
 import { AppContext } from '../context';
+import { IRecipe } from '../types';
 
 interface ILoginFormValues {
   url: string;
@@ -25,7 +26,7 @@ enum ActionType {
   SHOW_SUCCESS,
 }
 interface ComponentProps {
-  onSuccess?: () => void;
+  onSuccess?: (x: IRecipe) => void;
 }
 
 // form default values
@@ -76,8 +77,8 @@ const reducer = (state: ILoginFormValues, action: ReducerAction) => {
 
 // component
 export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
-  const { updateUserData } = useContext(AppContext);
-  const [state, dispatch] = useReducer(reducer, defaultValues);
+  const { globalState } = useContext(AppContext);
+  const [localState, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
@@ -85,16 +86,17 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
       url: '/api/v1/recipes',
       method: 'POST',
       body: {
-        url: state.url,
+        url: localState.url,
       },
       before: () => {
         dispatch({ type: ActionType.LOADING_TRUE });
         dispatch({ type: ActionType.CLEAR_ERROR });
       },
       success: (json) => {
-        updateUserData(json.data);
         dispatch({ type: ActionType.SHOW_SUCCESS });
-        setTimeout(onSuccess, 1000);
+        setTimeout(() => {
+          onSuccess(json.data);
+        }, 1000);
       },
       error: (err) => {
         dispatch({ type: ActionType.LOADING_FALSE });
@@ -102,16 +104,18 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
       },
     });
   };
+  const disabled = localState.loading || !globalState.user.email;
   return (
     <form onSubmit={onSubmit} className={formClass}>
       <TextField
         className={textFieldClass}
         required
         fullWidth
-        label='Recipe URL'
-        variant='outlined'
-        helperText='The web address of any recipe! Example: https://www.recipes.com/tacos'
-        value={state.url}
+        label="Recipe URL"
+        variant="outlined"
+        helperText="The web address of any recipe! Example: https://www.recipes.com/tacos"
+        value={localState.url}
+        disabled={disabled}
         onChange={(e) =>
           dispatch({
             type: ActionType.UPDATE_URL,
@@ -119,31 +123,46 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
           })
         }
       />
-      {state.error && (
+      {localState.error && (
         <Alert
-          severity='error'
+          severity="error"
           className={errorClass}
           elevation={2}
           onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
         >
-          {state.error}
+          {localState.error}
         </Alert>
       )}
-      {state.success && (
-        <Alert severity='success' className={errorClass} elevation={2}>
-          {state.success}
+      {localState.success && (
+        <Alert severity="success" className={errorClass} elevation={2}>
+          {localState.success}
+        </Alert>
+      )}
+      {!globalState.user.email && (
+        <Alert severity="warning" className={errorClass} elevation={2}>
+          You must have an account to add new recipes.
         </Alert>
       )}
       <Button
-        variant='contained'
+        variant="contained"
         className={btnClass}
-        disabled={state.loading}
+        disabled={disabled}
         onClick={() => dispatch({ type: ActionType.RESET })}
       >
         Reset
       </Button>
-      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={state.loading}>
-        {state.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
+      <Button
+        variant="contained"
+        className={btnClass}
+        color="primary"
+        type="submit"
+        disabled={disabled}
+      >
+        {localState.loading ? (
+          <CircularProgress color="primary" size="20px" />
+        ) : (
+          'Submit'
+        )}
       </Button>
     </form>
   );

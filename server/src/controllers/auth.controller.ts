@@ -14,8 +14,8 @@ router.post('/local', usePassportLocalStrategy, async (req, res) => {
     roles: user.roles,
     organizations: {
       admin: [],
-      member: []
-    }
+      member: [],
+    },
   });
   sendResponse({
     req,
@@ -24,20 +24,21 @@ router.post('/local', usePassportLocalStrategy, async (req, res) => {
     data: {
       _id: user._id,
       email: user.email,
-      roles: user.roles
+      roles: user.roles,
     },
     success: true,
-    message: ''
+    message: '',
   });
 });
 
+// GET /api/v1/auth/signout
 router.get('/signout', (req, res, next) => {
   sendResponse({
     req,
     res,
     success: true,
     message: '',
-    cookie: 'clear'
+    cookie: 'clear',
   });
 });
 

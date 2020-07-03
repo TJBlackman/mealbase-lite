@@ -84,7 +84,7 @@ const reducer = (state: ILoginFormValues, action: ReducerAction) => {
 // component
 export const LoginForm = ({ onSuccess }: ComponentProps) => {
   const { updateUserData } = useContext(AppContext);
-  const [state, dispatch] = useReducer(reducer, defaultValues);
+  const [localState, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
@@ -92,8 +92,8 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
       url: '/api/v1/auth/local',
       method: 'POST',
       body: {
-        email: state.email,
-        password: state.password,
+        email: localState.email,
+        password: localState.password,
       },
       before: () => {
         dispatch({ type: ActionType.LOADING_TRUE });
@@ -116,9 +116,10 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label='Email Address'
-        variant='outlined'
-        value={state.email}
+        label="Email Address"
+        variant="outlined"
+        value={localState.email}
+        disabled={localState.loading}
         onChange={(e) =>
           dispatch({
             type: ActionType.UPDATE_EMAIL,
@@ -130,10 +131,11 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label='Password'
-        variant='outlined'
-        type='password'
-        value={state.password}
+        label="Password"
+        variant="outlined"
+        type="password"
+        value={localState.password}
+        disabled={localState.loading}
         onChange={(e) =>
           dispatch({
             type: ActionType.UPDATE_PASSWORD,
@@ -141,31 +143,41 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
           })
         }
       />
-      {state.error && (
+      {localState.error && (
         <Alert
-          severity='error'
+          severity="error"
           className={errorClass}
           elevation={2}
           onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
         >
-          {state.error}
+          {localState.error}
         </Alert>
       )}
-      {state.success && (
-        <Alert severity='success' className={errorClass} elevation={2}>
-          {state.success}
+      {localState.success && (
+        <Alert severity="success" className={errorClass} elevation={2}>
+          {localState.success}
         </Alert>
       )}
       <Button
-        variant='contained'
+        variant="contained"
         className={btnClass}
-        disabled={state.loading}
+        disabled={localState.loading}
         onClick={() => dispatch({ type: ActionType.RESET })}
       >
         Reset
       </Button>
-      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={state.loading}>
-        {state.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
+      <Button
+        variant="contained"
+        className={btnClass}
+        color="primary"
+        type="submit"
+        disabled={localState.loading}
+      >
+        {localState.loading ? (
+          <CircularProgress color="primary" size="20px" />
+        ) : (
+          'Submit'
+        )}
       </Button>
     </form>
   );
