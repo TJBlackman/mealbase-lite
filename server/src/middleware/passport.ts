@@ -11,15 +11,22 @@ passport.use(
     {
       usernameField: 'email',
       passwordField: 'password',
-      session: false
+      session: false,
     },
     async (email, password, done) => {
       try {
-        const existing_user: any = await UserModel.findOne({ email }, '', { lean: true });
+        const existing_user: any = await UserModel.findOne(
+          { email, deleted: false },
+          '',
+          { lean: true }
+        );
         if (!existing_user) {
           return done(null, false);
         }
-        const correctPassword = await compareHash(password, existing_user.password);
+        const correctPassword = await compareHash(
+          password,
+          existing_user.password
+        );
         if (!correctPassword) {
           return done(null, false);
         }
@@ -32,13 +39,17 @@ passport.use(
 );
 
 export const usePassportLocalStrategy = (req: any, res: any, next: any) => {
-  passport.authenticate('local', { session: false }, function (err, user, info) {
+  passport.authenticate('local', { session: false }, function (
+    err,
+    user,
+    info
+  ) {
     if (err) {
       return sendResponse({
         res,
         req,
         success: false,
-        message: err
+        message: err,
       });
     }
     if (!user) {
@@ -46,7 +57,7 @@ export const usePassportLocalStrategy = (req: any, res: any, next: any) => {
         res,
         req,
         success: false,
-        message: '401 Unauthorized'
+        message: '401 Unauthorized',
       });
     }
     req.user = user;

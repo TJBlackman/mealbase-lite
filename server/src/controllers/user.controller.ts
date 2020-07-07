@@ -3,7 +3,12 @@ const router = express.Router();
 
 import allowLoggedInUsersOnly from '../middleware/auth-users-only';
 
-import { queryAllUsers, registerNewUser, editExistingUser, markUserDeleted } from '../services/user.service';
+import {
+  queryAllUsers,
+  registerNewUser,
+  editExistingUser,
+  markUserDeleted,
+} from '../services/user.service';
 import { sendResponse } from '../utils/normalize-response';
 import { createJWT } from '../utils/jwt-helpers';
 import { JWTUser } from '..//types/type-definitions';
@@ -18,14 +23,14 @@ router.get('/', async (req, res, next) => {
       res,
       data: response,
       message: '',
-      success: true
+      success: true,
     });
   } catch (err) {
     sendResponse({
       req,
       res,
       message: err.message,
-      success: false
+      success: false,
     });
   }
 });
@@ -41,8 +46,8 @@ router.post('/', async (req, res, next) => {
       roles: response.roles,
       organizations: {
         admin: [],
-        member: []
-      }
+        member: [],
+      },
     });
     sendResponse({
       req,
@@ -50,14 +55,14 @@ router.post('/', async (req, res, next) => {
       cookie: jwt,
       data: response,
       message: '',
-      success: true
+      success: true,
     });
   } catch (err) {
     sendResponse({
       req,
       res,
       message: err.message,
-      success: false
+      success: false,
     });
   }
 });
@@ -71,7 +76,7 @@ router.put('/', allowLoggedInUsersOnly, async (req, res, next) => {
       res,
       data: response,
       message: '',
-      success: true
+      success: true,
     });
   } catch (err) {
     console.log(err);
@@ -79,7 +84,7 @@ router.put('/', allowLoggedInUsersOnly, async (req, res, next) => {
       req,
       res,
       message: err.message,
-      success: false
+      success: false,
     });
   }
 });
@@ -92,14 +97,14 @@ router.delete('/', allowLoggedInUsersOnly, async (req, res, next) => {
       req,
       res,
       message: '',
-      success: true
+      success: true,
     });
   } catch (err) {
     sendResponse({
       req,
       res,
       message: err.message,
-      success: false
+      success: false,
     });
   }
 });

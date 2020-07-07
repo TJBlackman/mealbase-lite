@@ -1,41 +1,40 @@
 import mongoose from 'mongoose';
-
+import { USER_MODEL } from './types';
 const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
-    required: true
+    required: true,
   },
   updatedAt: {
     type: Date,
-    required: true
+    required: true,
   },
   email: {
     type: String,
     required: true,
     lowercase: true,
     trim: true,
-    unique: true
   },
   password: {
     type: String,
     required: true,
     minlength: 6,
-    trim: true
+    trim: true,
   },
   roles: {
     type: [{ type: String }],
-    required: true
+    required: true,
   },
   deleted: {
     type: Boolean,
     required: true,
-    default: false
-  }
+    default: false,
+  },
 });
 
 // allows searching on email address
 UserSchema.index({ email: 'text' });
 
-const UserModel = mongoose.model('User', UserSchema);
+const UserModel = mongoose.model(USER_MODEL, UserSchema);
 
 export default UserModel;

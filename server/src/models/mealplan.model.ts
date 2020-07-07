@@ -1,13 +1,14 @@
 import mongoose from 'mongoose';
+import { MEALPLAN_MODEL } from './types';
 
 const MealPlanSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
-    required: true
+    required: true,
   },
   updatedAt: {
     type: Date,
-    required: true
+    required: true,
   },
   title: {
     type: String,
@@ -17,30 +18,34 @@ const MealPlanSchema = new mongoose.Schema({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
   },
   sharedWith: {
-    type: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }],
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     required: true,
     default: [],
   },
   recipes: {
-    type: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Recipe'
-    }],
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recipe',
+      },
+    ],
     required: true,
     default: [],
   },
   deleted: {
     type: Boolean,
     required: true,
-    default: false
-  }
+    default: false,
+  },
 });
 
-const MealPlanModel = mongoose.model('MealPlan', MealPlanSchema);
+const MealPlanModel = mongoose.model(MEALPLAN_MODEL, MealPlanSchema);
 export default MealPlanModel;

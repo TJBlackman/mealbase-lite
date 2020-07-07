@@ -4,7 +4,12 @@ const router = express.Router();
 import { sendResponse } from '../utils/normalize-response';
 import allowLoggedInUsersOnly from '../middleware/auth-users-only';
 import { JWTUser } from '../types/type-definitions';
-import { getRecipes, postNewRecipe, updateExistingRecipe, deleteRecipe } from '../services/recipe.service';
+import {
+  getRecipes,
+  postNewRecipe,
+  updateExistingRecipe,
+  deleteRecipe,
+} from '../services/recipe.service';
 
 // GET /api/v1/recipes
 router.get('/', async (req, res, next) => {
@@ -22,7 +27,7 @@ router.get('/', async (req, res, next) => {
       req,
       res,
       message: err.message,
-      success: false
+      success: false,
     });
   }
 });
@@ -37,14 +42,14 @@ router.post('/', allowLoggedInUsersOnly, async (req, res, next) => {
       res,
       data: recipe,
       message: '',
-      success: true
+      success: true,
     });
   } catch (err) {
     sendResponse({
       req,
       res,
       message: err.message,
-      success: false
+      success: false,
     });
   }
 });
@@ -52,20 +57,20 @@ router.post('/', allowLoggedInUsersOnly, async (req, res, next) => {
 // PUT /api/v1/recipes
 router.put('/', allowLoggedInUsersOnly, async (req, res, next) => {
   try {
-    const recipe = await updateExistingRecipe(req.body, req.user as JWTUser)
+    const recipe = await updateExistingRecipe(req.body, req.user as JWTUser);
     sendResponse({
       req,
       res,
       message: '',
       success: true,
-      data: recipe
+      data: recipe,
     });
   } catch (err) {
     sendResponse({
       req,
       res,
       message: err.message,
-      success: false
+      success: false,
     });
   }
 });
@@ -78,16 +83,19 @@ router.delete('/', allowLoggedInUsersOnly, async (req, res, next) => {
       req,
       res,
       message: '',
-      success: true
+      success: true,
     });
   } catch (err) {
     sendResponse({
       req,
       res,
       message: err.message,
-      success: false
+      success: false,
     });
   }
 });
+
+// POST /api/v1/recipes/like
+router.post('/like', allowLoggedInUsersOnly, async (req, res, next) => {});
 
 export default router;

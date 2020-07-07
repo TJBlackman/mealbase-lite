@@ -1,11 +1,21 @@
 import UserModel from '../models/user.model';
-import { GetUsersQuery, GetUsersDbConditions, ExistingUserData, NewUserData } from '../types/type-definitions';
+import {
+  GetUsersQuery,
+  GetUsersDbConditions,
+  ExistingUserData,
+  NewUserData,
+} from '../types/type-definitions';
+
+export const getSensitiveUserDataById = async (id: string) => {
+  const user = UserModel.findById(id);
+  return (user as undefined) as ExistingUserData;
+};
 
 export const queryUsers = async (query: GetUsersQuery) => {
   // create filter to match documents against
   const filter = (() => {
     const conditions: GetUsersDbConditions = {
-      deleted: false
+      deleted: false,
     };
     if (query.deleted) {
       conditions.deleted = true;
@@ -79,19 +89,19 @@ export const queryUsers = async (query: GetUsersQuery) => {
   const projections = (() => {
     let str = '-password';
     if (query.deleted !== true) {
-      str = `${str} -deleted`
-    };
+      str = `${str} -deleted`;
+    }
     return str;
   })();
   const dbOptions = {
     limit: queryLimit,
     skip: querySkip,
     sort: querySort,
-    lean: true
+    lean: true,
   };
   const users = await UserModel.find(filter, projections, dbOptions);
-  return users as unknown as [ExistingUserData];
-}
+  return (users as unknown) as [ExistingUserData];
+};
 
 export const saveNewUser = async (data: NewUserData) => {
   const newUser = new UserModel({
@@ -99,25 +109,27 @@ export const saveNewUser = async (data: NewUserData) => {
     updatedAt: new Date().toUTCString(),
     email: data.email,
     password: data.password,
-    roles: ['user']
+    roles: ['user'],
   });
   const user = await newUser.save();
   return user.toObject() as ExistingUserData;
-}
+};
 
 export const updateExistingUser = async (data: ExistingUserData) => {
   if (!data._id) {
-    throw Error('Cannot update user without an _id.')
+    throw Error('Cannot update user without an _id.');
   }
+  // save reference to id
+  const id = data._id;
   // can never edit these values
   delete data.createdAt;
   delete data.__v;
   delete data._id;
   // update timestamp here
   data.updatedAt = new Date().toUTCString();
-  const user = await UserModel.findByIdAndUpdate(data._id, data, { new: true });
+  const user = await UserModel.findByIdAndUpdate(id, data, { new: true });
   if (!user) {
-    throw Error(`No user found with id: ${data._id}`)
+    throw Error(`No user found with id: ${data._id}`);
   }
   return user.toObject() as ExistingUserData;
-}
+};
