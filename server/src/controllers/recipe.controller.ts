@@ -6,9 +6,9 @@ import allowLoggedInUsersOnly from '../middleware/auth-users-only';
 import { JWTUser } from '../types/type-definitions';
 import {
   getRecipesService,
-  postNewRecipe,
-  updateExistingRecipe,
-  deleteRecipe,
+  newRecipeService,
+  editRecipeService,
+  deleteRecipeService,
   likeRecipeService,
   unLikedRecipeService
 } from '../services/recipe.service';
@@ -38,7 +38,7 @@ router.get('/', async (req, res, next) => {
 // Needs recaptcha middleware
 router.post('/', allowLoggedInUsersOnly, async (req, res, next) => {
   try {
-    const recipe = await postNewRecipe(req.body, req.user as JWTUser);
+    const recipe = await newRecipeService(req.body, req.user as JWTUser);
     sendResponse({
       req,
       res,
@@ -59,7 +59,7 @@ router.post('/', allowLoggedInUsersOnly, async (req, res, next) => {
 // PUT /api/v1/recipes
 router.put('/', allowLoggedInUsersOnly, async (req, res, next) => {
   try {
-    const recipe = await updateExistingRecipe(req.body, req.user as JWTUser);
+    const recipe = await editRecipeService(req.body, req.user as JWTUser);
     sendResponse({
       req,
       res,
@@ -80,7 +80,7 @@ router.put('/', allowLoggedInUsersOnly, async (req, res, next) => {
 // DELETE /api/v1/recipes
 router.delete('/', allowLoggedInUsersOnly, async (req, res, next) => {
   try {
-    await deleteRecipe(req.body, req.user as JWTUser);
+    await deleteRecipeService(req.body, req.user as JWTUser);
     sendResponse({
       req,
       res,

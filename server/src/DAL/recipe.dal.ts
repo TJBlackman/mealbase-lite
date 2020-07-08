@@ -2,7 +2,7 @@ import RecipeModel from '../models/recipe.model';
 import RecipeLikeModel from '../models/recipe-likes.model';
 import { RecipeRecord, RecipeQuery, IRecipeLikeRecord, IRecipeLikeRequest } from '../types/type-definitions'
 
-export const queryRecipes = async (query: RecipeQuery) => {
+export const queryRecipeDAL = async (query: RecipeQuery) => {
   // create filter to match documents against
   const filter = (() => {
     const conditions: RecipeRecord = {
@@ -86,13 +86,14 @@ export const queryRecipes = async (query: RecipeQuery) => {
     limit: queryLimit,
     skip: querySkip,
     sort: querySort,
-    lean: true
+    lean: true,
+    virtuals: true
   };
   const recipes = await RecipeModel.find(filter, projections, dbOptions);
   return recipes as unknown as RecipeRecord[];
 }
 
-export const saveNewRecipe = async (data: RecipeRecord) => {
+export const saveRecipeDAL = async (data: RecipeRecord) => {
   const newRecipe = new RecipeModel({
     createdAt: new Date().toUTCString(),
     updatedAt: new Date().toUTCString(),
@@ -106,7 +107,7 @@ export const saveNewRecipe = async (data: RecipeRecord) => {
   return recipe.toObject() as RecipeRecord;
 }
 
-export const updateRecipe = async (data: RecipeRecord) => {
+export const editRecipeDAL = async (data: RecipeRecord) => {
   if (!data._id) {
     throw Error('Cannot update recipe without an _id.')
   }
@@ -124,12 +125,17 @@ export const updateRecipe = async (data: RecipeRecord) => {
   return recipe.toObject() as RecipeRecord;
 }
 
-export const getRecipeLikedRecord = async (data: IRecipeLikeRequest) => {
-  const document = await RecipeLikeModel.findOne(data);
-  return document as unknown as IRecipeLikeRecord;
+export const getRecipeLikeRecordDAL = async (data: IRecipeLikeRequest) => {
+  const documents = await RecipeLikeModel.find({
+    recipeId: {
+      $in: data.recipeIds
+    },
+    userId: data.userId
+  });
+  return documents as unknown as IRecipeLikeRecord[];
 };
 
-export const likeRecipe = async (data: IRecipeLikeRequest) => {
+export const likeRecipeDAL = async (data: { userId: string; recipeId: string; }) => {
   const record = new RecipeLikeModel({
     userId: data.userId,
     recipeId: data.recipeId,
@@ -139,7 +145,7 @@ export const likeRecipe = async (data: IRecipeLikeRequest) => {
   return document as unknown as IRecipeLikeRecord;
 }
 
-export const unLikedRecipe = async (_id: string) => {
+export const unLikedRecipeDAL = async (_id: string) => {
   const result = await RecipeLikeModel.findByIdAndDelete(_id);
   return result;
 }

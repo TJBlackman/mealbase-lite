@@ -1,5 +1,5 @@
 import { ACTIONS } from './actions'
-import { IAppContext, IAction } from "../types";
+import { IAppContext, IAction, IRecipe } from "../types";
 import { defaultAppContext } from './index'
 import { getNewState } from "../utils/copy-state";
 
@@ -22,6 +22,10 @@ export const appReducer = (state: IAppContext, action: IAction) => {
       newState.user = {
         ...defaultAppContext.user
       };
+      newState.browse.recipes = newState.browse.recipes.map(recipe => ({
+        ...recipe,
+        isLiked: false
+      }));
       break;
     }
     case ACTIONS.UPDATE_BROWSE_PAGE: {
@@ -35,6 +39,16 @@ export const appReducer = (state: IAppContext, action: IAction) => {
           ...action.payload.filters
         }
       }
+      break;
+    }
+    case ACTIONS.REPLACE_RECIPE: {
+      newState.browse.recipes = newState.browse.recipes.map((recipe: IRecipe) => {
+        if (recipe._id === action.payload._id) {
+          return action.payload
+        } else {
+          return recipe;
+        }
+      })
       break;
     }
     default: {

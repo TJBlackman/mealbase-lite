@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useEffect } from 'react';
 import { appReducer } from './reducer';
 import { ACTIONS as A } from './actions';
-import { IContextValue, IAppContext, IUserData } from '../types';
+import { IContextValue, IAppContext } from '../types';
 
 // app default state
 export const defaultAppContext: IAppContext = {
@@ -51,6 +51,7 @@ export const GlobalContextProvider = ({ children }) => {
     toggleSideMenu: () => dispatch({ type: A.TOGGLE_SIDEMENU }),
     logout: () => dispatch({ type: A.LOG_OUT }),
     updateBrowsePage: (payload) => dispatch({ type: A.UPDATE_BROWSE_PAGE, payload }),
+    replaceRecipe: (payload) => dispatch({ type: A.REPLACE_RECIPE, payload }),
   };
 
   console.log('NEW Global Context - ', new Date().toLocaleTimeString());

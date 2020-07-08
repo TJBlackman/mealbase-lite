@@ -23,6 +23,7 @@ export interface IContextValue {
   toggleSideMenu: () => void;
   logout: () => void;
   updateBrowsePage: (payload: Partial<IBrowseRecipePage>) => void;
+  replaceRecipe: (payload: IRecipe) => void;
 }
 
 // network response from server
@@ -55,6 +56,8 @@ export interface IRecipe {
   url: string;
   __v: number;
   _id: string;
+  likes: number;
+  isLiked: boolean;
 }
 
 // generic reducer action

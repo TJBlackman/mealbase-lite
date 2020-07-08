@@ -72,6 +72,7 @@ export interface RecipeRecord extends basicRecordOptions {
   url?: string;
   siteName?: string;
   likes?: number;
+  isLiked?: boolean;
 }
 export interface RecipeQuery extends basicQueryOptions {
   url?: string;
@@ -101,5 +102,5 @@ export interface IRecipeLikeRecord extends basicRecordOptions {
 }
 export interface IRecipeLikeRequest {
   userId: string;
-  recipeId: string;
+  recipeIds: string[];
 }

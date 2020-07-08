@@ -46,6 +46,11 @@ const RecipeSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
+  isLiked: {
+    type: Boolean,
+    required: true,
+    default: false
+  }
 });
 
 // allows string seach on title, siteName fields

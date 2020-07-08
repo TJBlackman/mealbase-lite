@@ -1,78 +1,101 @@
-import { queryRecipes, saveNewRecipe, updateRecipe, getRecipeLikedRecord, likeRecipe, unLikedRecipe } from '../DAL/recipe.dal';
+import { queryRecipeDAL, saveRecipeDAL, editRecipeDAL, getRecipeLikeRecordDAL, likeRecipeDAL, unLikedRecipeDAL } from '../DAL/recipe.dal';
 import { userHasRole } from '../utils/validators'
-import { JWTUser, RecipeQuery, RecipeRecord } from '../types/type-definitions';
+import { JWTUser, RecipeQuery, RecipeRecord, IRecipeLikeRecord } from '../types/type-definitions';
 import { getRecipeData } from './puppeteer.service';
 
 export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
-  // if (userHasRole('admin', user)){
-  const recipes = await queryRecipes(query);
+  const recipes = await queryRecipeDAL(query);
+  if (user) {
+    // confirm which recipes this user has liked
+    const recipeIds = recipes.map(i => i._id);
+    const likeRecords = await getRecipeLikeRecordDAL({ userId: user._id, recipeIds: recipeIds });
+    if (likeRecords.length > 0) {
+      let i = 0, imax = likeRecords.length;
+      for (; i < imax; ++i) {
+        const likeRecord = likeRecords[i];
+        let j = 0, jmax = recipes.length;
+        for (; j < jmax; ++j) {
+          const recipe = recipes[j];
+          if (recipe._id.toString() === likeRecord.recipeId.toString()) {
+            recipe.isLiked = true;
+          }
+        }
+      }
+    }
+  }
   return recipes;
-  // }
 }
 
-export const postNewRecipe = async (data: RecipeRecord, user: JWTUser) => {
+export const newRecipeService = async (data: RecipeRecord, user: JWTUser) => {
   const { url } = data;
   if (!url) {
     throw Error('URL is required.');
   }
-  const foundRecipe = await queryRecipes({ url: url.split('?')[0] });
+  const foundRecipe = await queryRecipeDAL({ url: url.split('?')[0] });
   if (foundRecipe.length > 0) {
     return foundRecipe[0];
   }
   const pptrData = await getRecipeData(url);
   if (pptrData) {
-    const recipe = await saveNewRecipe(pptrData as RecipeRecord);
+    const recipe = await saveRecipeDAL(pptrData as RecipeRecord);
     return recipe;
   } else {
     throw Error('Recipe could not be retreived.')
   }
 }
 
-export const updateExistingRecipe = async (data: RecipeRecord, user: JWTUser) => {
+export const editRecipeService = async (data: RecipeRecord, user: JWTUser) => {
   if (userHasRole('admin', user)) {
-    const recipe = await updateRecipe(data);
+    const recipe = await editRecipeDAL(data);
     return recipe;
   }
   throw Error('Only an admin can edit a recipe.')
 }
 
-export const deleteRecipe = async (data: RecipeRecord, user: JWTUser) => {
+export const deleteRecipeService = async (data: RecipeRecord, user: JWTUser) => {
   if (userHasRole('admin', user)) {
-    const recipe = await updateRecipe({ ...data, deleted: true });
+    const recipe = await editRecipeDAL({ ...data, deleted: true });
     return recipe;
   }
   throw Error('Only an admin can delete a recipe.')
 }
 
 export const likeRecipeService = async (data: { recipeId: string; }, user: JWTUser) => {
-  const existingRecipe = await queryRecipes({ _id: data.recipeId });
+  const existingRecipe = await queryRecipeDAL({ _id: data.recipeId });
   if (existingRecipe.length < 1) {
     throw Error('Recipe does not exist.');
   }
-  const alreadyLiked = await getRecipeLikedRecord({ recipeId: data.recipeId, userId: user._id });
-  if (alreadyLiked) {
-    return true;
+  const alreadyLiked = await getRecipeLikeRecordDAL({ recipeIds: [data.recipeId], userId: user._id });
+  if (alreadyLiked.length > 0) {
+    return {
+      ...existingRecipe[0],
+      isLiked: true
+    };
   }
-  await likeRecipe({ recipeId: data.recipeId, userId: user._id });
-  await updateRecipe({
+  await likeRecipeDAL({ recipeId: data.recipeId, userId: user._id });
+  const newRecipe = await editRecipeDAL({
     _id: data.recipeId,
     likes: existingRecipe[0].likes + 1
   })
-  return true;
+  return {
+    ...newRecipe,
+    isLiked: true
+  };
 }
+
 export const unLikedRecipeService = async (data: { recipeId: string; }, user: JWTUser) => {
-  const existingRecipe = await queryRecipes({ _id: data.recipeId });
+  const existingRecipe = await queryRecipeDAL({ _id: data.recipeId });
   if (existingRecipe.length < 1) {
     throw Error('Recipe does not exist.');
   }
-  const recipeIsLiked = await getRecipeLikedRecord({ recipeId: data.recipeId, userId: user._id });
-  if (!recipeIsLiked) {
-    return true;
+  const recipeIsLiked = await getRecipeLikeRecordDAL({ recipeIds: [data.recipeId], userId: user._id });
+  if (recipeIsLiked.length < 1) {
+    return existingRecipe[0];
   }
-  await unLikedRecipe(recipeIsLiked._id);
-  await updateRecipe({
+  await unLikedRecipeDAL(recipeIsLiked[0]._id);
+  const newRecipe = await editRecipeDAL({
     _id: data.recipeId,
     likes: existingRecipe[0].likes - 1
   });
-  return true;
+  return newRecipe;
 }
