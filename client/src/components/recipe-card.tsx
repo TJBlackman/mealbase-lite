@@ -19,7 +19,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { IRecipe } from '../types';
 import { networkRequest } from '../utils/network-request';
 import { AppContext } from '../context';
-import { RecipeCardMenu } from './recipe-card-menu';
 
 // types
 interface IProps {
