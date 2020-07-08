@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { RECIPE_MODEL } from './types';
+import { RECIPE_RECORD } from './types';
 
 const RecipeSchema = new mongoose.Schema({
   createdAt: {
@@ -36,6 +36,11 @@ const RecipeSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  likes: {
+    type: Number,
+    required: true,
+    default: 0
+  },
   deleted: {
     type: Boolean,
     required: true,
@@ -47,6 +52,6 @@ const RecipeSchema = new mongoose.Schema({
 RecipeSchema.index('title');
 RecipeSchema.index('siteName');
 
-const RecipeModel = mongoose.model(RECIPE_MODEL, RecipeSchema);
+const RecipeModel = mongoose.model(RECIPE_RECORD, RecipeSchema);
 
 export default RecipeModel;

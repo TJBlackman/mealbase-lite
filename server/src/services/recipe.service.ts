@@ -1,9 +1,9 @@
-import { queryRecipes, saveNewRecipe, updateRecipe } from '../DAL/recipe.dal';
+import { queryRecipes, saveNewRecipe, updateRecipe, getRecipeLikedRecord, likeRecipe, unLikedRecipe } from '../DAL/recipe.dal';
 import { userHasRole } from '../utils/validators'
 import { JWTUser, RecipeQuery, RecipeRecord } from '../types/type-definitions';
 import { getRecipeData } from './puppeteer.service';
 
-export const getRecipes = async (query: RecipeQuery, user: JWTUser) => {
+export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
   // if (userHasRole('admin', user)){
   const recipes = await queryRecipes(query);
   return recipes;
@@ -42,4 +42,37 @@ export const deleteRecipe = async (data: RecipeRecord, user: JWTUser) => {
     return recipe;
   }
   throw Error('Only an admin can delete a recipe.')
+}
+
+export const likeRecipeService = async (data: { recipeId: string; }, user: JWTUser) => {
+  const existingRecipe = await queryRecipes({ _id: data.recipeId });
+  if (existingRecipe.length < 1) {
+    throw Error('Recipe does not exist.');
+  }
+  const alreadyLiked = await getRecipeLikedRecord({ recipeId: data.recipeId, userId: user._id });
+  if (alreadyLiked) {
+    return true;
+  }
+  await likeRecipe({ recipeId: data.recipeId, userId: user._id });
+  await updateRecipe({
+    _id: data.recipeId,
+    likes: existingRecipe[0].likes + 1
+  })
+  return true;
+}
+export const unLikedRecipeService = async (data: { recipeId: string; }, user: JWTUser) => {
+  const existingRecipe = await queryRecipes({ _id: data.recipeId });
+  if (existingRecipe.length < 1) {
+    throw Error('Recipe does not exist.');
+  }
+  const recipeIsLiked = await getRecipeLikedRecord({ recipeId: data.recipeId, userId: user._id });
+  if (!recipeIsLiked) {
+    return true;
+  }
+  await unLikedRecipe(recipeIsLiked._id);
+  await updateRecipe({
+    _id: data.recipeId,
+    likes: existingRecipe[0].likes - 1
+  });
+  return true;
 }

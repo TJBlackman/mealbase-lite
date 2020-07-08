@@ -5,16 +5,18 @@ import { sendResponse } from '../utils/normalize-response';
 import allowLoggedInUsersOnly from '../middleware/auth-users-only';
 import { JWTUser } from '../types/type-definitions';
 import {
-  getRecipes,
+  getRecipesService,
   postNewRecipe,
   updateExistingRecipe,
   deleteRecipe,
+  likeRecipeService,
+  unLikedRecipeService
 } from '../services/recipe.service';
 
 // GET /api/v1/recipes
 router.get('/', async (req, res, next) => {
   try {
-    const recipes = await getRecipes(req.query, req.user as JWTUser);
+    const recipes = await getRecipesService(req.query, req.user as JWTUser);
     sendResponse({
       req,
       res,
@@ -96,6 +98,45 @@ router.delete('/', allowLoggedInUsersOnly, async (req, res, next) => {
 });
 
 // POST /api/v1/recipes/like
-router.post('/like', allowLoggedInUsersOnly, async (req, res, next) => {});
+router.post('/like', allowLoggedInUsersOnly, async (req, res, next) => {
+  try {
+    const results = await likeRecipeService(req.body, req.user as JWTUser);
+    sendResponse({
+      req,
+      res,
+      data: results,
+      message: '',
+      success: true,
+    });
+  } catch (err) {
+    sendResponse({
+      req,
+      res,
+      message: err.message,
+      success: false,
+    });
+  }
+});
+
+// POST /api/v1/recipes/unlike
+router.post('/unlike', allowLoggedInUsersOnly, async (req, res, next) => {
+  try {
+    const result = await unLikedRecipeService(req.body, req.user as JWTUser);
+    sendResponse({
+      req,
+      res,
+      data: result,
+      message: '',
+      success: true,
+    });
+  } catch (err) {
+    sendResponse({
+      req,
+      res,
+      message: err.message,
+      success: false,
+    });
+  }
+});
 
 export default router;

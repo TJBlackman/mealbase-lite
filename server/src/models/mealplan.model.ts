@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { MEALPLAN_MODEL } from './types';
+import { MEALPLAN_RECORD } from './types';
 
 const MealPlanSchema = new mongoose.Schema({
   createdAt: {
@@ -47,5 +47,5 @@ const MealPlanSchema = new mongoose.Schema({
   },
 });
 
-const MealPlanModel = mongoose.model(MEALPLAN_MODEL, MealPlanSchema);
+const MealPlanModel = mongoose.model(MEALPLAN_RECORD, MealPlanSchema);
 export default MealPlanModel;

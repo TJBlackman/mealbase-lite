@@ -23,8 +23,10 @@ export const RecipeCard = ({ recipe }: IProps) => {
           <Typography gutterBottom variant='h5' component='h2'>
             {recipe.title}
           </Typography>
-          <Typography>{recipe.siteName}</Typography>
-          <Typography variant='body2' color='textSecondary' component='p'>
+          <Typography gutterBottom color='textSecondary' component='h4'>
+            {recipe.siteName}
+          </Typography>
+          <Typography variant='body2' component='p'>
             {recipe.description}
           </Typography>
         </CardContent>

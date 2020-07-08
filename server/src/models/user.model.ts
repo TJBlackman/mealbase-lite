@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { USER_MODEL } from './types';
+import { USER_RECORD } from './types';
 const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
@@ -35,6 +35,6 @@ const UserSchema = new mongoose.Schema({
 // allows searching on email address
 UserSchema.index({ email: 'text' });
 
-const UserModel = mongoose.model(USER_MODEL, UserSchema);
+const UserModel = mongoose.model(USER_RECORD, UserSchema);
 
 export default UserModel;

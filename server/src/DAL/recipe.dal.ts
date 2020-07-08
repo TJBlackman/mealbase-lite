@@ -1,5 +1,6 @@
 import RecipeModel from '../models/recipe.model';
-import { RecipeRecord, RecipeQuery } from '../types/type-definitions'
+import RecipeLikeModel from '../models/recipe-likes.model';
+import { RecipeRecord, RecipeQuery, IRecipeLikeRecord, IRecipeLikeRequest } from '../types/type-definitions'
 
 export const queryRecipes = async (query: RecipeQuery) => {
   // create filter to match documents against
@@ -121,4 +122,24 @@ export const updateRecipe = async (data: RecipeRecord) => {
     throw Error(`No recipe found with id: ${data._id}`);
   }
   return recipe.toObject() as RecipeRecord;
+}
+
+export const getRecipeLikedRecord = async (data: IRecipeLikeRequest) => {
+  const document = await RecipeLikeModel.findOne(data);
+  return document as unknown as IRecipeLikeRecord;
+};
+
+export const likeRecipe = async (data: IRecipeLikeRequest) => {
+  const record = new RecipeLikeModel({
+    userId: data.userId,
+    recipeId: data.recipeId,
+    createdAt: new Date().toUTCString()
+  })
+  const document = await record.save();
+  return document as unknown as IRecipeLikeRecord;
+}
+
+export const unLikedRecipe = async (_id: string) => {
+  const result = await RecipeLikeModel.findByIdAndDelete(_id);
+  return result;
 }

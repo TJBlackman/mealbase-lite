@@ -1,5 +1,5 @@
-export const RECIPE_MODEL = 'Recipe Model';
-export const USER_MODEL = 'User Model';
-export const RECIPE_LIKES_MODEL = 'Recipe Likes Model';
-export const MEALPLAN_MODEL = 'Mealplan Model';
-export const COOKBOOK_MODEL = 'Cookbook Model';
+export const RECIPE_RECORD = 'Recipes';
+export const USER_RECORD = 'Users';
+export const RECIPE_LIKES_RECORD = 'Recipe Like Records';
+export const MEALPLAN_RECORD = 'Mealplans';
+export const COOKBOOK_RECORD = 'Cookbooks';

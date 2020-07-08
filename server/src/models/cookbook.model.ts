@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { COOKBOOK_MODEL } from './types';
+import { COOKBOOK_RECORD } from './types';
 
 const CookbookSchema = new mongoose.Schema({
   createdAt: {
@@ -47,5 +47,5 @@ const CookbookSchema = new mongoose.Schema({
   },
 });
 
-const CookbookModel = mongoose.model(COOKBOOK_MODEL, CookbookSchema);
+const CookbookModel = mongoose.model(COOKBOOK_RECORD, CookbookSchema);
 export default CookbookModel;

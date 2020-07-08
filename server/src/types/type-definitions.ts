@@ -71,6 +71,7 @@ export interface RecipeRecord extends basicRecordOptions {
   image?: string;
   url?: string;
   siteName?: string;
+  likes?: number;
 }
 export interface RecipeQuery extends basicQueryOptions {
   url?: string;
@@ -93,4 +94,12 @@ export interface MealPlanRecord extends basicRecordOptions {
 export interface MealPlanQuery extends basicQueryOptions {
   owner?: string;
   sharedWith?: string;
+}
+export interface IRecipeLikeRecord extends basicRecordOptions {
+  userId: string;
+  recipeId: string;
+}
+export interface IRecipeLikeRequest {
+  userId: string;
+  recipeId: string;
 }
