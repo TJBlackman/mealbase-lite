@@ -6,6 +6,7 @@ import { AccountPage } from '../pages/account.page';
 import { BrowsePage } from '../pages/browse-recipes.page';
 import { MealPlansPage } from '../pages/mealplans.page';
 import { AddRecipePage } from '../pages/add-recipe.page';
+import { CookbooksPage } from '../pages/cookbooks.page';
 import { AboutPage } from '../pages/about.page';
 import { PrivateRoute } from '../components/private-route';
 
@@ -17,7 +18,8 @@ export const AppRouter = () => {
         <Route path='/register' component={RegisterPage} />
         <PrivateRoute path='/account' component={AccountPage} />
         <Route path='/browse' component={BrowsePage} />
-        <Route path='/mealplan' component={MealPlansPage} />
+        <Route path='/mealplans' component={MealPlansPage} />
+        <Route path='/cookbooks' component={CookbooksPage} />
         <Route path='/add-recipe' component={AddRecipePage} />
         <Route path='/about' component={AboutPage} />
         <Redirect from='/' to='/about' />

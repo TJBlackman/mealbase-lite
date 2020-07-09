@@ -10,10 +10,12 @@ export const BrowsePage = () => {
   const showNoResults = globalState.browse.loading === false && globalState.browse.recipes.length === 0;
   return (
     <Layout>
-      <Typography variant='h4'>Browse Recipes</Typography>
+      <Typography variant='h3' component='h1'>
+        Browse Recipes
+      </Typography>
       <Typography variant='subtitle1'>
-        Use this page to search for new recipes. Users may like a recipe, add it to a cookbook or mealplan, or simply
-        click on the recipe title to be taken to that recipe's original website.
+        Search for new or old recipes. You may filter recpes, sort them into particular order, and limit the number of
+        results you see per page.
       </Typography>
       <FilterRecipeForm />
       <Grid container justify='space-around'>
