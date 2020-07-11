@@ -32,6 +32,37 @@ const reducer = (state: IFilterRecipesState, action: { type: string; payload: Pa
 };
 
 const makeParamsFromState = (state: IFilterRecipesState) => {
+  let params = '?';
+  if (state.filter) {
+    params = params + `filter=${state.filter}&`;
+  }
+  if (state.limit) {
+    params = params + `limit=${state.limit}&`;
+  }
+  if (state.page) {
+    params = params + `page=${state.page}&`;
+  }
+  if (state.search) {
+    params = params + `search=${state.search}&`;
+  }
+  if (state.search) {
+    params = params + `search=${state.search}&`;
+  }
+  if (state.sort) {
+    switch (state.sort) {
+      case 'newest': {
+        params = params + `sortOrder=-1`;
+        break;
+      }
+      case 'oldest': {
+        // do nothing, this is the API default
+        break;
+      }
+      case 'most likes': {
+        params = params + `sortBy=likes`;
+      }
+    }
+  }
   return `?search=${state.search}&limit=${state.limit}`;
 };
 
@@ -42,14 +73,12 @@ export const FilterRecipeForm = () => {
   // recipe api call
   const getRecipes = () => {
     const queryParams = makeParamsFromState(localState);
+    updateBrowsePage({
+      filters: { ...localState },
+      loading: true,
+    });
     networkRequest({
       url: '/api/v1/recipes' + queryParams,
-      before: () => {
-        updateBrowsePage({
-          filters: { ...localState },
-          loading: true,
-        });
-      },
       success: (json) => {
         updateBrowsePage({
           loading: false,
@@ -112,8 +141,7 @@ export const FilterRecipeForm = () => {
               label='Filter Recipes'
             >
               <MenuItem value='all'>All Recipes</MenuItem>
-              <MenuItem value='liked'>Liked</MenuItem>
-              <MenuItem value='not liked'>Not Liked</MenuItem>
+              <MenuItem value='liked'>Liked Recipes</MenuItem>
             </Select>
           </FormControl>
         </Grid>

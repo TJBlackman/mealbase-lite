@@ -12,7 +12,7 @@ export const RegisterPage = () => {
         <Grid item sm={8} md={6}>
           <Typography variant='h4'>Register Page!</Typography>
           <Typography variant='body2'>Use the form below to register a new account.</Typography>
-          <RegisterForm onSuccess={() => history.push('/dashboard')} />
+          <RegisterForm onSuccess={() => history.push('/browse')} />
         </Grid>
       </Grid>
     </Layout>

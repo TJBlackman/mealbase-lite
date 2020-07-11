@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
   Card,
   CardActionArea,
@@ -9,22 +9,15 @@ import {
   Button,
   Typography,
   Grid,
-  Menu,
-  MenuItem,
-  ListItemIcon,
+  useMediaQuery,
 } from '@material-ui/core';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import MenuBookIcon from '@material-ui/icons/MenuBook';
-import DoneIcon from '@material-ui/icons/Done';
-import ReportIcon from '@material-ui/icons/Report';
-import LinkIcon from '@material-ui/icons/Link';
-import EventNoteIcon from '@material-ui/icons/EventNote';
 import { IRecipe } from '../types';
 import { networkRequest } from '../utils/network-request';
 import { AppContext } from '../context';
-import { copyTextToClipboard } from '../utils/copy-to-clipboard';
+import { RecipeCardMenu } from './recipe-card-menu';
 
 // types
 interface IProps {
@@ -33,10 +26,9 @@ interface IProps {
 
 // component
 export const RecipeCard = ({ recipe }: IProps) => {
-  const { replaceRecipe, globalState } = useContext(AppContext);
+  const { replaceRecipe, setModal, globalState } = useContext(AppContext);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [loadingLike, setLoadingLike] = useState(false);
-  const [copied, setCopied] = useState(false);
   const classes = useStyles();
   const handleLikeClick = () => {
     if (!globalState.user.email) {
@@ -60,14 +52,7 @@ export const RecipeCard = ({ recipe }: IProps) => {
       },
     });
   };
-  const closeMenu = () => setMenuAnchor(null);
-  const copyLink = () => {
-    copyTextToClipboard(recipe.url);
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 3000);
-  };
+  const theme = useTheme();
 
   return (
     <Card className={classes.root} elevation={2}>
@@ -102,44 +87,21 @@ export const RecipeCard = ({ recipe }: IProps) => {
           </Grid>
         </Grid>
       </CardActions>
-      <Menu id='simple-menu' anchorEl={menuAnchor} keepMounted open={Boolean(menuAnchor)} onClose={closeMenu}>
-        <MenuItem onClick={closeMenu}>
-          <ListItemIcon>
-            <MenuBookIcon fontSize='small' />
-          </ListItemIcon>
-          <Typography variant='inherit' noWrap>
-            Add to Cookbook
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <ListItemIcon>
-            <EventNoteIcon fontSize='small' />
-          </ListItemIcon>
-          <Typography variant='inherit' noWrap>
-            Add to Mealplan
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={copyLink}>
-          <ListItemIcon>{copied ? <DoneIcon fontSize='small' /> : <LinkIcon fontSize='small' />}</ListItemIcon>
-          <Typography variant='inherit' noWrap>
-            Copy Link
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={closeMenu}>
-          <ListItemIcon>
-            <ReportIcon fontSize='small' />
-          </ListItemIcon>
-          <Typography variant='inherit' noWrap>
-            Report
-          </Typography>
-        </MenuItem>
-      </Menu>
+      {menuAnchor && (
+        <RecipeCardMenu
+          recipe={recipe}
+          user={globalState.user}
+          onClose={() => setMenuAnchor(null)}
+          anchor={menuAnchor}
+          setModal={setModal}
+        />
+      )}
     </Card>
   );
 };
 
 // styles
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
     margin: '20px',
@@ -147,6 +109,9 @@ const useStyles = makeStyles({
     flexFlow: 'column',
     justifyContent: 'space-between',
     position: 'relative',
+    [theme.breakpoints.down('xs')]: {
+      margin: '20px 0',
+    },
   },
   likeBtn: {
     top: '0px',
@@ -159,4 +124,4 @@ const useStyles = makeStyles({
   media: {
     height: 180,
   },
-});
+}));

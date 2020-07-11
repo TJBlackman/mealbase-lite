@@ -1,5 +1,5 @@
 import { ACTIONS } from './actions'
-import { IAppContext, IAction, IRecipe } from "../types";
+import { IAppContext, IAction, IRecipe, ModalTypes } from "../types";
 import { defaultAppContext } from './index'
 import { getNewState } from "../utils/copy-state";
 
@@ -49,6 +49,14 @@ export const appReducer = (state: IAppContext, action: IAction) => {
           return recipe;
         }
       })
+      break;
+    }
+    case ACTIONS.SET_MODAL: {
+      if (action.payload.type === ModalTypes.CLEAR_MODAL) {
+        newState.modal = { ...defaultAppContext.modal };
+      } else {
+        newState.modal = { ...action.payload };
+      }
       break;
     }
     default: {

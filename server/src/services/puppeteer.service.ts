@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer-core';
 import { RecipeRecord } from '../types/type-definitions';
+import { cleanUrl } from '../utils/clean-url'
 
 export const getRecipeData = async (url: string): Promise<RecipeRecord | boolean> => {
   let browser;
@@ -15,9 +16,9 @@ export const getRecipeData = async (url: string): Promise<RecipeRecord | boolean
         '--disable-dev-shm-usage',
       ]
     });
-    const urlSansQueryParams = url.split('?')[0].trim();
+    const newUrl = cleanUrl(url);
     const page = await browser.newPage();
-    await page.goto(urlSansQueryParams);
+    await page.goto(newUrl);
     const data: RecipeRecord = await page.evaluate(() => new Promise((resolve, reject) => {
       try {
         const data: any = {};

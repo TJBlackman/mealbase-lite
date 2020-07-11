@@ -11,7 +11,7 @@ export const CookbooksPage = () => {
       <Typography variant='body1'>
         Cookbooks are a way to organize your recipes. You might create a cookbook full of breakfast or dinner recipes,
         and a separate cookbook for cocktail recipes, or cookbook for only deserts. Cookbooks help you arrange the
-        recipes you like into lists of similar recipes.
+        recipes you like into groups that make sense to you!
       </Typography>
     </Layout>
   );

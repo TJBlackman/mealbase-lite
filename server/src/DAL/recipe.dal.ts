@@ -125,13 +125,18 @@ export const editRecipeDAL = async (data: RecipeRecord) => {
   return recipe.toObject() as RecipeRecord;
 }
 
-export const getRecipeLikeRecordDAL = async (data: IRecipeLikeRequest) => {
+export const getLikeRecordsByUserId = async (data: { userId: string; recipeIds: string[]; }) => {
   const documents = await RecipeLikeModel.find({
     recipeId: {
       $in: data.recipeIds
     },
     userId: data.userId
   });
+  return documents as unknown as IRecipeLikeRecord[];
+};
+
+export const getLikeRecordsByRecipeId = async (recipeId: string) => {
+  const documents = await RecipeLikeModel.find({ recipeId });
   return documents as unknown as IRecipeLikeRecord[];
 };
 

@@ -24,6 +24,11 @@ export const defaultAppContext: IAppContext = {
       page: 1,
     },
   },
+  modal: {
+    visible: false,
+    type: '',
+    data: null,
+  },
 };
 
 // use state from sessionStorage or default
@@ -52,6 +57,7 @@ export const GlobalContextProvider = ({ children }) => {
     logout: () => dispatch({ type: A.LOG_OUT }),
     updateBrowsePage: (payload) => dispatch({ type: A.UPDATE_BROWSE_PAGE, payload }),
     replaceRecipe: (payload) => dispatch({ type: A.REPLACE_RECIPE, payload }),
+    setModal: (payload) => dispatch({ type: A.SET_MODAL, payload }),
   };
 
   console.log('NEW Global Context - ', new Date().toLocaleTimeString());

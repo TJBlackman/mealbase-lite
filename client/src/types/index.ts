@@ -5,6 +5,20 @@ export interface IUserData {
   roles: string[];
 }
 
+// modal types
+export enum ModalTypes {
+  DELETE_RECIPE,
+  CLEAR_MODAL,
+  COMING_SOON
+}
+
+// modal state
+export interface IModalState {
+  visible: boolean;
+  type: ModalTypes | '';
+  data: any;
+}
+
 // Application State
 // Data ONLY, no handlers. This can be serialized and saved between sessions if needed
 export interface IAppContext {
@@ -13,6 +27,7 @@ export interface IAppContext {
     visible: boolean;
   };
   browse: IBrowseRecipePage;
+  modal: IModalState;
 }
 
 // Context Provider Value
@@ -24,6 +39,7 @@ export interface IContextValue {
   logout: () => void;
   updateBrowsePage: (payload: Partial<IBrowseRecipePage>) => void;
   replaceRecipe: (payload: IRecipe) => void;
+  setModal: (payload: Partial<IModalState>) => void;
 }
 
 // network response from server

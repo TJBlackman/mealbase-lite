@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button } from '@material-ui/core';
 import { AppRouter } from './components/app-router';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { AppThemeProvider } from './components/theme-provider';
 import { GlobalContextProvider } from './context';
+import { ModalConductor } from './modals/index';
 
 export const App = () => {
   return (
@@ -11,6 +11,7 @@ export const App = () => {
       <AppThemeProvider>
         <CssBaseline />
         <AppRouter />
+        <ModalConductor />
       </AppThemeProvider>
     </GlobalContextProvider>
   );

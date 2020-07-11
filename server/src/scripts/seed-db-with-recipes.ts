@@ -1,6 +1,7 @@
 import { getRecipeData } from '../services/puppeteer.service';
 import { saveRecipeDAL } from '../DAL/recipe.dal';
 import { RecipeRecord } from '../types/type-definitions';
+import { cleanRecipeTitle } from '../utils/clean-recipe-title';
 
 const urls: string[] = [
   'https://cookieandkate.com/best-vegetable-lasagna-recipe/',
@@ -21,8 +22,10 @@ export const seedRecipes = async () => {
       if (!pptrData) {
         throw Error('Recipe could not be retreived.');
       }
-      await saveRecipeDAL(pptrData as RecipeRecord);
-      console.log(`Added recipe #${0}: ${url}`);
+      const data = pptrData as RecipeRecord;
+      cleanRecipeTitle(data);
+      const recipe = await saveRecipeDAL(data);
+      console.log(`Added recipe #${i + 1}: ${recipe.url}`);
     }
     catch (err) {
       console.log(err);
