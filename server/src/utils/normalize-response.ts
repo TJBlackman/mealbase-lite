@@ -3,8 +3,8 @@ import express, { response } from 'express';
 interface IProps {
   req: any;
   res: any;
-  message: String;
-  success: Boolean;
+  message: string;
+  success: boolean;
   cookie?: 'clear' | any | null;
   data?: any;
   errorCode?: number | null;
@@ -12,10 +12,10 @@ interface IProps {
 }
 
 interface IResponseModel {
-  message: String;
-  success: Boolean;
+  message: string;
+  success: boolean;
   data?: object | [] | null;
-  errorCode?: Number | String;
+  errorCode?: number | string;
 }
 
 export const sendResponse = async (options: IProps) => {

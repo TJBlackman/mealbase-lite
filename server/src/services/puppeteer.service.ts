@@ -21,28 +21,28 @@ export const getRecipeData = async (url: string): Promise<RecipeRecord | boolean
     await page.goto(newUrl);
     const data: RecipeRecord = await page.evaluate(() => new Promise((resolve, reject) => {
       try {
-        const data: any = {};
+        const recipeData: any = {};
         const title: any = document.querySelector('[property="og:title"]');
         if (title) {
-          data.title = title.content;
+          recipeData.title = title.content;
         }
         const description: any = document.querySelector('[property="og:description"]');
         if (description) {
-          data.description = description.content;
+          recipeData.description = description.content;
         }
         const image: any = document.querySelector('[property="og:image"]');
         if (image) {
-          data.image = image.content;
+          recipeData.image = image.content;
         }
-        const url: any = document.querySelector('[property="og:url"]');
-        if (url) {
-          data.url = url.content;
+        const recipeURL: any = document.querySelector('[property="og:url"]');
+        if (recipeURL) {
+          recipeData.url = recipeURL.content;
         }
         const siteName: any = document.querySelector('[property="og:site_name"]');
         if (siteName) {
-          data.siteName = siteName.content;
+          recipeData.siteName = siteName.content;
         }
-        resolve(data);
+        resolve(recipeData);
       }
       catch (err) {
         reject(err);

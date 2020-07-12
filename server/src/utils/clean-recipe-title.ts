@@ -10,6 +10,8 @@ export const cleanRecipeTitle = (data: RecipeRecord) => {
       data.title = data.title.replace(' - Cookie and Kate', '');
       break;
     }
-    default: { }
+    default: {
+      // dont do anything
+    }
   }
 }

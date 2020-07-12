@@ -18,8 +18,8 @@ export const defaultAppContext: IAppContext = {
     loading: false,
     filters: {
       search: '',
-      filter: 'all',
-      sort: 'most likes',
+      filter: 'x',
+      sort: 'most liked',
       limit: 20,
       page: 1,
     },

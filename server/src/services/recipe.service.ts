@@ -10,12 +10,14 @@ export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
   if (user) {
     // confirm which recipes this user has liked
     const recipeIds = recipes.map(i => i._id);
-    const likeRecords = await getLikeRecordsByUserId({ userId: user._id, recipeIds: recipeIds });
+    const likeRecords = await getLikeRecordsByUserId({ userId: user._id, recipeIds });
     if (likeRecords.length > 0) {
-      let i = 0, imax = likeRecords.length;
+      let i = 0;
+      const imax = likeRecords.length;
       for (; i < imax; ++i) {
         const likeRecord = likeRecords[i];
-        let j = 0, jmax = recipes.length;
+        let j = 0;
+        const jmax = recipes.length;
         for (; j < jmax; ++j) {
           const recipe = recipes[j];
           if (recipe._id.toString() === likeRecord.recipeId.toString()) {
@@ -41,9 +43,9 @@ export const newRecipeService = async (data: RecipeRecord, user: JWTUser) => {
   }
   const pptrData = await getRecipeData(newUrl);
   if (pptrData) {
-    const data = pptrData as RecipeRecord;
-    cleanRecipeTitle(data);
-    const recipe = await saveRecipeDAL(data);
+    const pptrRecipe = pptrData as RecipeRecord;
+    cleanRecipeTitle(pptrRecipe);
+    const recipe = await saveRecipeDAL(pptrRecipe);
     return recipe;
   } else {
     throw Error('Recipe could not be retreived.')
@@ -63,7 +65,8 @@ export const deleteRecipeService = async (data: RecipeRecord, user: JWTUser) => 
     const recipe = await editRecipeDAL({ ...data, deleted: true });
     // delete any like-recipe records
     const likeRecords = await getLikeRecordsByRecipeId(recipe._id);
-    let i = 0, imax = likeRecords.length;
+    let i = 0;
+    const imax = likeRecords.length;
     for (; i - imax; ++i) {
       await unLikedRecipeDAL(likeRecords[i]._id);
     }

@@ -35,6 +35,17 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// GET /api/v1/users/self-id
+router.get('/my-cookie', (req, res, next) => {
+  sendResponse({
+    req,
+    res,
+    data: req.user,
+    message: '',
+    success: true,
+  });
+})
+
 // POST /api/v1/users
 // Needs recaptcha middleware
 router.post('/', async (req, res, next) => {

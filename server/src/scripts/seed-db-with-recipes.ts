@@ -14,7 +14,8 @@ const urls: string[] = [
 ];
 
 export const seedRecipes = async () => {
-  let i = 0, imax = urls.length;
+  let i = 0;
+  const imax = urls.length;
   for (; i < imax; ++i) {
     try {
       const url = urls[i];

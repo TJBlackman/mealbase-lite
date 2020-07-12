@@ -5,12 +5,13 @@
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json",
     "prestart": "npm run build",
     "start": "nodemon dist/index.js",
-    "local": "nodemon --watch 'src/**/*.ts' -r dotenv/config --exec 'ts-node' src/index.ts dotenv_config_path=.local.env",
-    "staging": "nodemon --watch 'src/**/*.ts' -r dotenv/config --exec 'ts-node' src/index.ts dotenv_config_path=.staging.env",
-    "prod": "node -r dotenv/config ./dist/index.js dotenv_config_path=.prod.env"
+    "local": "nodemon --watch 'src/**/*.ts' -r dotenv/config --exec 'ts-node' src/index.ts dotenv_config_path=configs/.local.env",
+    "staging": "nodemon --watch 'src/**/*.ts' -r dotenv/config --exec 'ts-node' src/index.ts dotenv_config_path=configs/.staging.env",
+    "prod": "node -r dotenv/config ./dist/index.js dotenv_config_path=configs/.prod.env",
+    "pm2": "pm2 start configs/ecosystem.config.js"
   },
   "author": "",
   "license": "ISC",

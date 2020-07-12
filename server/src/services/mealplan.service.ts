@@ -4,8 +4,8 @@ import { userHasRole } from '../utils/validators';
 
 export const getMealPlans = async (query: MealPlanQuery, user: JWTUser) => {
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const mealplans = await queryMealPlans(query);
-    return mealplans;
+    const _mealplans = await queryMealPlans(query);
+    return _mealplans;
   }
   // revoke ability to search by deleted
   delete query.deleted;
@@ -19,8 +19,8 @@ export const getMealPlans = async (query: MealPlanQuery, user: JWTUser) => {
 
 export const createNewMealPlan = async (data: MealPlanRecord, user: JWTUser) => {
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const mealplan = await saveNewMealPlan(data);
-    return mealplan;
+    const _mealplan = await saveNewMealPlan(data);
+    return _mealplan;
   }
 
   const mealplan = await saveNewMealPlan({
@@ -36,8 +36,8 @@ export const editMealPlans = async (data: MealPlanRecord, user: JWTUser) => {
   }
 
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const mealplan = await updateMealPlan(data);
-    return mealplan;
+    const _mealplan = await updateMealPlan(data);
+    return _mealplan;
   }
 
   const mp = await queryMealPlans({ _id: data._id });
@@ -58,11 +58,11 @@ export const deleteMealPlans = async (data: MealPlanRecord, user: JWTUser) => {
   }
 
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const mealplan = await updateMealPlan({
+    const _mealplan = await updateMealPlan({
       ...data,
       deleted: true
     });
-    return mealplan;
+    return _mealplan;
   }
 
   const cb = await queryMealPlans({ _id: data._id });

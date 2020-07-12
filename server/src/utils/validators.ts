@@ -90,12 +90,12 @@ export const userHasRole = (roles: string | string[], user: JWTUser) => {
     return false;
   }
   if (Array.isArray(roles)) {
-    let i = 0,
-      max = roles.length;
+    let i = 0;
+    const imax = roles.length;
     if (!user || !user.roles) {
       throw Error(`Unable to validate user role.`);
     }
-    for (; i < max; ++i) {
+    for (; i < imax; ++i) {
       const role = roles[i];
       if (user.roles.includes(role)) {
         return true;

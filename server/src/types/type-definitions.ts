@@ -3,7 +3,7 @@ export interface ValidationResult {
   error: undefined | string;
   result?: boolean;
 }
-interface basicQueryOptions {
+interface BasicQueryOptions {
   _id?: string;
   limit?: string;
   skip?: string;
@@ -13,14 +13,14 @@ interface basicQueryOptions {
   projections?: string;
   search?: string;
 }
-interface basicRecordOptions {
+interface BasicRecordOptions {
   _id?: string;
   __v?: string;
   deleted?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
-export interface GetUsersQuery extends basicQueryOptions {
+export interface GetUsersQuery extends BasicQueryOptions {
   email?: string | { $regex: string; $options: string; };
   role?: string;
 }
@@ -65,7 +65,7 @@ export enum Roles {
   PremiumUser = 'premiumUser',
   User = 'user'
 };
-export interface RecipeRecord extends basicRecordOptions {
+export interface RecipeRecord extends BasicRecordOptions {
   title?: string | any;
   description?: string;
   image?: string;
@@ -74,29 +74,29 @@ export interface RecipeRecord extends basicRecordOptions {
   likes?: number;
   isLiked?: boolean;
 }
-export interface RecipeQuery extends basicQueryOptions {
+export interface RecipeQuery extends BasicQueryOptions {
   url?: string;
 }
-export interface CookbookQuery extends basicQueryOptions {
+export interface CookbookQuery extends BasicQueryOptions {
   userId?: string;
 }
-export interface CookbookRecord extends basicRecordOptions {
+export interface CookbookRecord extends BasicRecordOptions {
   title?: string;
   owner?: string;
   sharedWith?: string[];
   recipes?: string[];
 }
-export interface MealPlanRecord extends basicRecordOptions {
+export interface MealPlanRecord extends BasicRecordOptions {
   owner?: string;
   sharedWith?: string[];
   recipes?: string[];
   title?: string;
 }
-export interface MealPlanQuery extends basicQueryOptions {
+export interface MealPlanQuery extends BasicQueryOptions {
   owner?: string;
   sharedWith?: string;
 }
-export interface IRecipeLikeRecord extends basicRecordOptions {
+export interface IRecipeLikeRecord extends BasicRecordOptions {
   userId: string;
   recipeId: string;
 }

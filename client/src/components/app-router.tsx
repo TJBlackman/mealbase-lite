@@ -22,7 +22,7 @@ export const AppRouter = () => {
         <Route path='/cookbooks' component={CookbooksPage} />
         <Route path='/add-recipe' component={AddRecipePage} />
         <Route path='/about' component={AboutPage} />
-        <Redirect from='/' to='/about' />
+        <Redirect from='/' to='/browse' />
       </Switch>
     </Router>
   );

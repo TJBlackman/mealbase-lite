@@ -12,7 +12,6 @@ import AuthController from './controllers/auth.controller';
 import RecipeController from './controllers/recipe.controller';
 import CookbookController from './controllers/cookbook.controller';
 import MealPlanController from './controllers/mealplan.controller';
-import { seedRecipes } from "./scripts/seed-db-with-recipes";
 
 // initialize express server
 const server = express();
@@ -58,5 +57,3 @@ checkAdminExistence();
 server.listen(process.env.PORT, () => {
   console.log(`Server Port: ${process.env.PORT}\nEnvironment: ${process.env.NODE_ENV}`);
 });
-
-// seedRecipes();

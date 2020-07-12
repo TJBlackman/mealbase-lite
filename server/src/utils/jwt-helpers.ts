@@ -14,7 +14,7 @@ export const createJWT = (payload: JWTUser) =>
       _id: payload._id,
       roles: payload.roles
     };
-    jwt.sign(jwtValues, process.env.JWT_SECRET, jwtOptions, function (err, token) {
+    jwt.sign(jwtValues, process.env.JWT_SECRET, jwtOptions, (err, token) => {
       if (err) {
         return reject(err);
       }
@@ -24,7 +24,7 @@ export const createJWT = (payload: JWTUser) =>
 
 export const verifyJWT = (token: string): Promise<JWTUser> =>
   new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.JWT_SECRET, jwtOptions, function (err, value) {
+    jwt.verify(token, process.env.JWT_SECRET, jwtOptions, (err, value) => {
       if (err) {
         return reject(err);
       }

@@ -26,13 +26,13 @@ export const queryRecipeDAL = async (query: RecipeQuery) => {
   // set min and max limit, 1 - 100, default 20
   const queryLimit = (() => {
     let limit = 20;
-    const potential_limit = Number(query.limit);
-    if (potential_limit) {
-      limit = potential_limit;
-      if (potential_limit < 1) {
+    const possibleLimit = Number(query.limit);
+    if (possibleLimit) {
+      limit = possibleLimit;
+      if (possibleLimit < 1) {
         limit = 1;
       }
-      if (potential_limit > 100) {
+      if (possibleLimit > 100) {
         limit = 100;
       }
     }
@@ -42,10 +42,10 @@ export const queryRecipeDAL = async (query: RecipeQuery) => {
   // skip, not below 0
   const querySkip = (() => {
     let skip = 0;
-    const potential_skip = Number(query.skip);
-    if (potential_skip) {
-      skip = potential_skip;
-      if (potential_skip < 0) {
+    const possibleSkip = Number(query.skip);
+    if (possibleSkip) {
+      skip = possibleSkip;
+      if (possibleSkip < 0) {
         skip = 0;
       }
     }
@@ -60,7 +60,7 @@ export const queryRecipeDAL = async (query: RecipeQuery) => {
     const { sortBy, sortOrder } = query;
     if (sortBy) {
       // whitelist sortable properties
-      if (['title', 'createdAt', 'updatedAt', 'siteName'].includes(sortBy)) {
+      if (['title', 'createdAt', 'updatedAt', 'siteName', 'likes'].includes(sortBy)) {
         fieldName = sortBy;
       }
     }

@@ -15,22 +15,22 @@ passport.use(
     },
     async (email, password, done) => {
       try {
-        const existing_user: any = await UserModel.findOne(
+        const existingUser: any = await UserModel.findOne(
           { email, deleted: false },
           '',
           { lean: true }
         );
-        if (!existing_user) {
+        if (!existingUser) {
           return done(null, false);
         }
         const correctPassword = await compareHash(
           password,
-          existing_user.password
+          existingUser.password
         );
         if (!correctPassword) {
           return done(null, false);
         }
-        return done(null, existing_user);
+        return done(null, existingUser);
       } catch (err) {
         done(err);
       }
@@ -39,11 +39,11 @@ passport.use(
 );
 
 export const usePassportLocalStrategy = (req: any, res: any, next: any) => {
-  passport.authenticate('local', { session: false }, function (
+  passport.authenticate('local', { session: false }, (
     err,
     user,
     info
-  ) {
+  ) => {
     if (err) {
       return sendResponse({
         res,

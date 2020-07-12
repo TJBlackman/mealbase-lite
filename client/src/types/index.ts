@@ -89,8 +89,8 @@ export interface IAction {
 // filter recipes on browse page
 export interface IFilterRecipesState {
   search: string;
-  filter: 'all' | 'liked' | 'not liked';
-  sort: 'newest' | 'oldest' | 'most likes' | 'fewest likes';
+  filter: 'x' | 'liked';
+  sort: 'newest' | 'oldest' | 'most liked';
   limit: number;
   page: number;
 }

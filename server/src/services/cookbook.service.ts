@@ -4,8 +4,8 @@ import { userHasRole } from '../utils/validators';
 
 export const getCookbooks = async (query: CookbookQuery, user: JWTUser) => {
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const cookbooks = await queryCookBooks(query);
-    return cookbooks;
+    const _cookbooks = await queryCookBooks(query);
+    return _cookbooks;
   }
   // revoke ability to search by deleted
   delete query.deleted;
@@ -19,8 +19,8 @@ export const getCookbooks = async (query: CookbookQuery, user: JWTUser) => {
 
 export const createNewCookbook = async (data: CookbookRecord, user: JWTUser) => {
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const cookbook = await saveNewCookbook(data);
-    return cookbook;
+    const _cookbook = await saveNewCookbook(data);
+    return _cookbook;
   }
 
   const cookbook = await saveNewCookbook({
@@ -36,8 +36,8 @@ export const editCookbook = async (data: CookbookRecord, user: JWTUser) => {
   }
 
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const cookbook = await updateCookbook(data);
-    return cookbook;
+    const _cookbook = await updateCookbook(data);
+    return _cookbook;
   }
 
   const cb = await queryCookBooks({ _id: data._id });
@@ -57,11 +57,11 @@ export const deleteCookbook = async (data: CookbookRecord, user: JWTUser) => {
   }
 
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const cookbook = await updateCookbook({
+    const _cookbook = await updateCookbook({
       ...data,
       deleted: true
     });
-    return cookbook;
+    return _cookbook;
   }
 
   const cb = await queryCookBooks({ _id: data._id });

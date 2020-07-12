@@ -1,4 +1,4 @@
-# Right Now Server & API
+# MealBase Lite | Server
 
 #### .env files
 
@@ -28,18 +28,3 @@ Controller > Service > DAL
 
 - Date should be recorded in UTC time string.
 - Store user info in JWT in http only cookie
-
-## API Docs
-
-GET /api/v1/users
-
-| Name      | Values      | Default   | Description                                                      |
-| --------- | ----------- | --------- | ---------------------------------------------------------------- |
-| email     | string      |           | Get user by specific email                                       |
-| \_id      | number      |           | Get user by specific id                                          |
-| role      | user, admin |           | Get users by their roles                                         |
-| search    | string      |           | Performs a partial match against email address only              |
-| sortBy    | string      | createdAt | Sort users by field. Options: email\|createdAt\|updatedAt\|roles |
-| sortOrder | +- 1        | +1        | Sort ascending or descending                                     |
-| skip      | number      | 0         | Skip this many records                                           |
-| limit     | number      | 20        | Return this many records. Max 100                                |

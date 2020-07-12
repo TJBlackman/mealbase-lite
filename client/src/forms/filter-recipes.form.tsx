@@ -1,15 +1,5 @@
 import React, { useContext, useReducer, useEffect } from 'react';
-import {
-  Grid,
-  TextField,
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Button,
-  CircularProgress,
-  LinearProgress,
-} from '@material-ui/core';
+import { Grid, TextField, Select, FormControl, InputLabel, MenuItem, Button, LinearProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppContext } from '../context';
 import { IFilterRecipesState } from '../types';
@@ -51,19 +41,19 @@ const makeParamsFromState = (state: IFilterRecipesState) => {
   if (state.sort) {
     switch (state.sort) {
       case 'newest': {
-        params = params + `sortOrder=-1`;
+        params = params + `sortBy=createdAt&sortOrder=-1&`;
         break;
       }
       case 'oldest': {
-        // do nothing, this is the API default
+        params = params + `sortBy=createdAt&sortOrder=1&`;
         break;
       }
-      case 'most likes': {
-        params = params + `sortBy=likes`;
+      case 'most liked': {
+        params = params + `sortBy=likes&sortOrder=-1&`;
       }
     }
   }
-  return `?search=${state.search}&limit=${state.limit}`;
+  return params;
 };
 
 export const FilterRecipeForm = () => {
@@ -73,6 +63,7 @@ export const FilterRecipeForm = () => {
   // recipe api call
   const getRecipes = () => {
     const queryParams = makeParamsFromState(localState);
+    console.log(queryParams);
     updateBrowsePage({
       filters: { ...localState },
       loading: true,
@@ -140,7 +131,7 @@ export const FilterRecipeForm = () => {
               onChange={(e: React.ChangeEvent<InputEvent>) => updateForm({ filter: e.target.value })}
               label='Filter Recipes'
             >
-              <MenuItem value='all'>All Recipes</MenuItem>
+              <MenuItem value='x'>All Recipes</MenuItem>
               <MenuItem value='liked'>Liked Recipes</MenuItem>
             </Select>
           </FormControl>
@@ -158,8 +149,7 @@ export const FilterRecipeForm = () => {
             >
               <MenuItem value='newest'>Newest</MenuItem>
               <MenuItem value='oldest'>Oldest</MenuItem>
-              <MenuItem value='most likes'>Most Popular</MenuItem>
-              <MenuItem value='fewest likes'>Least Popular</MenuItem>
+              <MenuItem value='most liked'>Most Popular</MenuItem>
             </Select>
           </FormControl>
         </Grid>
