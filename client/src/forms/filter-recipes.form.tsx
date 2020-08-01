@@ -1,9 +1,12 @@
 import React, { useContext, useReducer, useEffect } from 'react';
 import { Grid, TextField, Select, FormControl, InputLabel, MenuItem, Button, LinearProgress } from '@material-ui/core';
+import Pagination from '@material-ui/lab/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
 import { AppContext } from '../context';
 import { IFilterRecipesState } from '../types';
 import { networkRequest } from '../utils/network-request';
+import { makeParamsFromState } from '../utils/recipe-query-params';
+import { RecipePagination } from '../components/recipe-pagination';
 
 // reducer
 const SET_FORM = 'SET FORM';
@@ -21,63 +24,28 @@ const reducer = (state: IFilterRecipesState, action: { type: string; payload: Pa
   }
 };
 
-const makeParamsFromState = (state: IFilterRecipesState) => {
-  let params = '?';
-  if (state.filter) {
-    params = params + `filter=${state.filter}&`;
-  }
-  if (state.limit) {
-    params = params + `limit=${state.limit}&`;
-  }
-  if (state.page) {
-    params = params + `page=${state.page}&`;
-  }
-  if (state.search) {
-    params = params + `search=${state.search}&`;
-  }
-  if (state.search) {
-    params = params + `search=${state.search}&`;
-  }
-  if (state.sort) {
-    switch (state.sort) {
-      case 'newest': {
-        params = params + `sortBy=createdAt&sortOrder=-1&`;
-        break;
-      }
-      case 'oldest': {
-        params = params + `sortBy=createdAt&sortOrder=1&`;
-        break;
-      }
-      case 'most liked': {
-        params = params + `sortBy=likes&sortOrder=-1&`;
-      }
-    }
-  }
-  return params;
-};
-
 export const FilterRecipeForm = () => {
-  const { globalState, updateBrowsePage } = useContext(AppContext);
-  const [localState, dispatch] = useReducer(reducer, globalState.browse.filters);
-  const { loading } = globalState.browse;
+  const { globalState, updateRecipesState } = useContext(AppContext);
+  const [localState, dispatch] = useReducer(reducer, globalState.recipes.filters);
+  const { loading } = globalState.recipes;
   // recipe api call
   const getRecipes = () => {
     const queryParams = makeParamsFromState(localState);
-    console.log(queryParams);
-    updateBrowsePage({
+    updateRecipesState({
       filters: { ...localState },
       loading: true,
     });
     networkRequest({
       url: '/api/v1/recipes' + queryParams,
       success: (json) => {
-        updateBrowsePage({
+        updateRecipesState({
           loading: false,
-          recipes: json.data,
+          totalCount: json.data.totalCount,
+          browse: json.data.recipes,
         });
       },
       error: (err) => {
-        updateBrowsePage({ loading: false });
+        updateRecipesState({ loading: false });
         alert(err.message);
       },
     });
@@ -87,7 +55,7 @@ export const FilterRecipeForm = () => {
     e.preventDefault();
     getRecipes();
   };
-  // easy educer handler
+  // easy reducer handler
   const updateForm = (payload: Partial<IFilterRecipesState>) => {
     dispatch({
       type: SET_FORM,
@@ -96,12 +64,18 @@ export const FilterRecipeForm = () => {
   };
   // get recipes on mount
   useEffect(() => {
-    if (globalState.browse.recipes.length === 0) {
+    if (globalState.recipes.browse.length === 0) {
       getRecipes();
     }
   }, []);
   // styles
   const styles = useStyles();
+  // localState has been updated, does not match globalState
+  const noUpdatedFilters = (() => {
+    const global = JSON.stringify(globalState.recipes.filters);
+    const local = JSON.stringify(localState);
+    return local === global;
+  })();
 
   return (
     <form onSubmit={onSubmit} className={styles.form}>
@@ -115,7 +89,14 @@ export const FilterRecipeForm = () => {
           onChange={(e) => updateForm({ search: e.target.value })}
           disabled={loading}
         />
-        <Button type='submit' variant='contained' size='large' className={styles.btn} disabled={loading}>
+        <Button
+          type='submit'
+          variant='contained'
+          size='large'
+          className={styles.btn}
+          disabled={loading || noUpdatedFilters}
+          color='primary'
+        >
           {loading ? 'Loading...' : 'Search'}
         </Button>
       </Grid>
@@ -164,12 +145,18 @@ export const FilterRecipeForm = () => {
               onChange={(e) => updateForm({ limit: e.target.value })}
               label='Results Per Page'
             >
+              <MenuItem value='2'>2</MenuItem>
+              <MenuItem value='3'>3</MenuItem>
+              <MenuItem value='5'>5</MenuItem>
               <MenuItem value='10'>10</MenuItem>
               <MenuItem value='20'>20</MenuItem>
               <MenuItem value='50'>50</MenuItem>
               <MenuItem value='100'>100</MenuItem>
             </Select>
           </FormControl>
+        </Grid>
+        <Grid item xs={12}>
+          <RecipePagination />
         </Grid>
       </Grid>
       <div className={styles.loading}>{loading && <LinearProgress />}</div>

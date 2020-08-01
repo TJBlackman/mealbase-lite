@@ -22,27 +22,27 @@ export const appReducer = (state: IAppContext, action: IAction) => {
       newState.user = {
         ...defaultAppContext.user
       };
-      newState.browse.recipes = newState.browse.recipes.map(recipe => ({
+      newState.recipes.browse = newState.recipes.browse.map(recipe => ({
         ...recipe,
         isLiked: false
       }));
       break;
     }
-    case ACTIONS.UPDATE_BROWSE_PAGE: {
-      newState.browse = {
-        ...newState.browse,
+    case ACTIONS.UPDATE_RECIPES_STATE: {
+      newState.recipes = {
+        ...newState.recipes,
         ...action.payload
       };
       if (action.payload.filters) {
-        newState.browse.filters = {
-          ...newState.browse.filters,
+        newState.recipes.filters = {
+          ...state.recipes.filters,
           ...action.payload.filters
         }
       }
       break;
     }
     case ACTIONS.REPLACE_RECIPE: {
-      newState.browse.recipes = newState.browse.recipes.map((recipe: IRecipe) => {
+      newState.recipes.browse = newState.recipes.browse.map((recipe: IRecipe) => {
         if (recipe._id === action.payload._id) {
           return action.payload
         } else {

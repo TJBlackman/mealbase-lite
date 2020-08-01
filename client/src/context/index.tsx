@@ -2,6 +2,7 @@ import React, { createContext, useReducer, useEffect } from 'react';
 import { appReducer } from './reducer';
 import { ACTIONS as A } from './actions';
 import { IContextValue, IAppContext } from '../types';
+import { networkRequest } from '../utils/network-request';
 
 // app default state
 export const defaultAppContext: IAppContext = {
@@ -13,8 +14,9 @@ export const defaultAppContext: IAppContext = {
   sidemenu: {
     visible: false,
   },
-  browse: {
-    recipes: [],
+  recipes: {
+    browse: [],
+    totalCount: 0,
     loading: false,
     filters: {
       search: '',
@@ -55,7 +57,7 @@ export const GlobalContextProvider = ({ children }) => {
     updateUserData: (payload) => dispatch({ type: A.UPDATE_USER, payload }),
     toggleSideMenu: () => dispatch({ type: A.TOGGLE_SIDEMENU }),
     logout: () => dispatch({ type: A.LOG_OUT }),
-    updateBrowsePage: (payload) => dispatch({ type: A.UPDATE_BROWSE_PAGE, payload }),
+    updateRecipesState: (payload) => dispatch({ type: A.UPDATE_RECIPES_STATE, payload }),
     replaceRecipe: (payload) => dispatch({ type: A.REPLACE_RECIPE, payload }),
     setModal: (payload) => dispatch({ type: A.SET_MODAL, payload }),
   };

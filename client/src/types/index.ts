@@ -26,9 +26,15 @@ export interface IAppContext {
   sidemenu: {
     visible: boolean;
   };
-  browse: IBrowseRecipePage;
+  recipes: IGlobalRecipesState;
   modal: IModalState;
 }
+
+// https://stackoverflow.com/questions/47914536/use-partial-in-nested-property-with-typescript
+// need to do partial updates on nested GlobalState properties
+type RecursivePartial<T> = {
+  [P in keyof T]?: RecursivePartial<T[P]>;
+};
 
 // Context Provider Value
 // State (from above) is in it's own property; also included are handlers for updating state
@@ -37,7 +43,7 @@ export interface IContextValue {
   updateUserData: (payload: Partial<IUserData>) => void;
   toggleSideMenu: () => void;
   logout: () => void;
-  updateBrowsePage: (payload: Partial<IBrowseRecipePage>) => void;
+  updateRecipesState: (payload: RecursivePartial<IGlobalRecipesState>) => void;
   replaceRecipe: (payload: IRecipe) => void;
   setModal: (payload: Partial<IModalState>) => void;
 }
@@ -96,8 +102,9 @@ export interface IFilterRecipesState {
 }
 
 // browse recipes page
-export interface IBrowseRecipePage {
-  recipes: IRecipe[];
-  filters: IFilterRecipesState;
+export interface IGlobalRecipesState {
   loading: boolean;
+  totalCount: number;
+  browse: IRecipe[];
+  filters: IFilterRecipesState;
 }

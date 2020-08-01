@@ -9,7 +9,7 @@ import {
   Button,
   Typography,
   Grid,
-  useMediaQuery,
+  Link,
 } from '@material-ui/core';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import FavoriteIcon from '@material-ui/icons/Favorite';
@@ -60,9 +60,11 @@ export const RecipeCard = ({ recipe }: IProps) => {
         <CardMedia className={classes.media} image={recipe.image} title={recipe.title} />
       </CardActionArea>
       <CardContent>
-        <Typography gutterBottom variant='h6' component='h2'>
-          {recipe.title}
-        </Typography>
+        <Link href={recipe.url} target='_blank' color='textPrimary' style={{ cursor: 'pointer' }}>
+          <Typography gutterBottom variant='h6' component='h2'>
+            {recipe.title}
+          </Typography>
+        </Link>
         <Typography gutterBottom color='textSecondary' component='h4'>
           {recipe.siteName}
         </Typography>
@@ -111,6 +113,9 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     [theme.breakpoints.down('xs')]: {
       margin: '20px 0',
+    },
+    '&:hover': {
+      boxShadow: theme.shadows[10],
     },
   },
   likeBtn: {

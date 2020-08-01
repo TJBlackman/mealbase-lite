@@ -91,6 +91,30 @@ export const queryRecipeDAL = async (query: RecipeQuery) => {
   };
   const recipes = await RecipeModel.find(filter, projections, dbOptions);
   return recipes as unknown as RecipeRecord[];
+};
+
+export const countRecipesDAL = async (query: RecipeQuery) => {
+  // create filter to match documents against
+  const filter = (() => {
+    const conditions: RecipeRecord = {
+      deleted: false
+    };
+    if (query._id) {
+      conditions._id = query._id;
+    }
+    if (query.url) {
+      conditions.url = query.url;
+    }
+    if (query.deleted) {
+      conditions.deleted = query.deleted;
+    }
+    if (query.search) {
+      conditions.title = { $regex: query.search, $options: 'i' };;
+    }
+    return conditions;
+  })();
+  const count = await RecipeModel.find(filter).countDocuments();
+  return count;
 }
 
 export const saveRecipeDAL = async (data: RecipeRecord) => {
@@ -105,7 +129,7 @@ export const saveRecipeDAL = async (data: RecipeRecord) => {
   });
   const recipe = await newRecipe.save();
   return recipe.toObject() as RecipeRecord;
-}
+};
 
 export const editRecipeDAL = async (data: RecipeRecord) => {
   if (!data._id) {
@@ -123,7 +147,7 @@ export const editRecipeDAL = async (data: RecipeRecord) => {
     throw Error(`No recipe found with id: ${data._id}`);
   }
   return recipe.toObject() as RecipeRecord;
-}
+};
 
 export const getLikeRecordsByUserId = async (data: { userId: string; recipeIds: string[]; }) => {
   const documents = await RecipeLikeModel.find({
@@ -148,9 +172,9 @@ export const likeRecipeDAL = async (data: { userId: string; recipeId: string; })
   })
   const document = await record.save();
   return document as unknown as IRecipeLikeRecord;
-}
+};
 
 export const unLikedRecipeDAL = async (_id: string) => {
   const result = await RecipeLikeModel.findByIdAndDelete(_id);
   return result;
-}
+};

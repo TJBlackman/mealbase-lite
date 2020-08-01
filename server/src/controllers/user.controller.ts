@@ -35,7 +35,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// GET /api/v1/users/self-id
+// GET /api/v1/users/my-cookie
 router.get('/my-cookie', (req, res, next) => {
   sendResponse({
     req,

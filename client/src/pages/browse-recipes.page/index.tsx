@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid, TablePagination } from '@material-ui/core';
 import Layout from '../../layouts/app-layout';
 import { FilterRecipeForm } from '../../forms/filter-recipes.form';
 import { RecipeCard } from '../../components/recipe-card';
@@ -7,7 +7,8 @@ import { AppContext } from '../../context';
 
 export const BrowsePage = () => {
   const { globalState } = useContext(AppContext);
-  const showNoResults = globalState.browse.loading === false && globalState.browse.recipes.length === 0;
+  const showNoResults = globalState.recipes.loading === false && globalState.recipes.browse.length === 0;
+  const { limit, page } = globalState.recipes.filters;
   return (
     <Layout>
       <Typography variant='h3' component='h1'>
@@ -19,7 +20,7 @@ export const BrowsePage = () => {
       </Typography>
       <FilterRecipeForm />
       <Grid container justify='space-around'>
-        {globalState.browse.recipes.map((item) => (
+        {globalState.recipes.browse.map((item) => (
           <RecipeCard recipe={item} key={item._id} />
         ))}
         {showNoResults && (

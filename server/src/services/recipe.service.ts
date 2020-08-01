@@ -1,4 +1,4 @@
-import { queryRecipeDAL, saveRecipeDAL, editRecipeDAL, getLikeRecordsByUserId, likeRecipeDAL, unLikedRecipeDAL, getLikeRecordsByRecipeId } from '../DAL/recipe.dal';
+import { queryRecipeDAL, saveRecipeDAL, editRecipeDAL, getLikeRecordsByUserId, likeRecipeDAL, unLikedRecipeDAL, getLikeRecordsByRecipeId, countRecipesDAL } from '../DAL/recipe.dal';
 import { userHasRole } from '../utils/validators'
 import { JWTUser, RecipeQuery, RecipeRecord } from '../types/type-definitions';
 import { getRecipeData } from './puppeteer.service';
@@ -6,6 +6,7 @@ import { cleanUrl } from '../utils/clean-url';
 import { cleanRecipeTitle } from '../utils/clean-recipe-title';
 
 export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
+  const totalCount = await countRecipesDAL(query);
   const recipes = await queryRecipeDAL(query);
   if (user) {
     // confirm which recipes this user has liked
@@ -27,7 +28,10 @@ export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
       }
     }
   }
-  return recipes;
+  return {
+    totalCount,
+    recipes
+  };
 }
 
 export const newRecipeService = async (data: RecipeRecord, user: JWTUser) => {
