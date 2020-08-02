@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Typography, Grid, TablePagination } from '@material-ui/core';
 import Layout from '../../layouts/app-layout';
 import { FilterRecipeForm } from '../../forms/filter-recipes.form';
-import { RecipeCard } from '../../components/recipe-card';
+import { RecipeCard } from '../../components/recipe-list-item';
 import { AppContext } from '../../context';
 
 export const BrowsePage = () => {

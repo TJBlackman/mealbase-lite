@@ -1,7 +1,6 @@
 import React, { useContext, useReducer, useEffect } from 'react';
 import { Grid, TextField, Select, FormControl, InputLabel, MenuItem, Button, LinearProgress } from '@material-ui/core';
-import Pagination from '@material-ui/lab/Pagination';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { AppContext } from '../context';
 import { IFilterRecipesState } from '../types';
 import { networkRequest } from '../utils/network-request';
@@ -28,6 +27,7 @@ export const FilterRecipeForm = () => {
   const { globalState, updateRecipesState } = useContext(AppContext);
   const [localState, dispatch] = useReducer(reducer, globalState.recipes.filters);
   const { loading } = globalState.recipes;
+
   // recipe api call
   const getRecipes = () => {
     const queryParams = makeParamsFromState(localState);
@@ -50,11 +50,13 @@ export const FilterRecipeForm = () => {
       },
     });
   };
+
   // submit form
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     getRecipes();
   };
+
   // easy reducer handler
   const updateForm = (payload: Partial<IFilterRecipesState>) => {
     dispatch({
@@ -62,14 +64,17 @@ export const FilterRecipeForm = () => {
       payload,
     });
   };
+
   // get recipes on mount
   useEffect(() => {
     if (globalState.recipes.browse.length === 0) {
       getRecipes();
     }
   }, []);
+
   // styles
   const styles = useStyles();
+
   // localState has been updated, does not match globalState
   const noUpdatedFilters = (() => {
     const global = JSON.stringify(globalState.recipes.filters);
