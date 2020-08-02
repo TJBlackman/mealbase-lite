@@ -46,6 +46,7 @@ export interface IContextValue {
   updateRecipesState: (payload: RecursivePartial<IGlobalRecipesState>) => void;
   replaceRecipe: (payload: IRecipe) => void;
   setModal: (payload: Partial<IModalState>) => void;
+  setDisplayType: (payload: keyof typeof RecipeDisplayTypes) => void
 }
 
 // network response from server
@@ -107,4 +108,11 @@ export interface IGlobalRecipesState {
   totalCount: number;
   browse: IRecipe[];
   filters: IFilterRecipesState;
+  displayType: keyof typeof RecipeDisplayTypes;
+}
+
+enum RecipeDisplayTypes {
+  cards = 'cards',
+  list = 'list',
+  dense = 'dense'
 }

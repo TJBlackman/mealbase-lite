@@ -7,6 +7,7 @@ import { networkRequest } from '../utils/network-request';
 import { makeParamsFromState } from '../utils/recipe-query-params';
 import { RecipePagination } from '../components/recipe-pagination';
 import { MobileOnlyDropdown } from '../components/mobile-only-dropdown';
+import { RecipeListTypeSelect } from '../components/recipe-list-type-select';
 
 // reducer
 const SET_FORM = 'SET FORM';
@@ -161,8 +162,11 @@ export const FilterRecipeForm = () => {
           </Grid>
         </Grid>
       </MobileOnlyDropdown>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
+      <Grid container spacing={3} alignItems='center' justify='space-between'>
+        <Grid item xs={12} sm={6}>
+          <RecipeListTypeSelect />
+        </Grid>
+        <Grid item xs={12} sm={6}>
           <RecipePagination />
         </Grid>
       </Grid>

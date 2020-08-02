@@ -1,14 +1,29 @@
 import React, { useContext } from 'react';
-import { Typography, Grid, TablePagination } from '@material-ui/core';
+import { Typography, Grid } from '@material-ui/core';
 import Layout from '../../layouts/app-layout';
 import { FilterRecipeForm } from '../../forms/filter-recipes.form';
-import { RecipeCard } from '../../components/recipe-list-item';
+import { RecipeCard } from '../../components/recipe-card';
+import { RecipeListItem } from '../../components/recipe-list-item';
+import { RecipeListItemDense } from '../../components/recipe-list-item-dense';
 import { AppContext } from '../../context';
 
 export const BrowsePage = () => {
   const { globalState } = useContext(AppContext);
   const showNoResults = globalState.recipes.loading === false && globalState.recipes.browse.length === 0;
-  const { limit, page } = globalState.recipes.filters;
+  const CardItem = (() => {
+    switch (globalState.recipes.displayType) {
+      case 'cards':
+        return RecipeCard;
+      case 'list':
+        return RecipeListItem;
+      case 'dense':
+        return RecipeListItemDense;
+      default: {
+        console.log('wtf: ', globalState.recipes.displayType);
+        return RecipeListItem;
+      }
+    }
+  })();
   return (
     <Layout>
       <Typography variant='h3' component='h1'>
@@ -21,7 +36,7 @@ export const BrowsePage = () => {
       <FilterRecipeForm />
       <Grid container justify='space-around'>
         {globalState.recipes.browse.map((item) => (
-          <RecipeCard recipe={item} key={item._id} />
+          <CardItem key={item._id} recipe={item} />
         ))}
         {showNoResults && (
           <Typography variant='body1' style={{ textAlign: 'center' }}>

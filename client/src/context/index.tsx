@@ -2,7 +2,6 @@ import React, { createContext, useReducer, useEffect } from 'react';
 import { appReducer } from './reducer';
 import { ACTIONS as A } from './actions';
 import { IContextValue, IAppContext } from '../types';
-import { networkRequest } from '../utils/network-request';
 
 // app default state
 export const defaultAppContext: IAppContext = {
@@ -25,6 +24,7 @@ export const defaultAppContext: IAppContext = {
       limit: 20,
       page: 1,
     },
+    displayType: 'dense',
   },
   modal: {
     visible: false,
@@ -60,6 +60,7 @@ export const GlobalContextProvider = ({ children }) => {
     updateRecipesState: (payload) => dispatch({ type: A.UPDATE_RECIPES_STATE, payload }),
     replaceRecipe: (payload) => dispatch({ type: A.REPLACE_RECIPE, payload }),
     setModal: (payload) => dispatch({ type: A.SET_MODAL, payload }),
+    setDisplayType: (payload) => dispatch({ type: A.SET_RECIPE_DISPLAY_TYPE, payload }),
   };
 
   console.log('NEW Global Context - ', new Date().toLocaleTimeString());

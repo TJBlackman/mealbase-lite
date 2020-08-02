@@ -12,10 +12,6 @@ export const RecipePagination = () => {
     filters: { limit, page },
   } = globalState.recipes;
   const pageCount = Math.ceil(totalCount / limit);
-  console.log('totalCount: ', totalCount);
-  console.log('page: ', page);
-  console.log('limit: ', limit);
-  console.log('pageCount: ', pageCount);
 
   const setPage = (e: ChangeEvent<unknown>, num: number) => {
     updateRecipesState({ loading: true, filters: { page: num } });

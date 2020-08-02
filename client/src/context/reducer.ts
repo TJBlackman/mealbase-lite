@@ -59,6 +59,10 @@ export const appReducer = (state: IAppContext, action: IAction) => {
       }
       break;
     }
+    case ACTIONS.SET_RECIPE_DISPLAY_TYPE: {
+      newState.recipes.displayType = action.payload;
+      break;
+    }
     default: {
       console.error('Unknown Action: ' + action.type);
     }

@@ -25,7 +25,7 @@ interface IProps {
 }
 
 // component
-export const RecipeListItem = ({ recipe }: IProps) => {
+export const RecipeListItemDense = ({ recipe }: IProps) => {
   const { replaceRecipe, setModal, globalState } = useContext(AppContext);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [loadingLike, setLoadingLike] = useState(false);
@@ -61,14 +61,14 @@ export const RecipeListItem = ({ recipe }: IProps) => {
       </CardActionArea>
       <CardContent className={classes.cardContent}>
         <Link href={recipe.url} target='_blank' color='textPrimary' style={{ cursor: 'pointer' }}>
-          <Typography gutterBottom variant='h6' component='h2'>
+          <Typography variant='h6' component='h2' style={{ lineHeight: '1.1' }}>
             {recipe.title}
           </Typography>
         </Link>
-        <Typography gutterBottom color='textSecondary' component='h4'>
+        <Typography color='textSecondary' component='h4' style={{ lineHeight: '1.1' }}>
           {recipe.siteName}
         </Typography>
-        <Typography variant='body2' component='p'>
+        <Typography variant='body2' component='p' className={classes.description}>
           {recipe.description}
         </Typography>
         <CardActions className={classes.cardActions}>
@@ -124,7 +124,7 @@ const useStyles = makeStyles((theme) => ({
     filter: 'drop-shadow(1px 1px 1px rgba(0,0,0,0.5))',
   },
   media: {
-    height: 180,
+    height: 110,
   },
   cardContent: {
     padding: '5px 5px 5px 20px',
@@ -133,16 +133,21 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexFlow: 'column nowrap',
     justifyContent: 'flex-start',
+    overflow: 'hidden',
   },
   actionArea: {
-    flex: '0 0 300px',
+    flex: '0 0 150px',
     [theme.breakpoints.down('xs')]: {
       display: 'none',
     },
   },
   cardActions: {
     marginTop: 'auto',
-    paddingLeft: 0,
-    paddingRight: 0,
+    padding: 0,
+  },
+  description: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 }));
