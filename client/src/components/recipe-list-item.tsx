@@ -71,7 +71,7 @@ export const RecipeCard = ({ recipe }: IProps) => {
         <Typography variant='body2' component='p'>
           {recipe.description}
         </Typography>
-        <CardActions style={{ marginTop: 'auto' }}>
+        <CardActions className={classes.cardActions}>
           <Grid container alignItems='center' justify='space-between'>
             <Grid item>
               <Button color='primary' size='large' onClick={handleLikeClick} disabled={loadingLike}>
@@ -130,11 +130,19 @@ const useStyles = makeStyles((theme) => ({
     padding: '5px 5px 5px 20px',
     paddingBottom: '5px !important',
     flex: '1 1 100%',
+    display: 'flex',
+    flexFlow: 'column nowrap',
+    justifyContent: 'flex-start',
   },
   actionArea: {
     flex: '0 0 300px',
     [theme.breakpoints.down('xs')]: {
       display: 'none',
     },
+  },
+  cardActions: {
+    marginTop: 'auto',
+    paddingLeft: 0,
+    paddingRight: 0,
   },
 }));

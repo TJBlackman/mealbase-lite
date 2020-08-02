@@ -6,6 +6,7 @@ import { IFilterRecipesState } from '../types';
 import { networkRequest } from '../utils/network-request';
 import { makeParamsFromState } from '../utils/recipe-query-params';
 import { RecipePagination } from '../components/recipe-pagination';
+import { MobileOnlyDropdown } from '../components/mobile-only-dropdown';
 
 // reducer
 const SET_FORM = 'SET FORM';
@@ -105,61 +106,62 @@ export const FilterRecipeForm = () => {
           {loading ? 'Loading...' : 'Search'}
         </Button>
       </Grid>
+      <MobileOnlyDropdown>
+        <Grid container spacing={3}>
+          <Grid item sm={4} xs={12}>
+            <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
+              <InputLabel id='filter-label'>Filter Recipes</InputLabel>
+              <Select
+                fullWidth
+                labelId='filter-label'
+                value={localState.filter}
+                // @ts-ignore
+                onChange={(e: React.ChangeEvent<InputEvent>) => updateForm({ filter: e.target.value })}
+                label='Filter Recipes'
+              >
+                <MenuItem value='x'>All Recipes</MenuItem>
+                <MenuItem value='liked'>Liked Recipes</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item sm={4} xs={12}>
+            <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
+              <InputLabel id='filter-label'>Sort Recipes</InputLabel>
+              <Select
+                fullWidth
+                labelId='filter-label'
+                value={localState.sort}
+                // @ts-ignore
+                onChange={(e) => updateForm({ sort: e.target.value })}
+                label='Sort Recipes'
+              >
+                <MenuItem value='newest'>Newest</MenuItem>
+                <MenuItem value='oldest'>Oldest</MenuItem>
+                <MenuItem value='most liked'>Most Popular</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item sm={4} xs={12}>
+            <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
+              <InputLabel id='filter-label'>Results Per Page</InputLabel>
+              <Select
+                fullWidth
+                labelId='filter-label'
+                value={localState.limit}
+                // @ts-ignore
+                onChange={(e) => updateForm({ limit: e.target.value })}
+                label='Results Per Page'
+              >
+                <MenuItem value='10'>10</MenuItem>
+                <MenuItem value='20'>20</MenuItem>
+                <MenuItem value='50'>50</MenuItem>
+                <MenuItem value='100'>100</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+      </MobileOnlyDropdown>
       <Grid container spacing={3}>
-        <Grid item sm={4} xs={12}>
-          <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
-            <InputLabel id='filter-label'>Filter Recipes</InputLabel>
-            <Select
-              fullWidth
-              labelId='filter-label'
-              value={localState.filter}
-              // @ts-ignore
-              onChange={(e: React.ChangeEvent<InputEvent>) => updateForm({ filter: e.target.value })}
-              label='Filter Recipes'
-            >
-              <MenuItem value='x'>All Recipes</MenuItem>
-              <MenuItem value='liked'>Liked Recipes</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item sm={4} xs={12}>
-          <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
-            <InputLabel id='filter-label'>Sort Recipes</InputLabel>
-            <Select
-              fullWidth
-              labelId='filter-label'
-              value={localState.sort}
-              // @ts-ignore
-              onChange={(e) => updateForm({ sort: e.target.value })}
-              label='Sort Recipes'
-            >
-              <MenuItem value='newest'>Newest</MenuItem>
-              <MenuItem value='oldest'>Oldest</MenuItem>
-              <MenuItem value='most liked'>Most Popular</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item sm={4} xs={12}>
-          <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
-            <InputLabel id='filter-label'>Results Per Page</InputLabel>
-            <Select
-              fullWidth
-              labelId='filter-label'
-              value={localState.limit}
-              // @ts-ignore
-              onChange={(e) => updateForm({ limit: e.target.value })}
-              label='Results Per Page'
-            >
-              <MenuItem value='2'>2</MenuItem>
-              <MenuItem value='3'>3</MenuItem>
-              <MenuItem value='5'>5</MenuItem>
-              <MenuItem value='10'>10</MenuItem>
-              <MenuItem value='20'>20</MenuItem>
-              <MenuItem value='50'>50</MenuItem>
-              <MenuItem value='100'>100</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
         <Grid item xs={12}>
           <RecipePagination />
         </Grid>
