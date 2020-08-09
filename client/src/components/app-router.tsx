@@ -16,12 +16,12 @@ export const AppRouter = () => {
       <Switch>
         <Route path='/login' component={LoginPage} />
         <Route path='/register' component={RegisterPage} />
-        <PrivateRoute path='/account' component={AccountPage} />
         <Route path='/browse' component={BrowsePage} />
         <Route path='/mealplans' component={MealPlansPage} />
         <Route path='/cookbooks' component={CookbooksPage} />
         <Route path='/add-recipe' component={AddRecipePage} />
         <Route path='/about' component={AboutPage} />
+        <PrivateRoute path='/account' component={AccountPage} />
         <Redirect from='/' to='/browse' />
       </Switch>
     </Router>

@@ -24,7 +24,7 @@ export const defaultAppContext: IAppContext = {
       limit: 20,
       page: 1,
     },
-    displayType: 'dense',
+    displayType: 'cards',
   },
   modal: {
     visible: false,

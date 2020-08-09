@@ -24,7 +24,8 @@ export const createNewCookbook = async (data: CookbookRecord, user: JWTUser) => 
   }
 
   const cookbook = await saveNewCookbook({
-    ...data,
+    title: data.title,
+    description: data.description,
     owner: user._id
   });
   return cookbook;

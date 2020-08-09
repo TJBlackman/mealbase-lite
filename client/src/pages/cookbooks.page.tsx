@@ -6,12 +6,12 @@ export const CookbooksPage = () => {
   return (
     <Layout>
       <Typography variant='h3' component='h1'>
-        Cookbooks Page
+        Cookbooks
       </Typography>
-      <Typography variant='body1'>
-        Cookbooks are a way to organize your recipes. You might create a cookbook full of breakfast or dinner recipes,
-        and a separate cookbook for cocktail recipes, or cookbook for only deserts. Cookbooks help you arrange the
-        recipes you like into groups that make sense to you!
+      <Typography variant='h6'>
+        Cookbooks allow users to easily organize recipes they like! You might create a cookbook full of breakfast or
+        dinner recipes, a separate cookbook for cocktail recipes, or cookbook for only deserts. Cookbooks help users
+        arrange the recipes they like into groups that make sense to them!
       </Typography>
     </Layout>
   );

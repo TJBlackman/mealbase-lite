@@ -82,6 +82,7 @@ export interface CookbookQuery extends BasicQueryOptions {
 }
 export interface CookbookRecord extends BasicRecordOptions {
   title?: string;
+  description?: string;
   owner?: string;
   sharedWith?: string[];
   recipes?: string[];

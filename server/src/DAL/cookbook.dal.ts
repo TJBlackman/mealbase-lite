@@ -89,6 +89,7 @@ export const saveNewCookbook = async (data: CookbookRecord) => {
     createdAt: new Date().toUTCString(),
     updatedAt: new Date().toUTCString(),
     title: data.title,
+    description: data.description,
     owner: data.owner,
     sharedWith: data.sharedWith,
     recipes: data.recipes
