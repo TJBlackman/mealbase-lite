@@ -32,7 +32,7 @@ export interface IAppContext {
 
 // https://stackoverflow.com/questions/47914536/use-partial-in-nested-property-with-typescript
 // need to do partial updates on nested GlobalState properties
-type RecursivePartial<T> = {
+export type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
 };
 
@@ -84,7 +84,7 @@ export interface IRecipe {
 }
 
 // generic reducer action
-export interface IGenericAction<T, P> {
+export interface IGenericAction<T, P = undefined> {
   type: T;
   payload?: P;
 };
@@ -111,8 +111,22 @@ export interface IGlobalRecipesState {
   displayType: keyof typeof RecipeDisplayTypes;
 }
 
+// recipe dispay types
 enum RecipeDisplayTypes {
   cards = 'cards',
   list = 'list',
   dense = 'dense'
+}
+
+// Cookbook Record 
+export interface ICookbookRecord {
+  title: string;
+  description?: string;
+  owner: string;
+  sharedWith: string[];
+  recipes: string[];
+  _id: string;
+  deleted: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
