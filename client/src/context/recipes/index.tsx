@@ -4,7 +4,7 @@ import { reducer } from './reducer';
 
 // default context
 export const defaultRecipeContext: IRecipeContext = {
-  browse: [],
+  recipes: [],
   totalCount: 0,
   loading: false,
   filters: {
@@ -24,7 +24,7 @@ export const defaultRecipeContext: IRecipeContext = {
 const RecipeContext = createContext(defaultRecipeContext);
 
 // provider wrapper
-export const SideMenuContextProvider = ({ children }) => {
+export const RecipeContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, defaultRecipeContext);
 
   const value: IRecipeContext = {
@@ -38,4 +38,4 @@ export const SideMenuContextProvider = ({ children }) => {
 };
 
 // Hook for using sidemenu context
-export const useSideMenuContext = () => useContext(RecipeContext);
+export const useRecipeContext = () => useContext(RecipeContext);

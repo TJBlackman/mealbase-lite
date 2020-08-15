@@ -16,7 +16,8 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { IRecipe } from '../types';
 import { networkRequest } from '../utils/network-request';
-import { AppContext } from '../context';
+import { useRecipeContext } from '../context/recipes';
+import { useUserContext } from '../context/user';
 import { RecipeCardMenu } from './recipe-card-menu';
 
 // types
@@ -26,12 +27,13 @@ interface IProps {
 
 // component
 export const RecipeListItem = ({ recipe }: IProps) => {
-  const { replaceRecipe, setModal, globalState } = useContext(AppContext);
+  const { user } = useUserContext();
+  const { replaceRecipe } = useRecipeContext();
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [loadingLike, setLoadingLike] = useState(false);
   const classes = useStyles();
   const handleLikeClick = () => {
-    if (!globalState.user.email) {
+    if (!user.email) {
       // not logged in
       return;
     }
@@ -89,13 +91,7 @@ export const RecipeListItem = ({ recipe }: IProps) => {
           </Grid>
         </CardActions>
         {menuAnchor && (
-          <RecipeCardMenu
-            recipe={recipe}
-            user={globalState.user}
-            onClose={() => setMenuAnchor(null)}
-            anchor={menuAnchor}
-            setModal={setModal}
-          />
+          <RecipeCardMenu recipe={recipe} user={user} onClose={() => setMenuAnchor(null)} anchor={menuAnchor} />
         )}
       </CardContent>
     </Card>

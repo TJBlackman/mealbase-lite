@@ -3,7 +3,7 @@ import { TextField, Button, CircularProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
-import { AppContext } from '../context';
+import { useUserContext } from '../context/user';
 import { IRecipe } from '../types';
 
 interface ILoginFormValues {
@@ -77,7 +77,7 @@ const reducer = (state: ILoginFormValues, action: ReducerAction) => {
 
 // component
 export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
-  const { globalState } = useContext(AppContext);
+  const { user } = useUserContext();
   const [localState, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
@@ -104,16 +104,16 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
       },
     });
   };
-  const disabled = localState.loading || !globalState.user.email;
+  const disabled = localState.loading || !user.email;
   return (
     <form onSubmit={onSubmit} className={formClass}>
       <TextField
         className={textFieldClass}
         required
         fullWidth
-        label="Recipe URL"
-        variant="outlined"
-        helperText="The web address of any recipe! Example: https://www.recipes.com/tacos"
+        label='Recipe URL'
+        variant='outlined'
+        helperText='The web address of any recipe! Example: https://www.recipes.com/tacos'
         value={localState.url}
         disabled={disabled}
         onChange={(e) =>
@@ -125,7 +125,7 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
       />
       {localState.error && (
         <Alert
-          severity="error"
+          severity='error'
           className={errorClass}
           elevation={2}
           onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
@@ -134,35 +134,25 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
         </Alert>
       )}
       {localState.success && (
-        <Alert severity="success" className={errorClass} elevation={2}>
+        <Alert severity='success' className={errorClass} elevation={2}>
           {localState.success}
         </Alert>
       )}
-      {!globalState.user.email && (
-        <Alert severity="warning" className={errorClass} elevation={2}>
+      {!user.email && (
+        <Alert severity='warning' className={errorClass} elevation={2}>
           You must have an account to add new recipes.
         </Alert>
       )}
       <Button
-        variant="contained"
+        variant='contained'
         className={btnClass}
         disabled={disabled}
         onClick={() => dispatch({ type: ActionType.RESET })}
       >
         Reset
       </Button>
-      <Button
-        variant="contained"
-        className={btnClass}
-        color="primary"
-        type="submit"
-        disabled={disabled}
-      >
-        {localState.loading ? (
-          <CircularProgress color="primary" size="20px" />
-        ) : (
-          'Submit'
-        )}
+      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={disabled}>
+        {localState.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
       </Button>
     </form>
   );

@@ -1,7 +1,7 @@
 import React, { useContext, useReducer, useEffect } from 'react';
 import { Grid, TextField, Select, FormControl, InputLabel, MenuItem, Button, LinearProgress } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { AppContext } from '../context';
+import { makeStyles } from '@material-ui/core/styles';
+import { useRecipeContext } from '../context/recipes';
 import { IFilterRecipesState } from '../types';
 import { networkRequest } from '../utils/network-request';
 import { makeParamsFromState } from '../utils/recipe-query-params';
@@ -26,28 +26,27 @@ const reducer = (state: IFilterRecipesState, action: { type: string; payload: Pa
 };
 
 export const FilterRecipeForm = () => {
-  const { globalState, updateRecipesState } = useContext(AppContext);
-  const [localState, dispatch] = useReducer(reducer, globalState.recipes.filters);
-  const { loading } = globalState.recipes;
+  const { updateRecipeContext, recipes, loading, filters } = useRecipeContext();
+  const [localState, dispatch] = useReducer(reducer, filters);
 
   // recipe api call
   const getRecipes = () => {
     const queryParams = makeParamsFromState(localState);
-    updateRecipesState({
+    updateRecipeContext({
       filters: { ...localState },
       loading: true,
     });
     networkRequest({
       url: '/api/v1/recipes' + queryParams,
       success: (json) => {
-        updateRecipesState({
+        updateRecipeContext({
           loading: false,
           totalCount: json.data.totalCount,
-          browse: json.data.recipes,
+          recipes: json.data.recipes,
         });
       },
       error: (err) => {
-        updateRecipesState({ loading: false });
+        updateRecipeContext({ loading: false });
         alert(err.message);
       },
     });
@@ -69,7 +68,7 @@ export const FilterRecipeForm = () => {
 
   // get recipes on mount
   useEffect(() => {
-    if (globalState.recipes.browse.length === 0) {
+    if (recipes.length === 0) {
       getRecipes();
     }
   }, []);
@@ -79,7 +78,7 @@ export const FilterRecipeForm = () => {
 
   // localState has been updated, does not match globalState
   const noUpdatedFilters = (() => {
-    const global = JSON.stringify(globalState.recipes.filters);
+    const global = JSON.stringify(filters);
     const local = JSON.stringify(localState);
     return local === global;
   })();

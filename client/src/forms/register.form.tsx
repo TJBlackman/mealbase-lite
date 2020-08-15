@@ -3,7 +3,7 @@ import { TextField, Button, CircularProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
-import { AppContext } from '../context';
+import { useUserContext } from '../context/user';
 
 interface IRegisterFormValues {
   email: string;
@@ -89,7 +89,7 @@ const reducer = (state: IRegisterFormValues, action: Action) => {
 
 // component
 export const RegisterForm = ({ onSuccess }: ComponentProps) => {
-  const { updateUserData } = useContext(AppContext);
+  const { updateUserData } = useUserContext();
   const [localState, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
@@ -122,9 +122,9 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label="Email Address"
-        variant="outlined"
-        type="email"
+        label='Email Address'
+        variant='outlined'
+        type='email'
         value={localState.email}
         onChange={(e) =>
           dispatch({
@@ -137,9 +137,9 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label="Password"
-        variant="outlined"
-        type="password"
+        label='Password'
+        variant='outlined'
+        type='password'
         value={localState.password}
         onChange={(e) =>
           dispatch({
@@ -152,9 +152,9 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label="Confirm Password"
-        variant="outlined"
-        type="password"
+        label='Confirm Password'
+        variant='outlined'
+        type='password'
         value={localState.confirmPw}
         onChange={(e) =>
           dispatch({
@@ -165,7 +165,7 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
       />
       {localState.error && (
         <Alert
-          severity="error"
+          severity='error'
           className={errorClass}
           elevation={2}
           onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
@@ -174,30 +174,20 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
         </Alert>
       )}
       {localState.success && (
-        <Alert severity="success" className={errorClass} elevation={2}>
+        <Alert severity='success' className={errorClass} elevation={2}>
           {localState.success}
         </Alert>
       )}
       <Button
-        variant="contained"
+        variant='contained'
         className={btnClass}
         onClick={() => dispatch({ type: ActionType.RESET })}
         disabled={localState.loading}
       >
         Reset
       </Button>
-      <Button
-        variant="contained"
-        className={btnClass}
-        color="primary"
-        type="submit"
-        disabled={localState.loading}
-      >
-        {localState.loading ? (
-          <CircularProgress color="primary" size="20px" />
-        ) : (
-          'Submit'
-        )}
+      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={localState.loading}>
+        {localState.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
       </Button>
     </form>
   );

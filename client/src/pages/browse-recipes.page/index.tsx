@@ -5,13 +5,13 @@ import { FilterRecipeForm } from '../../forms/filter-recipes.form';
 import { RecipeCard } from '../../components/recipe-card';
 import { RecipeListItem } from '../../components/recipe-list-item';
 import { RecipeListItemDense } from '../../components/recipe-list-item-dense';
-import { AppContext } from '../../context';
+import { useRecipeContext } from '../../context/recipes';
 
 export const BrowsePage = () => {
-  const { globalState } = useContext(AppContext);
-  const showNoResults = globalState.recipes.loading === false && globalState.recipes.browse.length === 0;
+  const { recipes, displayType, loading } = useRecipeContext();
+  const showNoResults = loading === false && recipes.length === 0;
   const CardItem = (() => {
-    switch (globalState.recipes.displayType) {
+    switch (displayType) {
       case 'cards':
         return RecipeCard;
       case 'list':
@@ -19,7 +19,7 @@ export const BrowsePage = () => {
       case 'dense':
         return RecipeListItemDense;
       default: {
-        console.log('wtf: ', globalState.recipes.displayType);
+        console.log('wtf: ', displayType);
         return RecipeListItem;
       }
     }
@@ -35,7 +35,7 @@ export const BrowsePage = () => {
       </Typography>
       <FilterRecipeForm />
       <Grid container justify='space-around'>
-        {globalState.recipes.browse.map((item) => (
+        {recipes.map((item) => (
           <CardItem key={item._id} recipe={item} />
         ))}
         {showNoResults && (

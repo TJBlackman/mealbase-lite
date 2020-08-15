@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { AppContext } from '../context';
+import { useUserContext } from '../context/user';
 
 export const PrivateRoute = ({ component, ...rest }) => {
-  const { globalState } = useContext(AppContext);
-  if (!globalState.user._id) {
+  const { user } = useUserContext();
+  if (!user._id) {
     return <Redirect to='/login' />;
   }
   return <Route component={component} {...rest} />;

@@ -1,12 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu';
 import { AppBar, Toolbar, Typography, IconButton, Container, Link, Hidden } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { AppContext } from '../context';
+import { useSideMenuContext } from '../context/side-menu';
+import { useUserContext } from '../context/user';
 
 export default function Header() {
-  const { toggleSideMenu, globalState } = useContext(AppContext);
+  const { toggleMenu } = useSideMenuContext();
+  const { user } = useUserContext();
+
   const history = useHistory();
   const { wrapper, link } = getStyles();
   return (
@@ -15,13 +18,13 @@ export default function Header() {
         <Toolbar className={wrapper}>
           <Typography variant='h6'>MealBase Lite</Typography>
           <div>
-            {globalState.user.email !== '' ? (
+            {user.email !== '' ? (
               <Hidden xsDown>
                 <Typography variant='body2' component='span' style={{ marginRight: '4px', userSelect: 'none' }}>
                   Welcome,
                 </Typography>
                 <Link onClick={() => history.push('/account')} color='inherit'>
-                  {globalState.user.email}
+                  {user.email}
                 </Link>
               </Hidden>
             ) : (
@@ -34,7 +37,7 @@ export default function Header() {
                 </Link>
               </Hidden>
             )}
-            <IconButton onClick={toggleSideMenu} color='inherit' aria-label='menu'>
+            <IconButton onClick={toggleMenu} color='inherit' aria-label='menu'>
               <MenuIcon />
             </IconButton>
           </div>

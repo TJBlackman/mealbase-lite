@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IRecipe, IUserData, IModalState, ModalTypes } from '../types';
+import { IRecipe, IUserData, ModalTypes } from '../types';
 import { Menu, MenuItem, ListItemIcon, Typography } from '@material-ui/core';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import DoneIcon from '@material-ui/icons/Done';
@@ -8,16 +8,17 @@ import LinkIcon from '@material-ui/icons/Link';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import { copyTextToClipboard } from '../utils/copy-to-clipboard';
+import { useModalContext } from '../context/modal';
 
 interface IProps {
   recipe: IRecipe;
   user: IUserData;
   anchor: Element;
   onClose: () => void;
-  setModal: (data: IModalState) => void;
 }
 
-export const RecipeCardMenu = ({ recipe, user, anchor, onClose, setModal }: IProps) => {
+export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
+  const { showModal } = useModalContext();
   const [copied, setCopied] = useState(false);
   const copyLink = () => {
     copyTextToClipboard(recipe.url);
@@ -31,19 +32,16 @@ export const RecipeCardMenu = ({ recipe, user, anchor, onClose, setModal }: IPro
   const userIsAdmin = userIsLoggedIn && user.roles.includes('admin');
 
   const deleteModal = () => {
-    setModal({
-      visible: true,
-      type: ModalTypes.DELETE_RECIPE,
-      data: recipe,
+    showModal({
+      modalType: 'DELETE RECIPE',
+      modalData: recipe,
     });
     onClose();
   };
 
   const comingSoonModal = () => {
-    setModal({
-      visible: true,
-      type: ModalTypes.COMING_SOON,
-      data: null,
+    showModal({
+      modalType: 'COMING SOON',
     });
     onClose();
   };

@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemText, ListItemIcon, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { AppContext } from '../context';
 import CloseIcon from '@material-ui/icons/Close';
 import DynamicFeedIcon from '@material-ui/icons/DynamicFeed';
 import InfoIcon from '@material-ui/icons/Info';
@@ -13,6 +12,8 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import CreateIcon from '@material-ui/icons/Create';
 import { networkRequest } from '../utils/network-request';
+import { useUserContext } from '../context/user';
+import { useSideMenuContext } from '../context/side-menu';
 
 const useStyles = makeStyles({
   paper: {
@@ -26,17 +27,18 @@ const useStyles = makeStyles({
 export const SideMenu = () => {
   const classes = useStyles();
   const history = useHistory();
-  const { globalState, toggleSideMenu, logout } = useContext(AppContext);
+  const { user, logout } = useUserContext();
+  const { toggleMenu, visible } = useSideMenuContext();
 
-  const userIsLoggedIn = globalState.user.email !== '';
+  const userIsLoggedIn = user.email !== '';
 
   const goTo = (link: string) => {
-    toggleSideMenu();
+    toggleMenu();
     history.push(link);
   };
 
   const onLogout = () => {
-    toggleSideMenu();
+    toggleMenu();
     logout();
     networkRequest({
       url: '/api/v1/auth/signout',
@@ -44,14 +46,9 @@ export const SideMenu = () => {
   };
 
   return (
-    <Drawer
-      anchor='right'
-      open={globalState.sidemenu.visible}
-      PaperProps={{ className: classes.paper }}
-      onClose={toggleSideMenu}
-    >
+    <Drawer anchor='right' open={visible} PaperProps={{ className: classes.paper }} onClose={toggleMenu}>
       <List component='nav'>
-        <ListItem button onClick={toggleSideMenu}>
+        <ListItem button onClick={toggleMenu}>
           <ListItemIcon>
             <CloseIcon />
           </ListItemIcon>

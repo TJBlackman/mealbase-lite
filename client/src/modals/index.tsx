@@ -1,28 +1,24 @@
-import React, { useContext } from 'react';
-import { AppContext } from '../context';
+import React from 'react';
 import { DeleteRecipeModal } from './delete-recipe.modal';
 import { ComingSoonModal } from './coming-soon.modal';
-import { ModalTypes } from '../types';
+import { useModalContext } from '../context/modal';
 
 export const ModalConductor = () => {
-  const { globalState, setModal } = useContext(AppContext);
-  const { modal } = globalState;
+  const { visible, content, dismissModal } = useModalContext();
 
-  if (!modal.visible) {
+  if (!visible) {
     return null;
   }
 
-  const closeModal = () => setModal({ type: ModalTypes.CLEAR_MODAL });
-
-  switch (modal.type) {
-    case ModalTypes.DELETE_RECIPE: {
-      return <DeleteRecipeModal data={modal.data} onClose={closeModal} />;
+  switch (content.modalType) {
+    case 'DELETE RECIPE': {
+      return <DeleteRecipeModal data={content.modalData} onClose={dismissModal} />;
     }
-    case ModalTypes.COMING_SOON: {
-      return <ComingSoonModal onClose={closeModal} />;
+    case 'COMING SOON': {
+      return <ComingSoonModal onClose={dismissModal} />;
     }
     default: {
-      console.error(`Unknown Modal Type: ${modal.type}`);
+      console.error(`Unknown Modal Type:\n${JSON.stringify(content, null, 4)}`);
       return null;
     }
   }

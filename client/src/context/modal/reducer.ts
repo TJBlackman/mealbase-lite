@@ -4,17 +4,12 @@ import { getNewState } from "../../utils/copy-state";
 export const reducer = (state: IModalContext, action: ModalAction): IModalContext => {
   const newState = getNewState(state);
   switch (action.type) {
-    case 'SHOW MENU': {
-      newState.visible = true;
+    case 'SHOW MODAL': {
+      newState.content = action.payload;
       return newState;
     }
-    case 'HIDE MENU': {
+    case 'DISMISS MODAL': {
       newState.visible = false;
-      return newState;
-    }
-    case 'TOGGLE MENU': {
-      newState.visible = !newState.visible;
-      return newState;
     }
     default: {
       console.error(`Unknown SideMenu action type:\n${JSON.stringify(action, null, 4)}`);

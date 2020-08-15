@@ -6,12 +6,11 @@ import { reducer } from './reducer';
 export const defaultSideMenuContext: IModalContext = {
   visible: false,
   content: {
-    type: '',
-    data: null,
+    modalType: '',
+    modalData: null,
   },
-  showMenu: () => {},
-  hideMenu: () => {},
-  toggleMenu: () => {},
+  showModal: () => {},
+  dismissModal: () => {},
 };
 
 // create context
@@ -24,9 +23,8 @@ export const ModalContextProvider = ({ children }) => {
   const value: IModalContext = {
     visible: state.visible,
     content: state.content,
-    showMenu: () => dispatch({ type: 'SHOW MENU' }),
-    hideMenu: () => dispatch({ type: 'HIDE MENU' }),
-    toggleMenu: () => dispatch({ type: 'TOGGLE MENU' }),
+    showModal: (payload) => dispatch({ type: 'SHOW MODAL', payload }),
+    dismissModal: () => dispatch({ type: 'DISMISS MODAL' }),
   };
 
   return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>;

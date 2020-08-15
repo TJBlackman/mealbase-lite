@@ -3,7 +3,7 @@ import { TextField, Button, CircularProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
-import { AppContext } from '../context';
+import { useUserContext } from '../context/user';
 
 interface ILoginFormValues {
   email: string;
@@ -83,7 +83,7 @@ const reducer = (state: ILoginFormValues, action: ReducerAction) => {
 
 // component
 export const LoginForm = ({ onSuccess }: ComponentProps) => {
-  const { updateUserData } = useContext(AppContext);
+  const { updateUserData } = useUserContext();
   const [localState, dispatch] = useReducer(reducer, defaultValues);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
@@ -116,8 +116,8 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label="Email Address"
-        variant="outlined"
+        label='Email Address'
+        variant='outlined'
         value={localState.email}
         disabled={localState.loading}
         onChange={(e) =>
@@ -131,9 +131,9 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         className={textFieldClass}
         required
         fullWidth
-        label="Password"
-        variant="outlined"
-        type="password"
+        label='Password'
+        variant='outlined'
+        type='password'
         value={localState.password}
         disabled={localState.loading}
         onChange={(e) =>
@@ -145,7 +145,7 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
       />
       {localState.error && (
         <Alert
-          severity="error"
+          severity='error'
           className={errorClass}
           elevation={2}
           onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
@@ -154,30 +154,20 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         </Alert>
       )}
       {localState.success && (
-        <Alert severity="success" className={errorClass} elevation={2}>
+        <Alert severity='success' className={errorClass} elevation={2}>
           {localState.success}
         </Alert>
       )}
       <Button
-        variant="contained"
+        variant='contained'
         className={btnClass}
         disabled={localState.loading}
         onClick={() => dispatch({ type: ActionType.RESET })}
       >
         Reset
       </Button>
-      <Button
-        variant="contained"
-        className={btnClass}
-        color="primary"
-        type="submit"
-        disabled={localState.loading}
-      >
-        {localState.loading ? (
-          <CircularProgress color="primary" size="20px" />
-        ) : (
-          'Submit'
-        )}
+      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={localState.loading}>
+        {localState.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
       </Button>
     </form>
   );

@@ -1,28 +1,27 @@
-import { IGenericAction } from "../../types";
+import { IGenericAction, IRecipe } from "../../types"
+
 
 // register reducer actions; <type, payload>
 export type ModalAction =
-  IGenericAction<'SHOW MENU'> |
-  IGenericAction<'HIDE MENU'> |
-  IGenericAction<'TOGGLE MENU'>;
+  IGenericAction<'SHOW MODAL', ModalContent> |
+  IGenericAction<'DISMISS MODAL'>;
 
 type GenericModalContent<T, D = undefined> = {
-  type: T,
-  data: D
+  modalType: T,
+  modalData?: D
 }
 
 // register modal types; <type, data>
 type ModalContent =
   GenericModalContent<'', null> |
-  GenericModalContent<'DELETE RECIPE', { recipeId: string }> |
-  GenericModalContent<'HIDE MODAL'> |
+  GenericModalContent<'DELETE RECIPE', IRecipe> |
+  GenericModalContent<'DISMISS MODAL'> |
   GenericModalContent<'COMING SOON'>;
 
 // modal context
 export interface IModalContext {
   visible: boolean;
   content: ModalContent;
-  showMenu: () => void;
-  hideMenu: () => void;
-  toggleMenu: () => void;
+  showModal: (x: ModalContent) => void;
+  dismissModal: () => void;
 }

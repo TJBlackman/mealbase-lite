@@ -1,35 +1,31 @@
 import React, { useContext, ChangeEvent } from 'react';
 import { Pagination } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
-import { AppContext } from '../context';
 import { networkRequest } from '../utils/network-request';
 import { makeParamsFromState } from '../utils/recipe-query-params';
+import { useRecipeContext } from '../context/recipes';
 
 export const RecipePagination = () => {
-  const { globalState, updateRecipesState } = useContext(AppContext);
-  const {
-    totalCount,
-    filters: { limit, page },
-  } = globalState.recipes;
-  const pageCount = Math.ceil(totalCount / limit);
+  const { loading, filters, updateRecipeContext, totalCount } = useRecipeContext();
+  const pageCount = Math.ceil(totalCount / filters.limit);
 
   const setPage = (e: ChangeEvent<unknown>, num: number) => {
-    updateRecipesState({ loading: true, filters: { page: num } });
+    updateRecipeContext({ loading: true, filters: { page: num } });
     const params = makeParamsFromState({
-      ...globalState.recipes.filters,
+      ...filters,
       page: num,
     });
     networkRequest({
       url: '/api/v1/recipes' + params,
       success: (json) => {
-        updateRecipesState({
+        updateRecipeContext({
           loading: false,
           totalCount: json.data.totalCount,
-          browse: json.data.recipes,
+          recipes: json.data.recipes,
         });
       },
       error: (err) => {
-        updateRecipesState({ loading: false });
+        updateRecipeContext({ loading: false });
         alert(err.message);
       },
     });
@@ -37,7 +33,7 @@ export const RecipePagination = () => {
 
   return (
     <Grid container justify='flex-end'>
-      <Pagination count={pageCount} page={page} onChange={setPage} disabled={globalState.recipes.loading} />
+      <Pagination count={pageCount} page={filters.page} onChange={setPage} disabled={loading} />
     </Grid>
   );
 };

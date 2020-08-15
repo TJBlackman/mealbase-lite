@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
   Card,
@@ -16,8 +16,9 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { IRecipe } from '../types';
 import { networkRequest } from '../utils/network-request';
-import { AppContext } from '../context';
 import { RecipeCardMenu } from './recipe-card-menu';
+import { useRecipeContext } from '../context/recipes';
+import { useUserContext } from '../context/user';
 
 // types
 interface IProps {
@@ -26,12 +27,13 @@ interface IProps {
 
 // component
 export const RecipeListItemDense = ({ recipe }: IProps) => {
-  const { replaceRecipe, setModal, globalState } = useContext(AppContext);
+  const { replaceRecipe } = useRecipeContext();
+  const { user } = useUserContext();
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [loadingLike, setLoadingLike] = useState(false);
   const classes = useStyles();
   const handleLikeClick = () => {
-    if (!globalState.user.email) {
+    if (!user.email) {
       // not logged in
       return;
     }
@@ -89,13 +91,7 @@ export const RecipeListItemDense = ({ recipe }: IProps) => {
           </Grid>
         </CardActions>
         {menuAnchor && (
-          <RecipeCardMenu
-            recipe={recipe}
-            user={globalState.user}
-            onClose={() => setMenuAnchor(null)}
-            anchor={menuAnchor}
-            setModal={setModal}
-          />
+          <RecipeCardMenu recipe={recipe} user={user} onClose={() => setMenuAnchor(null)} anchor={menuAnchor} />
         )}
       </CardContent>
     </Card>
