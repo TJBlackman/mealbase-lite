@@ -1,5 +1,14 @@
 import React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography, makeStyles } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+  makeStyles,
+  Modal,
+} from '@material-ui/core';
 
 interface IProps {
   onClose: () => void;

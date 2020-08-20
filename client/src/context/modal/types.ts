@@ -16,6 +16,7 @@ type ModalContent =
   GenericModalContent<'', null> |
   GenericModalContent<'DELETE RECIPE', IRecipe> |
   GenericModalContent<'DISMISS MODAL'> |
+  GenericModalContent<'NEW COOKBOOK'> |
   GenericModalContent<'COMING SOON'>;
 
 // modal context
