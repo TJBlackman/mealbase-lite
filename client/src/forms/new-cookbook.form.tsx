@@ -3,6 +3,10 @@ import { IGenericAction } from '../types';
 import { getNewState } from '../utils/copy-state';
 import { makeStyles } from '@material-ui/styles';
 import { TextField, Button, Grid } from '@material-ui/core';
+import { networkRequest } from '../utils/network-request';
+import { Alert } from '@material-ui/lab';
+import { useUserContext } from '../context/user';
+import { useCookbookContext } from '../context/cookbooks';
 
 // styles
 const useStyles = makeStyles({
@@ -29,22 +33,35 @@ interface IState {
   title: string;
   description: string;
   loading: boolean;
+  success: string | null;
+  error: string | null;
 }
 const defaultState: IState = {
   title: '',
   description: '',
   loading: false,
+  success: null,
+  error: null,
 };
 
 type Actions =
   | IGenericAction<'SET LOADING', boolean>
+  | IGenericAction<'SET ERROR', string | null>
+  | IGenericAction<'SET SUCCESS', string | null>
   | IGenericAction<'SET TITLE', string>
   | IGenericAction<'RESET FORM'>
+  | IGenericAction<'SUBMIT FORM'>
   | IGenericAction<'SET DESCRIPTION', string>;
 
 const reducer = (state: IState, action: Actions) => {
   const newState = getNewState<IState>(state);
   switch (action.type) {
+    case 'SUBMIT FORM': {
+      newState.loading = true;
+      newState.error = null;
+      newState.success = null;
+      return newState;
+    }
     case 'SET LOADING': {
       newState.loading = action.payload;
       return newState;
@@ -60,6 +77,16 @@ const reducer = (state: IState, action: Actions) => {
     case 'RESET FORM': {
       return defaultState;
     }
+    case 'SET ERROR': {
+      newState.error = action.payload;
+      newState.loading = false;
+      return newState;
+    }
+    case 'SET SUCCESS': {
+      newState.success = action.payload;
+      newState.loading = false;
+      return newState;
+    }
     default: {
       console.error(`Unknown action type:\n${JSON.stringify(action, null, 4)}`);
       return state;
@@ -67,21 +94,46 @@ const reducer = (state: IState, action: Actions) => {
   }
 };
 
-export const NewCookbookForm = () => {
+interface IProps {
+  onSuccess: () => void;
+}
+
+export const NewCookbookForm = ({ onSuccess }: IProps) => {
+  const { user } = useUserContext();
+  const { addCookbook } = useCookbookContext();
   const [localState, dispatch] = useReducer(reducer, defaultState);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert(JSON.stringify(localState, null, 4));
+    dispatch({ type: 'SUBMIT FORM' });
+    networkRequest({
+      url: '/api/v1/cookbooks',
+      method: 'POST',
+      body: {
+        title: localState.title,
+        description: localState.description,
+      },
+      success: (response) => {
+        addCookbook(response.data);
+        dispatch({ type: 'SET SUCCESS', payload: 'Cookbook successfully created!' });
+        onSuccess();
+      },
+      error: (response) => {
+        dispatch({ type: 'SET ERROR', payload: response.message });
+      },
+    });
   };
 
+  const disabled = !user.email || localState.loading;
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={formClass}>
       <TextField
-        className={textFieldClass}
         required
         fullWidth
-        label='Title'
+        className={textFieldClass}
+        label='Cookbook Title'
         variant='outlined'
         value={localState.title}
         disabled={localState.loading}
@@ -98,7 +150,7 @@ export const NewCookbookForm = () => {
         multiline
         rows={3}
         className={textFieldClass}
-        label='Description'
+        label='Cookbook Description'
         variant='outlined'
         value={localState.description}
         disabled={localState.loading}
@@ -109,11 +161,33 @@ export const NewCookbookForm = () => {
           })
         }
       />
+
+      {localState.success && (
+        <Alert severity='success' className={errorClass} elevation={2}>
+          {localState.success}
+        </Alert>
+      )}
+      {localState.error && (
+        <Alert severity='error' className={errorClass} elevation={2}>
+          {localState.error}
+        </Alert>
+      )}
+      {!user.email && (
+        <Alert severity='warning' className={errorClass} elevation={2}>
+          You must have an account to create cookbooks.
+        </Alert>
+      )}
       <Grid container style={{ flexFlow: 'row-reverse' }}>
-        <Button type='submit' variant='contained' color='primary'>
+        <Button type='submit' variant='contained' color='primary' className={btnClass} disabled={disabled}>
           Submit
         </Button>
-        <Button type='button' variant='contained' color='default' onClick={() => dispatch({ type: 'RESET FORM' })}>
+        <Button
+          type='button'
+          variant='contained'
+          color='default'
+          onClick={() => dispatch({ type: 'RESET FORM' })}
+          className={btnClass}
+        >
           Reset
         </Button>
       </Grid>
