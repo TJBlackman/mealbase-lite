@@ -4,6 +4,7 @@ import { Typography, Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { useModalContext } from '../context/modal';
 import { useCookbookContext } from '../context/cookbooks';
+import { CookbookListItem } from '../components/cookbook-list-item';
 
 export const CookbooksPage = () => {
   const { showModal } = useModalContext();
@@ -32,8 +33,8 @@ export const CookbooksPage = () => {
         Add New Cookbook
       </Button>
       <hr />
-      {cookbooks.map((item) => (
-        <p>{item.title}</p>
+      {cookbooks.map((cb) => (
+        <CookbookListItem cookbook={cb} />
       ))}
     </Layout>
   );
