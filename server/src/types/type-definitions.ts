@@ -105,3 +105,7 @@ export interface IRecipeLikeRequest {
   userId: string;
   recipeIds: string[];
 }
+export type AddIdToCookbook = {
+  recipeId: string;
+  cookbookId: string;
+}

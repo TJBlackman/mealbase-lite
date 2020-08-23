@@ -1,6 +1,7 @@
-import { queryCookBooks, saveNewCookbook, updateCookbook } from '../DAL/cookbook.dal';
-import { CookbookQuery, JWTUser, Roles, CookbookRecord } from '../types/type-definitions';
+import { queryCookBooks, saveNewCookbook, updateCookbook, addRecipeIdToCookbook, removeRecipeIdFromCookbook } from '../DAL/cookbook.dal';
+import { CookbookQuery, JWTUser, Roles, CookbookRecord, AddIdToCookbook } from '../types/type-definitions';
 import { userHasRole } from '../utils/validators';
+import { queryRecipeDAL } from "../DAL/recipe.dal";
 
 export const getCookbooks = async (query: CookbookQuery, user: JWTUser) => {
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
@@ -77,4 +78,54 @@ export const deleteCookbook = async (data: CookbookRecord, user: JWTUser) => {
     deleted: true
   });
   return cookbook;
+}
+
+export const addRecipeToCookbook = async (data: AddIdToCookbook, user: JWTUser) => {
+  if (!data.cookbookId || !data.recipeId) {
+    throw Error('CookbookId and RecipeId are both required!');
+  };
+
+  const cookbooks = await queryCookBooks({ _id: data.cookbookId });
+  if (cookbooks.length < 1) {
+    throw Error(`Cookbook with id "${data.cookbookId}" dos not exist.`);
+  }
+  const recipes = await queryRecipeDAL({ _id: data.recipeId });
+  if (recipes.length < 1) {
+    throw Error(`Recipe with id "${data.recipeId}" does not exist.`)
+  }
+
+  if (userHasRole([Roles.Admin, Roles.Support], user)) {
+    await addRecipeIdToCookbook(data);
+    return true;
+  }
+
+  if (user._id.toString() !== cookbooks[0].owner.toString()) {
+    throw Error('Only the cookbook owner can add recipes to their cookbooks.')
+  }
+
+  await addRecipeIdToCookbook(data);
+  return true;
+}
+
+export const removeRecipeFromCookbook = async (data: AddIdToCookbook, user: JWTUser) => {
+  if (!data.cookbookId || !data.recipeId) {
+    throw Error('CookbookId and RecipeId are both required!');
+  };
+
+  const cookbooks = await queryCookBooks({ _id: data.cookbookId });
+  if (cookbooks.length < 1) {
+    throw Error(`Cookbook with id "${data.cookbookId}" dos not exist.`);
+  }
+
+  if (userHasRole([Roles.Admin, Roles.Support], user)) {
+    await removeRecipeIdFromCookbook(data);
+    return true;
+  }
+
+  if (user._id.toString() !== cookbooks[0].owner.toString()) {
+    throw Error('Only the cookbook owner can remove recipes from their cookbooks.')
+  }
+
+  await removeRecipeIdFromCookbook(data);
+  return true;
 }

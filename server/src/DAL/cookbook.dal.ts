@@ -1,5 +1,6 @@
 import CookbookModel from '../models/cookbook.model';
-import { CookbookQuery, CookbookRecord } from '../types/type-definitions';
+import { CookbookQuery, CookbookRecord, AddIdToCookbook } from '../types/type-definitions';
+import { Document } from "mongoose";
 
 export const queryCookBooks = async (query: CookbookQuery) => {
   // create filter to match documents against
@@ -81,8 +82,8 @@ export const queryCookBooks = async (query: CookbookQuery) => {
     sort: querySort,
     lean: true
   };
-  const recipes = await CookbookModel.find(filter, projections, dbOptions);
-  return recipes as unknown as CookbookRecord[];
+  const cookbooks = await CookbookModel.find(filter, projections, dbOptions);
+  return cookbooks as unknown as CookbookRecord[];
 }
 export const saveNewCookbook = async (data: CookbookRecord) => {
   const newRecipe = new CookbookModel({
@@ -94,12 +95,12 @@ export const saveNewCookbook = async (data: CookbookRecord) => {
     sharedWith: data.sharedWith,
     recipes: data.recipes
   });
-  const recipe = await newRecipe.save();
-  return recipe.toObject() as CookbookRecord;
+  const cookbook = await newRecipe.save();
+  return cookbook.toObject() as CookbookRecord;
 }
 export const updateCookbook = async (data: CookbookRecord) => {
   if (!data._id) {
-    throw Error('Cannot update recipe without an _id.')
+    throw Error('Cannot update cookbook without an _id.')
   }
   const id = data._id;
   // can never edit these values
@@ -108,9 +109,27 @@ export const updateCookbook = async (data: CookbookRecord) => {
   delete data._id;
   // update timestamp here
   data.updatedAt = new Date().toUTCString();
-  const recipe = await CookbookModel.findByIdAndUpdate(id, data, { new: true });
-  if (!recipe) {
+  const cookbook = await CookbookModel.findByIdAndUpdate(id, data, { new: true });
+  if (!cookbook) {
     throw Error(`No recipe found with id: ${data._id}`);
   }
-  return recipe.toObject() as CookbookRecord;
+  return cookbook.toObject() as CookbookRecord;
+}
+export const addRecipeIdToCookbook = async (data: AddIdToCookbook) => {
+  const cookbook = await CookbookModel.findById(data.cookbookId) as unknown as Document & CookbookRecord;
+  if (!cookbook) {
+    throw Error(`Cookbook does not exist: {_id: ${data.cookbookId}}`);
+  }
+  cookbook.recipes.push(data.recipeId);
+  const result = await cookbook.save();
+  return result.toObject();
+}
+export const removeRecipeIdFromCookbook = async (data: AddIdToCookbook) => {
+  const cookbook = await CookbookModel.findById(data.cookbookId) as unknown as Document & CookbookRecord;
+  if (!cookbook) {
+    throw Error(`Cookbook does not exist: {_id: ${data.cookbookId}}`);
+  }
+  cookbook.recipes = cookbook.recipes.filter(id => id.toString() !== data.recipeId);
+  const result = await cookbook.save();
+  return result.toObject();
 }
