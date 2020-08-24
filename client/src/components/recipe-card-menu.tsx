@@ -46,10 +46,16 @@ export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
     onClose();
   };
 
+  const addRecipeToCookbook = () =>
+    showModal({
+      modalType: 'ADD RECIPE TO COOKBOOK',
+      modalData: recipe,
+    });
+
   return (
     <Menu anchorEl={anchor} keepMounted open={true} onClose={onClose}>
       {userIsLoggedIn && (
-        <MenuItem onClick={comingSoonModal}>
+        <MenuItem onClick={addRecipeToCookbook}>
           <ListItemIcon>
             <MenuBookIcon fontSize='small' />
           </ListItemIcon>

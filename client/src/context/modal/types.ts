@@ -15,6 +15,7 @@ type GenericModalContent<T, D = undefined> = {
 type ModalContent =
   GenericModalContent<'', null> |
   GenericModalContent<'DELETE RECIPE', IRecipe> |
+  GenericModalContent<'ADD RECIPE TO COOKBOOK', IRecipe> |
   GenericModalContent<'DISMISS MODAL'> |
   GenericModalContent<'NEW COOKBOOK'> |
   GenericModalContent<'COMING SOON'>;

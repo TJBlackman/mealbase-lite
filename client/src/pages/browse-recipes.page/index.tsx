@@ -19,7 +19,7 @@ export const BrowsePage = () => {
       case 'dense':
         return RecipeListItemDense;
       default: {
-        console.log('wtf: ', displayType);
+        console.error('Unknown recipe display type: ', displayType);
         return RecipeListItem;
       }
     }

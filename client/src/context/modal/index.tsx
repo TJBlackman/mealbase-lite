@@ -19,7 +19,6 @@ const ModalContext = createContext(defaultSideMenuContext);
 // provider wrapper
 export const ModalContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, defaultSideMenuContext);
-  console.log(state);
   const value: IModalContext = {
     visible: state.visible,
     content: state.content,
