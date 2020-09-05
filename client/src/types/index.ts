@@ -93,13 +93,17 @@ export interface IAction {
   type: string | number;
   payload?: any;
 }
+
+export type RecipeSortOptions = '' | 'newest' | 'oldest' | 'most liked';
+export type RecipeFilterOptions = '' | 'liked';
 // filter recipes on browse page
-export interface IFilterRecipesState {
+export interface IRecipeFilters {
   search: string;
-  filter: 'x' | 'liked';
-  sort: 'newest' | 'oldest' | 'most liked';
+  filter: RecipeFilterOptions;
+  sort: RecipeSortOptions;
   limit: number;
   page: number;
+  cookbook: string;
 }
 
 // browse recipes page
@@ -107,7 +111,7 @@ export interface IGlobalRecipesState {
   loading: boolean;
   totalCount: number;
   browse: IRecipe[];
-  filters: IFilterRecipesState;
+  filters: IRecipeFilters;
   displayType: keyof typeof RecipeDisplayTypes;
 }
 

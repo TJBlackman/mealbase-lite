@@ -5,9 +5,12 @@ import { RecipeRecord, RecipeQuery, IRecipeLikeRecord, IRecipeLikeRequest } from
 export const queryRecipeDAL = async (query: RecipeQuery) => {
   // create filter to match documents against
   const filter = (() => {
-    const conditions: RecipeRecord = {
+    const conditions: any = {
       deleted: false
     };
+    if (query.in) {
+      conditions._id = { '$in': query.in };
+    }
     if (query._id) {
       conditions._id = query._id;
     }
@@ -22,6 +25,7 @@ export const queryRecipeDAL = async (query: RecipeQuery) => {
     }
     return conditions;
   })();
+  console.log(JSON.stringify(filter, null, 2))
 
   // set min and max limit, 1 - 100, default 20
   const queryLimit = (() => {

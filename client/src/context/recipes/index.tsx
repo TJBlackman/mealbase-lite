@@ -9,10 +9,11 @@ export const defaultRecipeContext: IRecipeContext = {
   loading: false,
   filters: {
     search: '',
-    filter: 'x',
-    sort: 'most liked',
+    filter: '',
+    sort: '',
     limit: 20,
     page: 1,
+    cookbook: '',
   },
   displayType: 'cards',
   updateRecipeContext: () => {},

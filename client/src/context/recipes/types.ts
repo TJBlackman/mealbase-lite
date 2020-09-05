@@ -1,4 +1,4 @@
-import { IGenericAction, IRecipe, RecursivePartial } from "../../types";
+import { IGenericAction, IRecipe, RecursivePartial, IRecipeFilters } from "../../types";
 
 export type RecipeDisplayType = 'cards' | 'list' | 'dense';
 
@@ -13,13 +13,7 @@ export interface IRecipeContext {
   recipes: IRecipe[];
   totalCount: number;
   loading: boolean;
-  filters: {
-    search: string;
-    filter: 'x' | 'liked';
-    sort: 'most liked' | 'newest' | 'oldest';
-    limit: number;
-    page: number;
-  };
+  filters: IRecipeFilters;
   displayType: RecipeDisplayType;
   updateRecipeContext: (x: RecursivePartial<IRecipeContext>) => void;
   replaceRecipe: (x: IRecipe) => void;

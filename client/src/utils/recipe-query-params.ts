@@ -1,9 +1,9 @@
 // take in global recipe filter state
 // return back a query parameter string
 
-import { IFilterRecipesState } from "../types";
+import { IRecipeFilters } from "../types";
 
-export const makeParamsFromState = (state: IFilterRecipesState) => {
+export const makeParamsFromState = (state: IRecipeFilters) => {
   let params = '?';
   if (state.filter) {
     params = params + `filter=${state.filter}&`;
@@ -16,6 +16,9 @@ export const makeParamsFromState = (state: IFilterRecipesState) => {
   }
   if (state.search) {
     params = params + `search=${state.search}&`;
+  }
+  if (state.cookbook) {
+    params = params + `cookbook=${state.cookbook}&`;
   }
   if (state.sort) {
     switch (state.sort) {

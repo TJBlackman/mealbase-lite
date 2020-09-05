@@ -1,25 +1,51 @@
-import React, { useContext, useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { Grid, TextField, Select, FormControl, InputLabel, MenuItem, Button, LinearProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRecipeContext } from '../context/recipes';
-import { IFilterRecipesState } from '../types';
+import { useCookbookContext } from '../context/cookbooks';
+import { useUserContext } from '../context/user';
+import { IRecipeFilters, IGenericAction, RecipeSortOptions, RecipeFilterOptions } from '../types';
 import { networkRequest } from '../utils/network-request';
 import { makeParamsFromState } from '../utils/recipe-query-params';
 import { RecipePagination } from '../components/recipe-pagination';
 import { MobileOnlyDropdown } from '../components/mobile-only-dropdown';
 import { RecipeListTypeSelect } from '../components/recipe-list-type-select';
+import { getNewState } from '../utils/copy-state';
 
 // reducer
-const SET_FORM = 'SET FORM';
-const reducer = (state: IFilterRecipesState, action: { type: string; payload: Partial<IFilterRecipesState> }) => {
+type Action =
+  | IGenericAction<'UPDATE SEARCH', string>
+  | IGenericAction<'SUBMIT FORM'>
+  | IGenericAction<'SET COOKBOOK', string>
+  | IGenericAction<'SET SORT', RecipeSortOptions>
+  | IGenericAction<'SET LIMIT', string>
+  | IGenericAction<'SET FILTER', RecipeFilterOptions>;
+
+const reducer = (state: IRecipeFilters, action: Action) => {
+  const newState = getNewState<IRecipeFilters>(state);
   switch (action.type) {
-    case SET_FORM: {
-      return {
-        ...state,
-        ...action.payload,
-      };
+    case 'UPDATE SEARCH': {
+      newState.search = action.payload;
+      return newState;
+    }
+    case 'SET COOKBOOK': {
+      newState.cookbook = action.payload;
+      return newState;
+    }
+    case 'SET SORT': {
+      newState.sort = action.payload;
+      return newState;
+    }
+    case 'SET FILTER': {
+      newState.filter = action.payload;
+      return newState;
+    }
+    case 'SET LIMIT': {
+      newState.limit = parseInt(action.payload);
+      return newState;
     }
     default: {
+      console.error(`Unknown action type:\n${JSON.stringify(action, null, 2)}`);
       return state;
     }
   }
@@ -27,6 +53,8 @@ const reducer = (state: IFilterRecipesState, action: { type: string; payload: Pa
 
 export const FilterRecipeForm = () => {
   const { updateRecipeContext, recipes, loading, filters } = useRecipeContext();
+  const { cookbooks } = useCookbookContext();
+  const { user } = useUserContext();
   const [localState, dispatch] = useReducer(reducer, filters);
 
   // recipe api call
@@ -58,14 +86,6 @@ export const FilterRecipeForm = () => {
     getRecipes();
   };
 
-  // easy reducer handler
-  const updateForm = (payload: Partial<IFilterRecipesState>) => {
-    dispatch({
-      type: SET_FORM,
-      payload,
-    });
-  };
-
   // get recipes on mount
   useEffect(() => {
     if (recipes.length === 0) {
@@ -92,7 +112,7 @@ export const FilterRecipeForm = () => {
           fullWidth
           variant='outlined'
           className={styles.searchInput}
-          onChange={(e) => updateForm({ search: e.target.value })}
+          onChange={(e) => dispatch({ type: 'UPDATE SEARCH', payload: e.target.value })}
           disabled={loading}
         />
         <Button
@@ -108,6 +128,29 @@ export const FilterRecipeForm = () => {
       </Grid>
       <MobileOnlyDropdown>
         <Grid container spacing={3}>
+          {user.email && (
+            <Grid item sm={4} xs={12}>
+              <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
+                <InputLabel id='filter-label'>My Cookbooks</InputLabel>
+                <Select
+                  fullWidth
+                  labelId='filter-label'
+                  value={localState.cookbook}
+                  onChange={(e: React.ChangeEvent<{ value: string }>) =>
+                    dispatch({ type: 'SET COOKBOOK', payload: e.target.value })
+                  }
+                  label='Filter Recipes'
+                >
+                  <MenuItem value=''>&nbsp;</MenuItem>
+                  {cookbooks.map((cb) => (
+                    <MenuItem value={cb._id} key={cb._id}>
+                      {cb.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
           <Grid item sm={4} xs={12}>
             <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
               <InputLabel id='filter-label'>Filter Recipes</InputLabel>
@@ -115,11 +158,13 @@ export const FilterRecipeForm = () => {
                 fullWidth
                 labelId='filter-label'
                 value={localState.filter}
-                // @ts-ignore
-                onChange={(e: React.ChangeEvent<InputEvent>) => updateForm({ filter: e.target.value })}
+                onChange={(e: React.ChangeEvent<{ value: RecipeFilterOptions }>) =>
+                  dispatch({ type: 'SET FILTER', payload: e.target.value })
+                }
                 label='Filter Recipes'
+                color='primary'
               >
-                <MenuItem value='x'>All Recipes</MenuItem>
+                <MenuItem value=''>&nbsp;</MenuItem>
                 <MenuItem value='liked'>Liked Recipes</MenuItem>
               </Select>
             </FormControl>
@@ -131,10 +176,12 @@ export const FilterRecipeForm = () => {
                 fullWidth
                 labelId='filter-label'
                 value={localState.sort}
-                // @ts-ignore
-                onChange={(e) => updateForm({ sort: e.target.value })}
+                onChange={(e: React.ChangeEvent<{ value: RecipeSortOptions }>) =>
+                  dispatch({ type: 'SET SORT', payload: e.target.value })
+                }
                 label='Sort Recipes'
               >
+                <MenuItem value=''>&nbsp;</MenuItem>
                 <MenuItem value='newest'>Newest</MenuItem>
                 <MenuItem value='oldest'>Oldest</MenuItem>
                 <MenuItem value='most liked'>Most Popular</MenuItem>
@@ -148,8 +195,9 @@ export const FilterRecipeForm = () => {
                 fullWidth
                 labelId='filter-label'
                 value={localState.limit}
-                // @ts-ignore
-                onChange={(e) => updateForm({ limit: e.target.value })}
+                onChange={(e: React.ChangeEvent<{ value: string }>) =>
+                  dispatch({ type: 'SET LIMIT', payload: e.target.value })
+                }
                 label='Results Per Page'
               >
                 <MenuItem value='10'>10</MenuItem>
