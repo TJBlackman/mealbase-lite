@@ -9,7 +9,8 @@ export const networkRequest = (options: INetworkRequestOptions) => {
     before = () => { },
     success = (json) => undefined,
     error = (err) => undefined,
-    after = () => { }
+    after = () => { },
+    latency = 0
   } = options;
 
 
@@ -32,15 +33,15 @@ export const networkRequest = (options: INetworkRequestOptions) => {
   })
     .then(response => response.json())
     .then((json: INetworkResponse) => {
-      // setTimeout(() => {
-      if (json.success) {
-        success(json);
-        after();
-      } else {
-        error(json);
-        after();
-      }
-      // }, 3000)
+      setTimeout(() => {
+        if (json.success) {
+          success(json);
+          after();
+        } else {
+          error(json);
+          after();
+        }
+      }, latency)
     })
     .catch(err => {
       error(err);

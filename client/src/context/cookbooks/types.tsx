@@ -5,7 +5,7 @@ export interface ICookbookContext {
   cookbooks: ICookbookRecord[];
   addCookbook: (x: ICookbookRecord) => void;
   updateCookbook: (x: ICookbookRecord) => void;
-  removeCookbook: (x: { cookbookId: string }) => void;
+  removeCookbook: (cookbookId: ICookbookRecord) => void;
   addManyCookbooks: (x: ICookbookRecord[]) => void;
 }
 
@@ -13,5 +13,5 @@ export interface ICookbookContext {
 export type CookbookAction =
   | IGenericAction<'ADD COOKBOOK', ICookbookRecord>
   | IGenericAction<'UPDATE COOKBOOK', ICookbookRecord>
-  | IGenericAction<'REMOVE COOKBOOK', { cookbookId: string }>
+  | IGenericAction<'REMOVE COOKBOOK', ICookbookRecord>
   | IGenericAction<'ADD MANY COOKBOOKS', ICookbookRecord[]>;

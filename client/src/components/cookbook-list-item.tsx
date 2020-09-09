@@ -1,7 +1,9 @@
-import React, { useReducer } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography } from '@material-ui/core';
+import { Card, CardContent, Typography, Grid, Button } from '@material-ui/core';
 import { ICookbookRecord } from '../types';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { CookbookCardMenu } from './cookbook-card-menu';
 
 // types
 interface IProps {
@@ -10,18 +12,35 @@ interface IProps {
 
 // component
 export const CookbookListItem = ({ cookbook }: IProps) => {
+  const [menuAnchor, setMenuAnchor] = useState(null);
+
   const { root, cardContent } = useStyles();
 
   return (
     <Card className={root} elevation={2}>
       <CardContent className={cardContent}>
-        <Typography gutterBottom variant='h6' component='h2'>
-          {cookbook.title}
+        <Grid container alignItems='flex-start' justify='space-between' wrap='nowrap'>
+          <Grid item>
+            <Typography variant='h6' component='h2' color='primary'>
+              {cookbook.title}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Button color='primary' size='large' onClick={(e) => setMenuAnchor(e.currentTarget)}>
+              <MoreVertIcon />
+            </Button>
+          </Grid>
+        </Grid>
+
+        <Typography variant='body1' component='p' paragraph>
+          {cookbook.recipes.length} {cookbook.recipes.length === 1 ? 'Recipe' : 'Recipes'}
         </Typography>
-        <Typography variant='body2' component='p'>
+
+        <Typography variant='body1' component='p'>
           {cookbook.description}
         </Typography>
       </CardContent>
+      {menuAnchor && <CookbookCardMenu cookbook={cookbook} onClose={() => setMenuAnchor(null)} anchor={menuAnchor} />}
     </Card>
   );
 };
@@ -40,8 +59,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   cardContent: {
-    padding: '5px 5px 5px 20px',
-    paddingBottom: '5px !important',
+    padding: '10px 20px',
     flex: '1 1 100%',
     display: 'flex',
     flexFlow: 'column nowrap',

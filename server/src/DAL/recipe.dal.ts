@@ -25,7 +25,6 @@ export const queryRecipeDAL = async (query: RecipeQuery) => {
     }
     return conditions;
   })();
-  console.log(JSON.stringify(filter, null, 2))
 
   // set min and max limit, 1 - 100, default 20
   const queryLimit = (() => {

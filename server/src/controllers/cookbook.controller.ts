@@ -75,7 +75,7 @@ router.delete('/', allowLoggedInUsersOnly, async (req, res, next) => {
     sendResponse({
       req,
       res,
-      message: 'POST cookbooks',
+      message: '',
       success: true
     })
   }

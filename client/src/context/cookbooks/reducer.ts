@@ -23,7 +23,7 @@ export const reducer = (state: ICookbookContext, action: CookbookAction): ICookb
     }
 
     case 'REMOVE COOKBOOK': {
-      newState.cookbooks = newState.cookbooks.filter(cb => cb._id !== action.payload.cookbookId);
+      newState.cookbooks = newState.cookbooks.filter(cb => cb._id !== action.payload._id);
       return newState;
     }
 

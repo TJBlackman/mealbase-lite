@@ -1,4 +1,4 @@
-import { IGenericAction, IRecipe } from "../../types"
+import { IGenericAction, IRecipe, ICookbookRecord } from "../../types"
 
 
 // register reducer actions; <type, payload>
@@ -18,6 +18,8 @@ type ModalContent =
   GenericModalContent<'ADD RECIPE TO COOKBOOK', IRecipe> |
   GenericModalContent<'DISMISS MODAL'> |
   GenericModalContent<'NEW COOKBOOK'> |
+  GenericModalContent<'DELETE COOKBOOK', ICookbookRecord> |
+  GenericModalContent<'EDIT COOKBOOK', ICookbookRecord> |
   GenericModalContent<'COMING SOON'>;
 
 // modal context

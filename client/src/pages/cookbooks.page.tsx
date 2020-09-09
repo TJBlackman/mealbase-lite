@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../layouts/app-layout';
-import { Typography, Button } from '@material-ui/core';
+import { Typography, Button, Divider } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { useModalContext } from '../context/modal';
 import { useCookbookContext } from '../context/cookbooks';
@@ -32,9 +32,9 @@ export const CookbooksPage = () => {
       >
         Add New Cookbook
       </Button>
-      <hr />
+      <Divider style={{ margin: '30px 0' }} />
       {cookbooks.map((cb) => (
-        <CookbookListItem cookbook={cb} />
+        <CookbookListItem key={cb._id} cookbook={cb} />
       ))}
     </Layout>
   );

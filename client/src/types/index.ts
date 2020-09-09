@@ -66,6 +66,7 @@ export interface INetworkRequestOptions {
   success?: (json: INetworkResponse) => void;
   error?: (error: INetworkResponse) => void;
   after?: () => void;
+  latency?: number;
 }
 
 // recipe from DB
