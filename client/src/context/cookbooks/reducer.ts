@@ -37,6 +37,12 @@ export const reducer = (state: ICookbookContext, action: CookbookAction): ICookb
       return newState;
     }
 
+    case 'ADD RECIPE TO COOKBOOK': {
+      const cookbook = newState.cookbooks.find(i => i._id === action.payload.cookbookId);
+      cookbook.recipes.push(action.payload.recipeId);
+      return newState;
+    }
+
     default: {
       console.error(`Unknown cookbook reducer type:\n${JSON.stringify(action, null, 4)}`);
       return state;

@@ -130,7 +130,13 @@ export const FilterRecipeForm = () => {
         <Grid container spacing={3}>
           {user.email && (
             <Grid item sm={4} xs={12}>
-              <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
+              <FormControl
+                variant='outlined'
+                fullWidth
+                size='small'
+                disabled={loading}
+                focused={!loading && Boolean(localState.cookbook)}
+              >
                 <InputLabel id='filter-label'>My Cookbooks</InputLabel>
                 <Select
                   fullWidth
@@ -152,7 +158,13 @@ export const FilterRecipeForm = () => {
             </Grid>
           )}
           <Grid item sm={4} xs={12}>
-            <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
+            <FormControl
+              variant='outlined'
+              fullWidth
+              size='small'
+              disabled={loading}
+              focused={!loading && Boolean(localState.filter)}
+            >
               <InputLabel id='filter-label'>Filter Recipes</InputLabel>
               <Select
                 fullWidth
@@ -170,7 +182,13 @@ export const FilterRecipeForm = () => {
             </FormControl>
           </Grid>
           <Grid item sm={4} xs={12}>
-            <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
+            <FormControl
+              variant='outlined'
+              fullWidth
+              size='small'
+              disabled={loading}
+              focused={!loading && Boolean(localState.sort)}
+            >
               <InputLabel id='filter-label'>Sort Recipes</InputLabel>
               <Select
                 fullWidth

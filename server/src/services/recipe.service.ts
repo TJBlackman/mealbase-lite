@@ -5,9 +5,11 @@ import { JWTUser, RecipeQuery, RecipeRecord } from '../types/type-definitions';
 import { getRecipeData } from './puppeteer.service';
 import { cleanUrl } from '../utils/clean-url';
 import { cleanRecipeTitle } from '../utils/clean-recipe-title';
+import { markRecipesAsLiked } from "../utils/mark-recipes-as-liked";
 
 export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
   let totalCount = 0;
+  let recipes = [];
   if (query.cookbook) {
     const cookbooks = await queryCookBooks({ _id: query.cookbook });
     query.in = cookbooks[0].recipes;
@@ -15,26 +17,12 @@ export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
   } else {
     totalCount = await countRecipesDAL(query);
   }
-  const recipes = await queryRecipeDAL(query);
+  recipes = await queryRecipeDAL(query);
   if (user) {
     // confirm which recipes this user has liked
     const recipeIds = recipes.map(i => i._id);
     const likeRecords = await getLikeRecordsByUserId({ userId: user._id, recipeIds });
-    if (likeRecords.length > 0) {
-      let i = 0;
-      const imax = likeRecords.length;
-      for (; i < imax; ++i) {
-        const likeRecord = likeRecords[i];
-        let j = 0;
-        const jmax = recipes.length;
-        for (; j < jmax; ++j) {
-          const recipe = recipes[j];
-          if (recipe._id.toString() === likeRecord.recipeId.toString()) {
-            recipe.isLiked = true;
-          }
-        }
-      }
-    }
+    recipes = markRecipesAsLiked(recipes, likeRecords);
   }
   return {
     totalCount,

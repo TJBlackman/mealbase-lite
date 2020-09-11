@@ -63,11 +63,12 @@ export const DeleteCookbookModal = ({ onClose, data }: IProps) => {
       success: (response) => {
         removeCookbook(data);
         dispatch({ type: 'SET SUCCESS', payload: 'Cookbook deleted.' });
-        setTimeout(onClose, 2000);
+        setTimeout(onClose, 4000);
       },
       error: (response) => {
         dispatch({ type: 'SET ERROR', payload: response.message });
       },
+      latency: 5000,
     });
   };
 
@@ -99,7 +100,7 @@ export const DeleteCookbookModal = ({ onClose, data }: IProps) => {
           >
             Delete Cookbook
           </Button>
-          <Button type='button' variant='contained' color='default' onClick={onClose}>
+          <Button type='button' variant='contained' color='default' onClick={onClose} disabled={localState.loading}>
             Cancel
           </Button>
         </Grid>

@@ -74,7 +74,6 @@ const reducer = (state: IState, action: Actions) => {
     }
     case 'SET SUCCESS': {
       newState.success = action.payload;
-      newState.loading = false;
       return newState;
     }
     default: {
@@ -91,7 +90,7 @@ interface IProps {
 
 export const AddRecipeToCookbookForm = ({ onSuccess, recipe }: IProps) => {
   const { user } = useUserContext();
-  const { cookbooks, addCookbook } = useCookbookContext();
+  const { cookbooks, addRecipeToCookbook } = useCookbookContext();
   const [localState, dispatch] = useReducer(reducer, defaultState);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
 
@@ -106,7 +105,10 @@ export const AddRecipeToCookbookForm = ({ onSuccess, recipe }: IProps) => {
         cookbookId: localState.cookbookId,
       },
       success: (response) => {
-        addCookbook(response.data);
+        addRecipeToCookbook({
+          cookbookId: localState.cookbookId,
+          recipeId: recipe._id,
+        });
         dispatch({ type: 'SET SUCCESS', payload: 'Recipe added to cookbook!' });
         onSuccess();
       },
@@ -136,6 +138,7 @@ export const AddRecipeToCookbookForm = ({ onSuccess, recipe }: IProps) => {
           }
           label='Select Cookbook'
           fullWidth
+          disabled={disabled}
         >
           <MenuItem value=''>
             <em>Select Cookbook</em>
@@ -173,6 +176,7 @@ export const AddRecipeToCookbookForm = ({ onSuccess, recipe }: IProps) => {
           color='default'
           onClick={() => dispatch({ type: 'RESET FORM' })}
           className={btnClass}
+          disabled={disabled}
         >
           Reset
         </Button>

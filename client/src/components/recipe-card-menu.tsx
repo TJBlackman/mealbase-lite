@@ -46,11 +46,13 @@ export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
     onClose();
   };
 
-  const addRecipeToCookbook = () =>
+  const addRecipeToCookbook = () => {
     showModal({
       modalType: 'ADD RECIPE TO COOKBOOK',
       modalData: recipe,
     });
+    onClose();
+  };
 
   return (
     <Menu anchorEl={anchor} keepMounted open={true} onClose={onClose}>

@@ -9,6 +9,7 @@ const defaultContext: ICookbookContext = {
   removeCookbook: () => {},
   updateCookbook: () => {},
   addManyCookbooks: () => {},
+  addRecipeToCookbook: () => {},
 };
 
 // create context
@@ -24,6 +25,7 @@ export const CookbookContextProvider = ({ children }) => {
     removeCookbook: (payload) => dispatch({ type: 'REMOVE COOKBOOK', payload }),
     updateCookbook: (payload) => dispatch({ type: 'UPDATE COOKBOOK', payload }),
     addManyCookbooks: (payload) => dispatch({ type: 'ADD MANY COOKBOOKS', payload }),
+    addRecipeToCookbook: (payload) => dispatch({ type: 'ADD RECIPE TO COOKBOOK', payload }),
   };
 
   return <CookbookContext.Provider value={value}>{children}</CookbookContext.Provider>;
