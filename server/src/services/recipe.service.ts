@@ -1,4 +1,4 @@
-import { queryRecipeDAL, saveRecipeDAL, editRecipeDAL, getLikeRecordsByUserId, likeRecipeDAL, unLikedRecipeDAL, getLikeRecordsByRecipeId, countRecipesDAL } from '../DAL/recipe.dal';
+import { queryRecipeDAL, saveRecipeDAL, editRecipeDAL, getLikeRecordsByUserIdAndRecipeIds, likeRecipeDAL, unLikedRecipeDAL, getLikeRecordsByRecipeId, countRecipesDAL, getUserLikedRecipeRecords } from '../DAL/recipe.dal';
 import { userHasRole } from '../utils/validators'
 import { queryCookBooks } from "../DAL/cookbook.dal";
 import { JWTUser, RecipeQuery, RecipeRecord } from '../types/type-definitions';
@@ -17,11 +17,28 @@ export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
   } else {
     totalCount = await countRecipesDAL(query);
   }
+  if (query.filter) {
+    switch (query.filter) {
+      case 'liked recipes': {
+        if (!user) {
+          break;
+        }
+        const likedRecipes = await getUserLikedRecipeRecords(user._id);
+        const recipeIds = likedRecipes.map(item => item.recipeId.toString());
+        if (query.in) {
+          query.in = query.in.filter(id => recipeIds.includes(id.toString()));
+        } else {
+          query.in = recipeIds;
+        }
+      }
+      default: { }
+    }
+  }
   recipes = await queryRecipeDAL(query);
   if (user) {
     // confirm which recipes this user has liked
     const recipeIds = recipes.map(i => i._id);
-    const likeRecords = await getLikeRecordsByUserId({ userId: user._id, recipeIds });
+    const likeRecords = await getLikeRecordsByUserIdAndRecipeIds({ userId: user._id, recipeIds });
     recipes = markRecipesAsLiked(recipes, likeRecords);
   }
   return {
@@ -80,7 +97,7 @@ export const likeRecipeService = async (data: { recipeId: string; }, user: JWTUs
   if (existingRecipe.length < 1) {
     throw Error('Recipe does not exist.');
   }
-  const alreadyLiked = await getLikeRecordsByUserId({ recipeIds: [data.recipeId], userId: user._id });
+  const alreadyLiked = await getLikeRecordsByUserIdAndRecipeIds({ recipeIds: [data.recipeId], userId: user._id });
   if (alreadyLiked.length > 0) {
     return {
       ...existingRecipe[0],
@@ -103,7 +120,7 @@ export const unLikedRecipeService = async (data: { recipeId: string; }, user: JW
   if (existingRecipe.length < 1) {
     throw Error('Recipe does not exist.');
   }
-  const recipeIsLiked = await getLikeRecordsByUserId({ recipeIds: [data.recipeId], userId: user._id });
+  const recipeIsLiked = await getLikeRecordsByUserIdAndRecipeIds({ recipeIds: [data.recipeId], userId: user._id });
   if (recipeIsLiked.length < 1) {
     return existingRecipe[0];
   }

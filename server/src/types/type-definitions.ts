@@ -78,6 +78,7 @@ export interface RecipeQuery extends BasicQueryOptions {
   url?: string;
   in?: string[];
   cookbook?: string;
+  filter?: 'liked recipes';
 }
 export interface CookbookQuery extends BasicQueryOptions {
   userId?: string;

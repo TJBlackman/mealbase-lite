@@ -145,9 +145,11 @@ export const FilterRecipeForm = () => {
                   onChange={(e: React.ChangeEvent<{ value: string }>) =>
                     dispatch({ type: 'SET COOKBOOK', payload: e.target.value })
                   }
-                  label='Filter Recipes'
+                  label='My Cookbooks'
                 >
-                  <MenuItem value=''>&nbsp;</MenuItem>
+                  <MenuItem value=''>
+                    <i>Unselect Cookbook</i>
+                  </MenuItem>
                   {cookbooks.map((cb) => (
                     <MenuItem value={cb._id} key={cb._id}>
                       {cb.title}
@@ -176,8 +178,10 @@ export const FilterRecipeForm = () => {
                 label='Filter Recipes'
                 color='primary'
               >
-                <MenuItem value=''>&nbsp;</MenuItem>
-                <MenuItem value='liked'>Liked Recipes</MenuItem>
+                <MenuItem value=''>
+                  <i>No Filters</i>
+                </MenuItem>
+                <MenuItem value='liked recipes'>Liked Recipes</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -189,17 +193,19 @@ export const FilterRecipeForm = () => {
               disabled={loading}
               focused={!loading && Boolean(localState.sort)}
             >
-              <InputLabel id='filter-label'>Sort Recipes</InputLabel>
+              <InputLabel id='sort-label'>Sort Recipes</InputLabel>
               <Select
                 fullWidth
-                labelId='filter-label'
+                labelId='sort-label'
                 value={localState.sort}
                 onChange={(e: React.ChangeEvent<{ value: RecipeSortOptions }>) =>
                   dispatch({ type: 'SET SORT', payload: e.target.value })
                 }
                 label='Sort Recipes'
               >
-                <MenuItem value=''>&nbsp;</MenuItem>
+                <MenuItem value=''>
+                  <i>Default Sort</i>
+                </MenuItem>
                 <MenuItem value='newest'>Newest</MenuItem>
                 <MenuItem value='oldest'>Oldest</MenuItem>
                 <MenuItem value='most liked'>Most Popular</MenuItem>

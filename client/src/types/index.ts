@@ -96,7 +96,7 @@ export interface IAction {
 }
 
 export type RecipeSortOptions = '' | 'newest' | 'oldest' | 'most liked';
-export type RecipeFilterOptions = '' | 'liked';
+export type RecipeFilterOptions = '' | 'liked recipes';
 // filter recipes on browse page
 export interface IRecipeFilters {
   search: string;
