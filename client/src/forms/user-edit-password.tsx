@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { IGenericAction } from '../types';
 import { getNewState } from '../utils/copy-state';
 import { makeStyles } from '@material-ui/styles';
@@ -6,7 +6,6 @@ import { TextField, Button, Grid } from '@material-ui/core';
 import { networkRequest } from '../utils/network-request';
 import { Alert } from '@material-ui/lab';
 import { useUserContext } from '../context/user';
-import { useCookbookContext } from '../context/cookbooks';
 import { FormFeedback } from '../components/form-feedback';
 
 // styles
@@ -31,15 +30,17 @@ const useStyles = makeStyles({
 });
 
 interface IState {
-  title: string;
-  description: string;
+  password: string;
+  newPassword: string;
+  confirmPassword: string;
   loading: boolean;
   success: string | null;
   error: string | null;
 }
 const defaultState: IState = {
-  title: '',
-  description: '',
+  password: '',
+  newPassword: '',
+  confirmPassword: '',
   loading: false,
   success: null,
   error: null,
@@ -49,10 +50,11 @@ type Actions =
   | IGenericAction<'SET LOADING', boolean>
   | IGenericAction<'SET ERROR', string | null>
   | IGenericAction<'SET SUCCESS', string | null>
-  | IGenericAction<'SET TITLE', string>
-  | IGenericAction<'RESET FORM'>
-  | IGenericAction<'SUBMIT FORM'>
-  | IGenericAction<'SET DESCRIPTION', string>;
+  | IGenericAction<'SET PASSWORD', string>
+  | IGenericAction<'SET NEW PASSWORD', string>
+  | IGenericAction<'SET CONFIRM PASSWORD', string>
+  | IGenericAction<'RESET FORM', Partial<IState>>
+  | IGenericAction<'SUBMIT FORM'>;
 
 const reducer = (state: IState, action: Actions) => {
   const newState = getNewState<IState>(state);
@@ -67,16 +69,23 @@ const reducer = (state: IState, action: Actions) => {
       newState.loading = action.payload;
       return newState;
     }
-    case 'SET TITLE': {
-      newState.title = action.payload;
+    case 'SET PASSWORD': {
+      newState.password = action.payload;
       return newState;
     }
-    case 'SET DESCRIPTION': {
-      newState.description = action.payload;
+    case 'SET NEW PASSWORD': {
+      newState.newPassword = action.payload;
+      return newState;
+    }
+    case 'SET CONFIRM PASSWORD': {
+      newState.confirmPassword = action.payload;
       return newState;
     }
     case 'RESET FORM': {
-      return defaultState;
+      return {
+        ...defaultState,
+        ...action.payload,
+      };
     }
     case 'SET ERROR': {
       newState.error = action.payload;
@@ -95,30 +104,46 @@ const reducer = (state: IState, action: Actions) => {
   }
 };
 
+const mismatchError = "New passwords don't match.";
+
 interface IProps {
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
-export const NewCookbookForm = ({ onSuccess }: IProps) => {
-  const { user } = useUserContext();
-  const { addCookbook } = useCookbookContext();
+export const EditPasswordForm = ({}: IProps) => {
+  const { user, updateUserData } = useUserContext();
   const [localState, dispatch] = useReducer(reducer, defaultState);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
 
+  useEffect(() => {
+    // clear mismatch error when they match
+    const { error, newPassword, confirmPassword } = localState;
+    if (error === mismatchError) {
+      if (newPassword === confirmPassword) {
+        dispatch({ type: 'SET ERROR', payload: '' });
+      }
+    }
+  }, [localState]);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (localState.newPassword !== localState.confirmPassword) {
+      dispatch({ type: 'SET ERROR', payload: mismatchError });
+      return;
+    }
     dispatch({ type: 'SUBMIT FORM' });
     networkRequest({
-      url: '/api/v1/cookbooks',
-      method: 'POST',
+      url: '/api/v1/users',
+      method: 'PUT',
       body: {
-        title: localState.title,
-        description: localState.description,
+        password: localState.password,
+        newPassword: localState.newPassword,
+        _id: user._id,
       },
       success: (response) => {
-        addCookbook(response.data);
-        dispatch({ type: 'SET SUCCESS', payload: 'Cookbook successfully created!' });
-        onSuccess();
+        updateUserData(response.data);
+        dispatch({ type: 'SET SUCCESS', payload: 'Password updated successfully!' });
+        setTimeout(() => dispatch({ type: 'RESET FORM' }), 3000);
       },
       error: (response) => {
         dispatch({ type: 'SET ERROR', payload: response.message });
@@ -133,14 +158,15 @@ export const NewCookbookForm = ({ onSuccess }: IProps) => {
       <TextField
         required
         fullWidth
+        type='password'
         className={textFieldClass}
-        label='Cookbook Title'
+        label='Current Password'
         variant='outlined'
-        value={localState.title}
-        disabled={localState.loading}
+        value={localState.password}
+        disabled={disabled}
         onChange={(e) =>
           dispatch({
-            type: 'SET TITLE',
+            type: 'SET PASSWORD',
             payload: e.target.value,
           })
         }
@@ -148,16 +174,31 @@ export const NewCookbookForm = ({ onSuccess }: IProps) => {
       <TextField
         required
         fullWidth
-        multiline
-        rows={3}
+        type='password'
         className={textFieldClass}
-        label='Cookbook Description'
+        label='New Password'
         variant='outlined'
-        value={localState.description}
-        disabled={localState.loading}
+        value={localState.newPassword}
+        disabled={disabled}
         onChange={(e) =>
           dispatch({
-            type: 'SET DESCRIPTION',
+            type: 'SET NEW PASSWORD',
+            payload: e.target.value,
+          })
+        }
+      />
+      <TextField
+        required
+        fullWidth
+        type='password'
+        className={textFieldClass}
+        label='Confirm Password'
+        variant='outlined'
+        value={localState.confirmPassword}
+        disabled={disabled}
+        onChange={(e) =>
+          dispatch({
+            type: 'SET CONFIRM PASSWORD',
             payload: e.target.value,
           })
         }
@@ -169,7 +210,7 @@ export const NewCookbookForm = ({ onSuccess }: IProps) => {
       />
       {!user.email && (
         <Alert severity='warning' className={errorClass} elevation={2}>
-          You must have an account to create cookbooks.
+          You must be signed in to update your email address.
         </Alert>
       )}
       <Grid container style={{ flexFlow: 'row-reverse' }}>

@@ -4,33 +4,30 @@ import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
 import { useUserContext } from '../context/user';
-import { IRecipe } from '../types';
+import { IRecipe, IGenericAction } from '../types';
+import { getNewState } from '../utils/copy-state';
+import { FormFeedback } from '../components/form-feedback';
 
-interface ILoginFormValues {
+interface ILocalState {
   url: string;
   loading: boolean;
   error: string | null;
   success: string | null;
 }
-interface ReducerAction {
-  type: number;
-  payload?: string;
-}
-enum ActionType {
-  UPDATE_URL,
-  LOADING_FALSE,
-  LOADING_TRUE,
-  RESET,
-  SET_ERROR,
-  CLEAR_ERROR,
-  SHOW_SUCCESS,
-}
+
+type Action =
+  | IGenericAction<'SET URL', string>
+  | IGenericAction<'RESET FORM'>
+  | IGenericAction<'SUBMIT FORM'>
+  | IGenericAction<'SET ERROR', string>
+  | IGenericAction<'SET SUCCESS', string>;
+
 interface ComponentProps {
   onSuccess?: (x: IRecipe) => void;
 }
 
 // form default values
-const defaultValues: ILoginFormValues = {
+const defaultState: ILocalState = {
   url: '',
   loading: false,
   error: null,
@@ -38,69 +35,58 @@ const defaultValues: ILoginFormValues = {
 };
 
 // form state reducer
-const reducer = (state: ILoginFormValues, action: ReducerAction) => {
-  const newState: ILoginFormValues = { ...state };
+const reducer = (state: ILocalState, action: Action) => {
+  const newState = getNewState<ILocalState>(state);
   switch (action.type) {
-    case ActionType.UPDATE_URL: {
-      newState.url = action.payload;
-      break;
+    case 'RESET FORM': {
+      return defaultState;
     }
-    case ActionType.LOADING_FALSE: {
-      newState.loading = false;
-      break;
-    }
-    case ActionType.LOADING_TRUE: {
+    case 'SUBMIT FORM': {
       newState.loading = true;
-      break;
+      return newState;
     }
-    case ActionType.SET_ERROR: {
+    case 'SET URL': {
+      newState.url = action.payload;
+      return newState;
+    }
+    case 'SET ERROR': {
       newState.error = action.payload;
-      break;
+      newState.loading = false;
+      return newState;
     }
-    case ActionType.CLEAR_ERROR: {
-      newState.error = null;
-      break;
-    }
-    case ActionType.SHOW_SUCCESS: {
-      newState.success = 'Recipe Found!';
-      break;
-    }
-    case ActionType.RESET: {
-      return { ...defaultValues };
+    case 'SET SUCCESS': {
+      newState.success = action.payload;
+      return newState;
     }
     default: {
-      console.error(`Unknown action type: ${action.type}`);
+      console.error(`Unknown action type:\n${JSON.stringify(action, null, 4)}`);
+      return state;
     }
   }
-  return newState;
 };
 
 // component
 export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
   const { user } = useUserContext();
-  const [localState, dispatch] = useReducer(reducer, defaultValues);
+  const [localState, dispatch] = useReducer(reducer, defaultState);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
+    dispatch({ type: 'SUBMIT FORM' });
     networkRequest({
       url: '/api/v1/recipes',
       method: 'POST',
       body: {
         url: localState.url,
       },
-      before: () => {
-        dispatch({ type: ActionType.LOADING_TRUE });
-        dispatch({ type: ActionType.CLEAR_ERROR });
-      },
       success: (json) => {
-        dispatch({ type: ActionType.SHOW_SUCCESS });
+        dispatch({ type: 'SET SUCCESS', payload: 'Recipe Found!' });
         setTimeout(() => {
           onSuccess(json.data);
         }, 1000);
       },
       error: (err) => {
-        dispatch({ type: ActionType.LOADING_FALSE });
-        dispatch({ type: ActionType.SET_ERROR, payload: err.message });
+        dispatch({ type: 'SET ERROR', payload: err.message });
       },
     });
   };
@@ -118,26 +104,16 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
         disabled={disabled}
         onChange={(e) =>
           dispatch({
-            type: ActionType.UPDATE_URL,
+            type: 'SET URL',
             payload: e.target.value,
           })
         }
       />
-      {localState.error && (
-        <Alert
-          severity='error'
-          className={errorClass}
-          elevation={2}
-          onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
-        >
-          {localState.error}
-        </Alert>
-      )}
-      {localState.success && (
-        <Alert severity='success' className={errorClass} elevation={2}>
-          {localState.success}
-        </Alert>
-      )}
+      <FormFeedback
+        success={localState.success}
+        error={localState.error}
+        clearError={() => dispatch({ type: 'SET ERROR', payload: '' })}
+      />
       {!user.email && (
         <Alert severity='warning' className={errorClass} elevation={2}>
           You must have an account to add new recipes.
@@ -147,7 +123,7 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
         variant='contained'
         className={btnClass}
         disabled={disabled}
-        onClick={() => dispatch({ type: ActionType.RESET })}
+        onClick={() => dispatch({ type: 'RESET FORM' })}
       >
         Reset
       </Button>

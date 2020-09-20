@@ -1,112 +1,111 @@
-import React, { useReducer, useContext } from 'react';
+import React, { useReducer } from 'react';
 import { TextField, Button, CircularProgress } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
 import { useUserContext } from '../context/user';
+import { IGenericAction } from '../types';
+import { getNewState } from '../utils/copy-state';
+import { FormFeedback } from '../components/form-feedback';
 
-interface ILoginFormValues {
+interface ILocalState {
   email: string;
   password: string;
+  confirmPw: string;
   loading: boolean;
   error: string | null;
   success: string | null;
 }
-interface ReducerAction {
-  type: number;
-  payload?: string;
-}
-enum ActionType {
-  UPDATE_EMAIL,
-  UPDATE_PASSWORD,
-  LOADING_FALSE,
-  LOADING_TRUE,
-  RESET,
-  SET_ERROR,
-  CLEAR_ERROR,
-  SHOW_SUCCESS,
-}
+type Action =
+  | IGenericAction<'SET EMAIL', string>
+  | IGenericAction<'SET PASSWORD', string>
+  | IGenericAction<'SET CONFIRM PASSWORD', string>
+  | IGenericAction<'SET ERROR', string>
+  | IGenericAction<'SET SUCCESS', string>
+  | IGenericAction<'SUBMIT FORM'>
+  | IGenericAction<'RESET FORM'>;
+
 interface ComponentProps {
   onSuccess?: () => void;
 }
-
 // form default values
-const defaultValues: ILoginFormValues = {
+const defaultState: ILocalState = {
   email: '',
   password: '',
+  confirmPw: '',
   loading: false,
   error: null,
   success: null,
 };
 
 // form state reducer
-const reducer = (state: ILoginFormValues, action: ReducerAction) => {
-  const newState: ILoginFormValues = { ...state };
+const reducer = (state: ILocalState, action: Action) => {
+  const newState = getNewState<ILocalState>(state);
   switch (action.type) {
-    case ActionType.UPDATE_EMAIL: {
+    case 'SET EMAIL': {
       newState.email = action.payload;
-      break;
+      return newState;
     }
-    case ActionType.UPDATE_PASSWORD: {
+    case 'SET PASSWORD': {
       newState.password = action.payload;
-      break;
+      return newState;
     }
-    case ActionType.LOADING_FALSE: {
-      newState.loading = false;
-      break;
+    case 'SET CONFIRM PASSWORD': {
+      newState.confirmPw = action.payload;
+      return newState;
     }
-    case ActionType.LOADING_TRUE: {
-      newState.loading = true;
-      break;
+    case 'SET SUCCESS': {
+      newState.success = action.payload;
+      return newState;
     }
-    case ActionType.SET_ERROR: {
+    case 'SET ERROR': {
       newState.error = action.payload;
-      break;
+      newState.loading = false;
+      return newState;
     }
-    case ActionType.CLEAR_ERROR: {
-      newState.error = null;
-      break;
+    case 'SET SUCCESS': {
+      newState.success = action.payload;
+      return newState;
     }
-    case ActionType.SHOW_SUCCESS: {
-      newState.success = 'Login Successful!';
-      break;
+    case 'RESET FORM': {
+      return defaultState;
     }
-    case ActionType.RESET: {
-      return { ...defaultValues };
+    case 'SUBMIT FORM': {
+      newState.loading = true;
+      return newState;
     }
     default: {
-      console.error(`Unknown action type: ${action.type}`);
+      console.error(`Unknown action type:\n${JSON.stringify(action, null, 4)}`);
+      return state;
     }
   }
-  return newState;
 };
 
 // component
-export const LoginForm = ({ onSuccess }: ComponentProps) => {
+export const RegisterForm = ({ onSuccess }: ComponentProps) => {
   const { updateUserData } = useUserContext();
-  const [localState, dispatch] = useReducer(reducer, defaultValues);
+  const [localState, dispatch] = useReducer(reducer, defaultState);
   const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
+    if (localState.password !== localState.confirmPw) {
+      dispatch({ type: 'SET ERROR', payload: 'Passwords do not match.' });
+      return;
+    }
+    dispatch({ type: 'SUBMIT FORM' });
     networkRequest({
-      url: '/api/v1/auth/local',
+      url: '/api/v1/users',
       method: 'POST',
       body: {
         email: localState.email,
         password: localState.password,
       },
-      before: () => {
-        dispatch({ type: ActionType.LOADING_TRUE });
-        dispatch({ type: ActionType.CLEAR_ERROR });
-      },
       success: (json) => {
         updateUserData(json.data);
-        dispatch({ type: ActionType.SHOW_SUCCESS });
+        dispatch({ type: 'SET SUCCESS', payload: 'Registration Successful!' });
         setTimeout(onSuccess, 1000);
       },
       error: (err) => {
-        dispatch({ type: ActionType.LOADING_FALSE });
-        dispatch({ type: ActionType.SET_ERROR, payload: err.message });
+        dispatch({ type: 'SET ERROR', payload: err.message });
       },
     });
   };
@@ -118,11 +117,11 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         fullWidth
         label='Email Address'
         variant='outlined'
+        type='email'
         value={localState.email}
-        disabled={localState.loading}
         onChange={(e) =>
           dispatch({
-            type: ActionType.UPDATE_EMAIL,
+            type: 'SET EMAIL',
             payload: e.target.value,
           })
         }
@@ -135,34 +134,38 @@ export const LoginForm = ({ onSuccess }: ComponentProps) => {
         variant='outlined'
         type='password'
         value={localState.password}
-        disabled={localState.loading}
         onChange={(e) =>
           dispatch({
-            type: ActionType.UPDATE_PASSWORD,
+            type: 'SET PASSWORD',
             payload: e.target.value,
           })
         }
       />
-      {localState.error && (
-        <Alert
-          severity='error'
-          className={errorClass}
-          elevation={2}
-          onClose={() => dispatch({ type: ActionType.CLEAR_ERROR })}
-        >
-          {localState.error}
-        </Alert>
-      )}
-      {localState.success && (
-        <Alert severity='success' className={errorClass} elevation={2}>
-          {localState.success}
-        </Alert>
-      )}
+      <TextField
+        className={textFieldClass}
+        required
+        fullWidth
+        label='Confirm Password'
+        variant='outlined'
+        type='password'
+        value={localState.confirmPw}
+        onChange={(e) =>
+          dispatch({
+            type: 'SET CONFIRM PASSWORD',
+            payload: e.target.value,
+          })
+        }
+      />
+      <FormFeedback
+        success={localState.success}
+        error={localState.error}
+        clearError={() => dispatch({ type: 'SET ERROR', payload: '' })}
+      />
       <Button
         variant='contained'
         className={btnClass}
+        onClick={() => dispatch({ type: 'RESET FORM' })}
         disabled={localState.loading}
-        onClick={() => dispatch({ type: ActionType.RESET })}
       >
         Reset
       </Button>

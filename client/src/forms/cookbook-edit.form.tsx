@@ -4,8 +4,8 @@ import { getNewState } from '../utils/copy-state';
 import { makeStyles } from '@material-ui/styles';
 import { TextField, Button, Grid } from '@material-ui/core';
 import { networkRequest } from '../utils/network-request';
-import { Alert } from '@material-ui/lab';
 import { useCookbookContext } from '../context/cookbooks';
+import { FormFeedback } from '../components/form-feedback';
 
 // styles
 const useStyles = makeStyles({
@@ -156,17 +156,11 @@ export const EditCookbookForm = ({ onSuccess, cookbook }: IProps) => {
           })
         }
       />
-
-      {localState.success && (
-        <Alert severity='success' className={errorClass} elevation={2}>
-          {localState.success}
-        </Alert>
-      )}
-      {localState.error && (
-        <Alert severity='error' className={errorClass} elevation={2}>
-          {localState.error}
-        </Alert>
-      )}
+      <FormFeedback
+        success={localState.success}
+        error={localState.error}
+        clearError={() => dispatch({ type: 'SET ERROR', payload: '' })}
+      />
       <Grid container style={{ flexFlow: 'row-reverse' }}>
         <Button type='submit' variant='contained' color='primary' className={btnClass} disabled={disabled}>
           Submit

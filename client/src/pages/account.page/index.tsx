@@ -2,8 +2,8 @@ import React from 'react';
 import Layout from '../../layouts/app-layout';
 import { Typography } from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
-import { EditEmailAddressForm } from '../../forms/edit-user-email.form';
-import { EditPasswordForm } from '../../forms/edit-user-password.form';
+import { EditEmailAddressForm } from '../../forms/user-edit-email.form';
+import { EditPasswordForm } from '../../forms/user-edit-password';
 
 export const AccountPage = () => {
   const location = useLocation();

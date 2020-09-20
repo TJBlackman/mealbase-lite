@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Layout from '../layouts/app-layout';
 import { Typography, Grid } from '@material-ui/core';
-import { LoginForm } from '../forms/login.form';
+import { LoginForm } from '../forms/user-login.form';
 
 export const LoginPage = () => {
   const history = useHistory();
