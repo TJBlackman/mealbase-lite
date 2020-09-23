@@ -8,7 +8,7 @@ function AppLayout({ children }) {
     <div>
       <Header />
       <SideMenu />
-      <Container style={{ marginTop: '40px' }}>{children}</Container>
+      <Container style={{ margin: '40px auto 100px auto' }}>{children}</Container>
     </div>
   );
 }

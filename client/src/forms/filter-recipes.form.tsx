@@ -7,9 +7,7 @@ import { useUserContext } from '../context/user';
 import { IRecipeFilters, IGenericAction, RecipeSortOptions, RecipeFilterOptions } from '../types';
 import { networkRequest } from '../utils/network-request';
 import { makeParamsFromState } from '../utils/recipe-query-params';
-import { RecipePagination } from '../components/recipe-pagination';
 import { MobileOnlyDropdown } from '../components/mobile-only-dropdown';
-import { RecipeListTypeSelect } from '../components/recipe-list-type-select';
 import { getNewState } from '../utils/copy-state';
 
 // reducer
@@ -98,9 +96,19 @@ export const FilterRecipeForm = () => {
 
   // localState has been updated, does not match globalState
   const noUpdatedFilters = (() => {
-    const global = JSON.stringify(filters);
-    const local = JSON.stringify(localState);
-    return local === global;
+    if (filters.search !== localState.search) {
+      return false;
+    }
+    if (filters.filter !== localState.filter) {
+      return false;
+    }
+    if (filters.cookbook !== localState.cookbook) {
+      return false;
+    }
+    if (filters.sort !== localState.sort) {
+      return false;
+    }
+    return true;
   })();
 
   return (
@@ -212,35 +220,8 @@ export const FilterRecipeForm = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item sm={4} xs={12}>
-            <FormControl variant='outlined' fullWidth size='small' disabled={loading}>
-              <InputLabel id='filter-label'>Results Per Page</InputLabel>
-              <Select
-                fullWidth
-                labelId='filter-label'
-                value={localState.limit}
-                onChange={(e: React.ChangeEvent<{ value: string }>) =>
-                  dispatch({ type: 'SET LIMIT', payload: e.target.value })
-                }
-                label='Results Per Page'
-              >
-                <MenuItem value='10'>10</MenuItem>
-                <MenuItem value='20'>20</MenuItem>
-                <MenuItem value='50'>50</MenuItem>
-                <MenuItem value='100'>100</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
         </Grid>
       </MobileOnlyDropdown>
-      <Grid container spacing={3} alignItems='center' justify='space-between'>
-        <Grid item xs={12} sm={6}>
-          <RecipeListTypeSelect />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <RecipePagination />
-        </Grid>
-      </Grid>
       <div className={styles.loading}>{loading && <LinearProgress />}</div>
     </form>
   );

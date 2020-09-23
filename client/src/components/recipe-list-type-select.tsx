@@ -12,7 +12,7 @@ export const RecipeListTypeSelect = () => {
   const classes = useStyles();
 
   return (
-    <FormControl variant='outlined' className={classes.formControl} size='small' fullWidth>
+    <FormControl variant='outlined' className={classes.formControl} size='small'>
       <InputLabel>Display Type</InputLabel>
       <Select
         value={displayType}

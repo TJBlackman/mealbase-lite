@@ -30,8 +30,11 @@ export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
         } else {
           query.in = recipeIds;
         }
+        break;
       }
-      default: { }
+      default: {
+        console.log('Unknown filter type: ' + query.filter);
+      }
     }
   }
   recipes = await queryRecipeDAL(query);
