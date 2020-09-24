@@ -151,7 +151,9 @@ export const EditPasswordForm = ({}: IProps) => {
     });
   };
 
-  const disabled = !user.email || localState.loading;
+  const hasEmptyFields = !localState.password || !localState.newPassword || !localState.confirmPassword;
+  const fieldsDisabled = !user.email || localState.loading;
+  const submitDisabled = fieldsDisabled || hasEmptyFields;
 
   return (
     <form onSubmit={handleSubmit} className={formClass}>
@@ -163,7 +165,7 @@ export const EditPasswordForm = ({}: IProps) => {
         label='Current Password'
         variant='outlined'
         value={localState.password}
-        disabled={disabled}
+        disabled={fieldsDisabled}
         onChange={(e) =>
           dispatch({
             type: 'SET PASSWORD',
@@ -179,7 +181,7 @@ export const EditPasswordForm = ({}: IProps) => {
         label='New Password'
         variant='outlined'
         value={localState.newPassword}
-        disabled={disabled}
+        disabled={fieldsDisabled}
         onChange={(e) =>
           dispatch({
             type: 'SET NEW PASSWORD',
@@ -195,7 +197,7 @@ export const EditPasswordForm = ({}: IProps) => {
         label='Confirm Password'
         variant='outlined'
         value={localState.confirmPassword}
-        disabled={disabled}
+        disabled={fieldsDisabled}
         onChange={(e) =>
           dispatch({
             type: 'SET CONFIRM PASSWORD',
@@ -214,7 +216,7 @@ export const EditPasswordForm = ({}: IProps) => {
         </Alert>
       )}
       <Grid container style={{ flexFlow: 'row-reverse' }}>
-        <Button type='submit' variant='contained' color='primary' className={btnClass} disabled={disabled}>
+        <Button type='submit' variant='contained' color='primary' className={btnClass} disabled={submitDisabled}>
           Submit
         </Button>
         <Button

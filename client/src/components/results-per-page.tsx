@@ -3,9 +3,16 @@ import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { useRecipeContext } from '../context/recipes';
 import { networkRequest } from '../utils/network-request';
 import { makeParamsFromState } from '../utils/recipe-query-params';
+import { makeStyles } from '@material-ui/styles';
 
-export const ResultsPerPage = () => {
+interface IProps {
+  fullWidth?: boolean;
+}
+
+export const ResultsPerPage = ({ fullWidth = false }: IProps) => {
   const { updateRecipeContext, recipes, loading, filters } = useRecipeContext();
+  const { root } = useStyles();
+
   const setResultsPerPage = (e: ChangeEvent<{ value: number }>) => {
     updateRecipeContext({ loading: true, filters: { limit: e.target.value } });
     const params = makeParamsFromState({
@@ -29,15 +36,9 @@ export const ResultsPerPage = () => {
   };
 
   return (
-    <FormControl variant='outlined' fullWidth size='small' disabled={loading} style={{ width: '150px' }}>
-      <InputLabel id='filter-label'>Results Per Page</InputLabel>
-      <Select
-        fullWidth
-        labelId='filter-label'
-        value={filters.limit}
-        onChange={setResultsPerPage}
-        label='Results Per Page'
-      >
+    <FormControl variant='outlined' size='small' disabled={loading} fullWidth={fullWidth}>
+      <InputLabel id='filter-label'>Results</InputLabel>
+      <Select fullWidth labelId='filter-label' value={filters.limit} onChange={setResultsPerPage} label='Results'>
         <MenuItem value='10'>10</MenuItem>
         <MenuItem value='20'>20</MenuItem>
         <MenuItem value='50'>50</MenuItem>
@@ -46,3 +47,9 @@ export const ResultsPerPage = () => {
     </FormControl>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    minWidth: '80px',
+  },
+}));

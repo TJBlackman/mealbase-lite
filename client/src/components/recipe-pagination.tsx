@@ -7,6 +7,10 @@ import { useRecipeContext } from '../context/recipes';
 
 export const RecipePagination = () => {
   const { loading, filters, updateRecipeContext, totalCount } = useRecipeContext();
+  if (loading) {
+    return null;
+  }
+
   const pageCount = Math.ceil(totalCount / filters.limit);
 
   const setPage = (e: ChangeEvent<unknown>, num: number) => {

@@ -7,12 +7,16 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { RecipeDisplayType } from '../context/recipes/types';
 
-export const RecipeListTypeSelect = () => {
+interface IProps {
+  fullWidth?: boolean;
+}
+
+export const RecipeListTypeSelect = ({ fullWidth = false }: IProps) => {
   const { displayType, setRecipeDisplayType } = useRecipeContext();
   const classes = useStyles();
 
   return (
-    <FormControl variant='outlined' className={classes.formControl} size='small'>
+    <FormControl variant='outlined' className={classes.formControl} size='small' fullWidth={fullWidth}>
       <InputLabel>Display Type</InputLabel>
       <Select
         value={displayType}

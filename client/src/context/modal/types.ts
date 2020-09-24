@@ -16,6 +16,7 @@ type ModalContent =
   GenericModalContent<'', null> |
   GenericModalContent<'DELETE RECIPE', IRecipe> |
   GenericModalContent<'ADD RECIPE TO COOKBOOK', IRecipe> |
+  GenericModalContent<'REMOVE FROM COOKBOOK', { recipe: IRecipe; cookbookId: string }> |
   GenericModalContent<'DISMISS MODAL'> |
   GenericModalContent<'NEW COOKBOOK'> |
   GenericModalContent<'DELETE COOKBOOK', ICookbookRecord> |

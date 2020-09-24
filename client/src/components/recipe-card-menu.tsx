@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IRecipe, IUserData, ModalTypes } from '../types';
+import { IRecipe, IUserData } from '../types';
 import { Menu, MenuItem, ListItemIcon, Typography } from '@material-ui/core';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 import DoneIcon from '@material-ui/icons/Done';
@@ -9,6 +9,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import { copyTextToClipboard } from '../utils/copy-to-clipboard';
 import { useModalContext } from '../context/modal';
+import { useRecipeContext } from '../context/recipes';
 
 interface IProps {
   recipe: IRecipe;
@@ -19,6 +20,7 @@ interface IProps {
 
 export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
   const { showModal } = useModalContext();
+  const { filters } = useRecipeContext();
   const [copied, setCopied] = useState(false);
   const copyLink = () => {
     copyTextToClipboard(recipe.url);
@@ -30,6 +32,7 @@ export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
 
   const userIsLoggedIn = user.email !== '';
   const userIsAdmin = userIsLoggedIn && user.roles.includes('admin');
+  const cookbookSelected = filters.cookbook !== '';
 
   const deleteModal = () => {
     showModal({
@@ -54,15 +57,36 @@ export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
     onClose();
   };
 
+  const removeRecipeFromCookbook = () => {
+    showModal({
+      modalType: 'REMOVE FROM COOKBOOK',
+      modalData: {
+        recipe,
+        cookbookId: filters.cookbook,
+      },
+    });
+    onClose();
+  };
+
   return (
     <Menu anchorEl={anchor} keepMounted open={true} onClose={onClose}>
-      {userIsLoggedIn && (
+      {userIsLoggedIn && !cookbookSelected && (
         <MenuItem onClick={addRecipeToCookbook}>
           <ListItemIcon>
             <MenuBookIcon fontSize='small' />
           </ListItemIcon>
           <Typography variant='inherit' noWrap>
             Add to Cookbook
+          </Typography>
+        </MenuItem>
+      )}
+      {userIsLoggedIn && cookbookSelected && (
+        <MenuItem onClick={removeRecipeFromCookbook}>
+          <ListItemIcon>
+            <MenuBookIcon fontSize='small' />
+          </ListItemIcon>
+          <Typography variant='inherit' noWrap>
+            Remove from Cookbook
           </Typography>
         </MenuItem>
       )}

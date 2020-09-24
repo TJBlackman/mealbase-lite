@@ -1,5 +1,15 @@
-import React, { useReducer, useEffect } from 'react';
-import { Grid, TextField, Select, FormControl, InputLabel, MenuItem, Button, LinearProgress } from '@material-ui/core';
+import React, { useReducer, useEffect, useState } from 'react';
+import {
+  Grid,
+  TextField,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Button,
+  LinearProgress,
+  Hidden,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRecipeContext } from '../context/recipes';
 import { useCookbookContext } from '../context/cookbooks';
@@ -9,6 +19,8 @@ import { networkRequest } from '../utils/network-request';
 import { makeParamsFromState } from '../utils/recipe-query-params';
 import { MobileOnlyDropdown } from '../components/mobile-only-dropdown';
 import { getNewState } from '../utils/copy-state';
+import { RecipeListTypeSelect } from '../components/recipe-list-type-select';
+import { ResultsPerPage } from '../components/results-per-page';
 
 // reducer
 type Action =
@@ -54,6 +66,7 @@ export const FilterRecipeForm = () => {
   const { cookbooks } = useCookbookContext();
   const { user } = useUserContext();
   const [localState, dispatch] = useReducer(reducer, filters);
+  const [mobileFiltersVisible, setMobileFiltersVisible] = useState(false);
 
   // recipe api call
   const getRecipes = () => {
@@ -111,6 +124,12 @@ export const FilterRecipeForm = () => {
     return true;
   })();
 
+  // mobile apply filters
+  const applyFilters = () => {
+    setMobileFiltersVisible(!mobileFiltersVisible);
+    getRecipes();
+  };
+
   return (
     <form onSubmit={onSubmit} className={styles.form}>
       <Grid container className={styles.searchRow}>
@@ -134,10 +153,15 @@ export const FilterRecipeForm = () => {
           {loading ? 'Loading...' : 'Search'}
         </Button>
       </Grid>
-      <MobileOnlyDropdown>
+
+      {loading && <LinearProgress className={styles.loading} />}
+      <MobileOnlyDropdown
+        isVisible={mobileFiltersVisible}
+        toggleOpen={() => setMobileFiltersVisible(!mobileFiltersVisible)}
+      >
         <Grid container spacing={3}>
-          {user.email && (
-            <Grid item sm={4} xs={12}>
+          {user.email && cookbooks.length > 0 && (
+            <Grid item sm={4} xs={12} className={styles.gridItem}>
               <FormControl
                 variant='outlined'
                 fullWidth
@@ -167,7 +191,7 @@ export const FilterRecipeForm = () => {
               </FormControl>
             </Grid>
           )}
-          <Grid item sm={4} xs={12}>
+          <Grid item sm={4} xs={12} className={styles.gridItem}>
             <FormControl
               variant='outlined'
               fullWidth
@@ -193,7 +217,7 @@ export const FilterRecipeForm = () => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item sm={4} xs={12}>
+          <Grid item sm={4} xs={12} className={styles.gridItem}>
             <FormControl
               variant='outlined'
               fullWidth
@@ -220,16 +244,37 @@ export const FilterRecipeForm = () => {
               </Select>
             </FormControl>
           </Grid>
+          <Hidden mdUp>
+            <Grid item sm={4} xs={12} className={styles.gridItem}>
+              <ResultsPerPage fullWidth />
+            </Grid>
+            <Grid item sm={4} xs={12} className={styles.gridItem}>
+              <RecipeListTypeSelect fullWidth />
+            </Grid>
+          </Hidden>
         </Grid>
+        <Hidden mdUp>
+          <Button
+            type='button'
+            onClick={applyFilters}
+            variant='contained'
+            size='small'
+            disabled={loading || noUpdatedFilters}
+            color='primary'
+            fullWidth
+            className={styles.mobileApplyFiltersBtn}
+          >
+            Apply Filters
+          </Button>
+        </Hidden>
       </MobileOnlyDropdown>
-      <div className={styles.loading}>{loading && <LinearProgress />}</div>
     </form>
   );
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   form: {
-    marginTop: '20px',
+    margin: '20px 0 0 0',
   },
   searchRow: {
     display: 'flex',
@@ -237,15 +282,32 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'space-between',
     margin: '0 0 20px 0',
+    [theme.breakpoints.down('sm')]: {
+      margin: '0 0 10px 0',
+    },
   },
   searchInput: {
     flex: '1 1 auto',
   },
+  mobileApplyFiltersBtn: {
+    margin: '15px 0',
+  },
+  gridItem: {
+    [theme.breakpoints.down('sm')]: {
+      padding: '5px 12px !important',
+    },
+  },
   btn: {
     marginLeft: '20px',
     height: '56px',
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: '5px',
+    },
   },
   loading: {
-    padding: '20px 0',
+    margin: '10px 0 25px 0',
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: '0px',
+    },
   },
-});
+}));

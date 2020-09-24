@@ -6,7 +6,8 @@ export type RecipeDisplayType = 'cards' | 'list' | 'dense';
 export type RecipeAction =
   IGenericAction<'UPDATE RECIPES STATE', RecursivePartial<IRecipeContext>> |
   IGenericAction<'REPLACE RECIPE', IRecipe> |
-  IGenericAction<'SET RECIPE DISPLAY TYPE', RecipeDisplayType>;
+  IGenericAction<'SET RECIPE DISPLAY TYPE', RecipeDisplayType> |
+  IGenericAction<'DISMISS RECIPE FROM UI', IRecipe>;
 
 // modal context
 export interface IRecipeContext {
@@ -18,4 +19,5 @@ export interface IRecipeContext {
   updateRecipeContext: (x: RecursivePartial<IRecipeContext>) => void;
   replaceRecipe: (x: IRecipe) => void;
   setRecipeDisplayType: (x: RecipeDisplayType) => void;
+  dismissRecipeFromUI: (x: IRecipe) => void;
 }

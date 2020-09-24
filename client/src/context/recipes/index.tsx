@@ -19,6 +19,7 @@ export const defaultRecipeContext: IRecipeContext = {
   updateRecipeContext: () => {},
   replaceRecipe: () => {},
   setRecipeDisplayType: () => {},
+  dismissRecipeFromUI: () => {},
 };
 
 // create context
@@ -33,6 +34,7 @@ export const RecipeContextProvider = ({ children }) => {
     updateRecipeContext: (payload) => dispatch({ type: 'UPDATE RECIPES STATE', payload }),
     replaceRecipe: (payload) => dispatch({ type: 'REPLACE RECIPE', payload }),
     setRecipeDisplayType: (payload) => dispatch({ type: 'SET RECIPE DISPLAY TYPE', payload }),
+    dismissRecipeFromUI: (payload) => dispatch({ type: 'DISMISS RECIPE FROM UI', payload }),
   };
 
   return <RecipeContext.Provider value={value}>{children}</RecipeContext.Provider>;

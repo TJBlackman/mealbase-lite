@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid, Hidden } from '@material-ui/core';
 import Layout from '../../layouts/app-layout';
 import { FilterRecipeForm } from '../../forms/filter-recipes.form';
 import { RecipeCard } from '../../components/recipe-card';
@@ -9,10 +9,12 @@ import { useRecipeContext } from '../../context/recipes';
 import { RecipePagination } from '../../components/recipe-pagination';
 import { RecipeListTypeSelect } from '../../components/recipe-list-type-select';
 import { ResultsPerPage } from '../../components/results-per-page';
+import { makeStyles } from '@material-ui/styles';
 
 export const BrowsePage = () => {
   const { recipes, displayType, loading } = useRecipeContext();
   const showNoResults = loading === false && recipes.length === 0;
+  const { paginationRow } = useStyles();
   const CardItem = (() => {
     switch (displayType) {
       case 'cards':
@@ -38,12 +40,14 @@ export const BrowsePage = () => {
       </Typography>
       <FilterRecipeForm />
       <Grid container spacing={3} alignItems='center' justify='flex-end'>
-        <Grid item>
-          <ResultsPerPage />
-        </Grid>
-        <Grid item>
-          <RecipeListTypeSelect />
-        </Grid>
+        <Hidden smDown>
+          <Grid item>
+            <RecipeListTypeSelect />
+          </Grid>
+          <Grid item>
+            <ResultsPerPage />
+          </Grid>
+        </Hidden>
         <Grid item>
           <RecipePagination />
         </Grid>
@@ -58,7 +62,7 @@ export const BrowsePage = () => {
           </Typography>
         )}
       </Grid>
-      <Grid container spacing={3} alignItems='center' justify='flex-end'>
+      <Grid container spacing={3} className={paginationRow}>
         <Grid item>
           <RecipePagination />
         </Grid>
@@ -66,3 +70,11 @@ export const BrowsePage = () => {
     </Layout>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  paginationRow: {
+    marginTop: '20px',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+}));

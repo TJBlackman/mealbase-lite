@@ -26,6 +26,10 @@ export const reducer = (state: IRecipeContext, action: RecipeAction): IRecipeCon
       newState.displayType = action.payload;
       return newState;
     }
+    case 'DISMISS RECIPE FROM UI': {
+      newState.recipes = newState.recipes.filter(r => r._id !== action.payload._id);
+      return newState;
+    }
     default: {
       console.error(`Unknown recipe action type:\n${JSON.stringify(action, null, 4)}`);
       return state;

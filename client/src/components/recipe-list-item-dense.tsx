@@ -102,7 +102,7 @@ export const RecipeListItemDense = ({ recipe }: IProps) => {
 const useStyles = makeStyles((theme) => ({
   root: {
     flex: '0 0 100%',
-    margin: '10px 0px',
+    margin: '5px 0px',
     display: 'flex',
     flexFlow: 'row',
     justifyContent: 'flex-start',
