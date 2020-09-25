@@ -68,7 +68,6 @@ export const DeleteCookbookModal = ({ onClose, data }: IProps) => {
       error: (response) => {
         dispatch({ type: 'SET ERROR', payload: response.message });
       },
-      latency: 5000,
     });
   };
 

@@ -4,6 +4,8 @@ import { Card, CardContent, Typography, Grid, Button } from '@material-ui/core';
 import { ICookbookRecord } from '../types';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { CookbookCardMenu } from './cookbook-card-menu';
+import { useRecipeContext } from '../context/recipes';
+import { useHistory } from 'react-router-dom';
 
 // types
 interface IProps {
@@ -13,15 +15,21 @@ interface IProps {
 // component
 export const CookbookListItem = ({ cookbook }: IProps) => {
   const [menuAnchor, setMenuAnchor] = useState(null);
-
+  const history = useHistory();
+  const { setFilters } = useRecipeContext();
   const { root, cardContent } = useStyles();
+
+  const goToRecipes = () => {
+    setFilters({ cookbook: cookbook._id });
+    history.push('/browse');
+  };
 
   return (
     <Card className={root} elevation={2}>
       <CardContent className={cardContent}>
         <Grid container alignItems='flex-start' justify='space-between' wrap='nowrap'>
           <Grid item>
-            <Typography variant='h6' component='h2' color='primary'>
+            <Typography variant='h6' component='h2' color='primary' onClick={goToRecipes}>
               {cookbook.title}
             </Typography>
           </Grid>

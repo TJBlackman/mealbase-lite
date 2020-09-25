@@ -10,33 +10,15 @@ interface IProps {
 }
 
 export const ResultsPerPage = ({ fullWidth = false }: IProps) => {
-  const { updateRecipeContext, recipes, loading, filters } = useRecipeContext();
+  const { setFilters, recipes, loadingNewRecipes, filters } = useRecipeContext();
   const { root } = useStyles();
 
   const setResultsPerPage = (e: ChangeEvent<{ value: number }>) => {
-    updateRecipeContext({ loading: true, filters: { limit: e.target.value } });
-    const params = makeParamsFromState({
-      ...filters,
-      limit: e.target.value,
-    });
-    networkRequest({
-      url: '/api/v1/recipes' + params,
-      success: (json) => {
-        updateRecipeContext({
-          loading: false,
-          totalCount: json.data.totalCount,
-          recipes: json.data.recipes,
-        });
-      },
-      error: (err) => {
-        updateRecipeContext({ loading: false });
-        alert(err.message);
-      },
-    });
+    setFilters({ limit: e.target.value });
   };
 
   return (
-    <FormControl variant='outlined' size='small' disabled={loading} fullWidth={fullWidth}>
+    <FormControl variant='outlined' size='small' disabled={loadingNewRecipes} fullWidth={fullWidth}>
       <InputLabel id='filter-label'>Results</InputLabel>
       <Select fullWidth labelId='filter-label' value={filters.limit} onChange={setResultsPerPage} label='Results'>
         <MenuItem value='10'>10</MenuItem>

@@ -12,8 +12,8 @@ import { ResultsPerPage } from '../../components/results-per-page';
 import { makeStyles } from '@material-ui/styles';
 
 export const BrowsePage = () => {
-  const { recipes, displayType, loading } = useRecipeContext();
-  const showNoResults = loading === false && recipes.length === 0;
+  const { recipes, displayType, loadingNewRecipes } = useRecipeContext();
+  const showNoResults = loadingNewRecipes === false && recipes.length === 0;
   const { paginationRow } = useStyles();
   const CardItem = (() => {
     switch (displayType) {

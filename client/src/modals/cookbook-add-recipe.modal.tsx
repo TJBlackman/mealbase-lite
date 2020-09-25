@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
 import { IRecipe } from '../types';
-import { AddRecipeToCookbookForm } from '../forms/recipe-add-to-cookbook.form';
+import { AddRecipeToCookbookForm } from '../forms/cookbook-add-recipe.form';
 
 interface IProps {
   onClose: () => void;

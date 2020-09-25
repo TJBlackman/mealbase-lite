@@ -62,7 +62,7 @@ const reducer = (state: IRecipeFilters, action: Action) => {
 };
 
 export const FilterRecipeForm = () => {
-  const { updateRecipeContext, recipes, loading, filters } = useRecipeContext();
+  const { setFilters, recipes, loadingNewRecipes, filters } = useRecipeContext();
   const { cookbooks } = useCookbookContext();
   const { user } = useUserContext();
   const [localState, dispatch] = useReducer(reducer, filters);
@@ -70,25 +70,7 @@ export const FilterRecipeForm = () => {
 
   // recipe api call
   const getRecipes = () => {
-    const queryParams = makeParamsFromState(localState);
-    updateRecipeContext({
-      filters: { ...localState },
-      loading: true,
-    });
-    networkRequest({
-      url: '/api/v1/recipes' + queryParams,
-      success: (json) => {
-        updateRecipeContext({
-          loading: false,
-          totalCount: json.data.totalCount,
-          recipes: json.data.recipes,
-        });
-      },
-      error: (err) => {
-        updateRecipeContext({ loading: false });
-        alert(err.message);
-      },
-    });
+    setFilters(localState);
   };
 
   // submit form
@@ -140,21 +122,21 @@ export const FilterRecipeForm = () => {
           variant='outlined'
           className={styles.searchInput}
           onChange={(e) => dispatch({ type: 'UPDATE SEARCH', payload: e.target.value })}
-          disabled={loading}
+          disabled={loadingNewRecipes}
         />
         <Button
           type='submit'
           variant='contained'
           size='large'
           className={styles.btn}
-          disabled={loading || noUpdatedFilters}
+          disabled={loadingNewRecipes || noUpdatedFilters}
           color='primary'
         >
-          {loading ? 'Loading...' : 'Search'}
+          {loadingNewRecipes ? 'Loading...' : 'Search'}
         </Button>
       </Grid>
 
-      {loading && <LinearProgress className={styles.loading} />}
+      {loadingNewRecipes && <LinearProgress className={styles.loading} />}
       <MobileOnlyDropdown
         isVisible={mobileFiltersVisible}
         toggleOpen={() => setMobileFiltersVisible(!mobileFiltersVisible)}
@@ -166,8 +148,8 @@ export const FilterRecipeForm = () => {
                 variant='outlined'
                 fullWidth
                 size='small'
-                disabled={loading}
-                focused={!loading && Boolean(localState.cookbook)}
+                disabled={loadingNewRecipes}
+                focused={!loadingNewRecipes && Boolean(localState.cookbook)}
               >
                 <InputLabel id='filter-label'>My Cookbooks</InputLabel>
                 <Select
@@ -196,8 +178,8 @@ export const FilterRecipeForm = () => {
               variant='outlined'
               fullWidth
               size='small'
-              disabled={loading}
-              focused={!loading && Boolean(localState.filter)}
+              disabled={loadingNewRecipes}
+              focused={!loadingNewRecipes && Boolean(localState.filter)}
             >
               <InputLabel id='filter-label'>Filter Recipes</InputLabel>
               <Select
@@ -222,8 +204,8 @@ export const FilterRecipeForm = () => {
               variant='outlined'
               fullWidth
               size='small'
-              disabled={loading}
-              focused={!loading && Boolean(localState.sort)}
+              disabled={loadingNewRecipes}
+              focused={!loadingNewRecipes && Boolean(localState.sort)}
             >
               <InputLabel id='sort-label'>Sort Recipes</InputLabel>
               <Select
@@ -259,7 +241,7 @@ export const FilterRecipeForm = () => {
             onClick={applyFilters}
             variant='contained'
             size='small'
-            disabled={loading || noUpdatedFilters}
+            disabled={loadingNewRecipes || noUpdatedFilters}
             color='primary'
             fullWidth
             className={styles.mobileApplyFiltersBtn}

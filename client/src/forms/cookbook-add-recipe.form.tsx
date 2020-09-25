@@ -162,7 +162,13 @@ export const AddRecipeToCookbookForm = ({ onSuccess, recipe }: IProps) => {
         </Alert>
       )}
       <Grid container style={{ flexFlow: 'row-reverse' }}>
-        <Button type='submit' variant='contained' color='primary' className={btnClass} disabled={disabled}>
+        <Button
+          type='submit'
+          variant='contained'
+          color='primary'
+          className={btnClass}
+          disabled={disabled || !localState.cookbookId}
+        >
           Submit
         </Button>
         <Button

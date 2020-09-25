@@ -88,7 +88,6 @@ export const RemoveRecipeFromCookbookModal = ({ onClose, data }: IProps) => {
       error: (err) => {
         dispatch({ type: 'SET ERROR', payload: err.message });
       },
-      latency: 5000,
     });
   };
 

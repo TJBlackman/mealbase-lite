@@ -6,38 +6,20 @@ import { makeParamsFromState } from '../utils/recipe-query-params';
 import { useRecipeContext } from '../context/recipes';
 
 export const RecipePagination = () => {
-  const { loading, filters, updateRecipeContext, totalCount } = useRecipeContext();
-  if (loading) {
+  const { loadingNewRecipes, filters, setFilters, totalCount } = useRecipeContext();
+  if (loadingNewRecipes) {
     return null;
   }
 
   const pageCount = Math.ceil(totalCount / filters.limit);
 
-  const setPage = (e: ChangeEvent<unknown>, num: number) => {
-    updateRecipeContext({ loading: true, filters: { page: num } });
-    const params = makeParamsFromState({
-      ...filters,
-      page: num,
-    });
-    networkRequest({
-      url: '/api/v1/recipes' + params,
-      success: (json) => {
-        updateRecipeContext({
-          loading: false,
-          totalCount: json.data.totalCount,
-          recipes: json.data.recipes,
-        });
-      },
-      error: (err) => {
-        updateRecipeContext({ loading: false });
-        alert(err.message);
-      },
-    });
+  const setPage = (_e: ChangeEvent<unknown>, page: number) => {
+    setFilters({ page });
   };
 
   return (
     <Grid container justify='flex-end'>
-      <Pagination count={pageCount} page={filters.page} onChange={setPage} disabled={loading} />
+      <Pagination count={pageCount} page={filters.page} onChange={setPage} disabled={loadingNewRecipes} />
     </Grid>
   );
 };

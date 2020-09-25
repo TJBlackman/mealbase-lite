@@ -4,20 +4,25 @@ export type RecipeDisplayType = 'cards' | 'list' | 'dense';
 
 // register reducer actions; <type, payload>
 export type RecipeAction =
-  IGenericAction<'UPDATE RECIPES STATE', RecursivePartial<IRecipeContext>> |
+  IGenericAction<'SET RECIPES', {
+    totalCount: number;
+    recipes: IRecipe[];
+  }> |
+  IGenericAction<'REQUEST NEW RECIPES'> |
   IGenericAction<'REPLACE RECIPE', IRecipe> |
   IGenericAction<'SET RECIPE DISPLAY TYPE', RecipeDisplayType> |
-  IGenericAction<'DISMISS RECIPE FROM UI', IRecipe>;
+  IGenericAction<'DISMISS RECIPE FROM UI', IRecipe> |
+  IGenericAction<'SET FILTERS', Partial<IRecipeFilters>>;
 
 // modal context
 export interface IRecipeContext {
   recipes: IRecipe[];
   totalCount: number;
-  loading: boolean;
+  loadingNewRecipes: boolean;
   filters: IRecipeFilters;
   displayType: RecipeDisplayType;
-  updateRecipeContext: (x: RecursivePartial<IRecipeContext>) => void;
   replaceRecipe: (x: IRecipe) => void;
   setRecipeDisplayType: (x: RecipeDisplayType) => void;
   dismissRecipeFromUI: (x: IRecipe) => void;
+  setFilters: (x: Partial<IRecipeFilters>) => void;
 }

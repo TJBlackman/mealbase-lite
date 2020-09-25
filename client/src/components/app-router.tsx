@@ -9,6 +9,7 @@ import { AddRecipePage } from '../pages/add-recipe.page';
 import { CookbooksPage } from '../pages/cookbooks.page';
 import { AboutPage } from '../pages/about.page';
 import { PrivateRoute } from '../components/private-route';
+import { EditRecipePage } from '../pages/edit-recipe.page';
 
 export const AppRouter = () => {
   return (
@@ -21,8 +22,9 @@ export const AppRouter = () => {
         <Route path='/cookbooks' component={CookbooksPage} />
         <Route path='/add-recipe' component={AddRecipePage} />
         <Route path='/about' component={AboutPage} />
+        <Route path='/edit-recipe/:recipeId' component={EditRecipePage} />
         <PrivateRoute path='/account' component={AccountPage} />
-        <Redirect from='/' to='/browse' />
+        <Redirect from='/' to='/edit-recipe/1234' />
       </Switch>
     </Router>
   );

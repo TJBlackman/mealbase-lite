@@ -5,17 +5,6 @@ import { IRecipe } from "../../types";
 export const reducer = (state: IRecipeContext, action: RecipeAction): IRecipeContext => {
   const newState: IRecipeContext = getNewState(state);
   switch (action.type) {
-    case 'UPDATE RECIPES STATE': {
-      const x = {
-        ...newState,
-        ...action.payload,
-        filters: {
-          ...newState.filters,
-          ...action.payload.filters
-        }
-      };
-      return x as IRecipeContext;
-    }
     case 'REPLACE RECIPE': {
       newState.recipes = newState.recipes.map((recipe: IRecipe) => {
         return recipe._id === action.payload._id ? action.payload : recipe;
@@ -28,6 +17,24 @@ export const reducer = (state: IRecipeContext, action: RecipeAction): IRecipeCon
     }
     case 'DISMISS RECIPE FROM UI': {
       newState.recipes = newState.recipes.filter(r => r._id !== action.payload._id);
+      return newState;
+    }
+    case 'SET FILTERS': {
+      newState.filters = {
+        ...newState.filters,
+        ...action.payload
+      };
+      newState.loadingNewRecipes = true;
+      return newState;
+    }
+    case 'REQUEST NEW RECIPES': {
+      newState.loadingNewRecipes = true;
+      return newState;
+    }
+    case 'SET RECIPES': {
+      newState.loadingNewRecipes = false;
+      newState.recipes = action.payload.recipes;
+      newState.totalCount = action.payload.totalCount;
       return newState;
     }
     default: {

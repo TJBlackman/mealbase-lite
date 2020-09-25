@@ -1,12 +1,12 @@
 import React from 'react';
 import { useModalContext } from '../context/modal';
-import { DeleteRecipeModal } from './delete-recipe.modal';
+import { DeleteRecipeModal } from './recipe-delete.modal';
 import { ComingSoonModal } from './coming-soon.modal';
 import { AddCookbookModal } from './cookbook-new.modal';
 import { EditCookbookModal } from './cookbook-edit.modal';
-import { AddRecipeToCookbookModal } from './add-recipe-to-cookbook.modal';
+import { AddRecipeToCookbookModal } from './cookbook-add-recipe.modal';
 import { DeleteCookbookModal } from './cookbook-delete.modal';
-import { RemoveRecipeFromCookbookModal } from './remove-recipe-from-cookbook.modal';
+import { RemoveRecipeFromCookbookModal } from './cookbook-remove-recipe.modal';
 
 export const ModalConductor = () => {
   const { visible, content, dismissModal } = useModalContext();
@@ -15,7 +15,6 @@ export const ModalConductor = () => {
     return null;
   }
 
-  const Modal = (() => {})();
   switch (content.modalType) {
     case 'DELETE RECIPE': {
       return <DeleteRecipeModal data={content.modalData} onClose={dismissModal} />;
