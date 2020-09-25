@@ -10,6 +10,8 @@ import EventNoteIcon from '@material-ui/icons/EventNote';
 import { copyTextToClipboard } from '../utils/copy-to-clipboard';
 import { useModalContext } from '../context/modal';
 import { useRecipeContext } from '../context/recipes';
+import EditIcon from '@material-ui/icons/Edit';
+import { useHistory } from 'react-router-dom';
 
 interface IProps {
   recipe: IRecipe;
@@ -19,6 +21,7 @@ interface IProps {
 }
 
 export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
+  const history = useHistory();
   const { showModal } = useModalContext();
   const { filters } = useRecipeContext();
   const [copied, setCopied] = useState(false);
@@ -68,6 +71,10 @@ export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
     onClose();
   };
 
+  const goToEditRecipe = () => {
+    history.push(`/edit-recipe/${recipe._id}`);
+  };
+
   return (
     <Menu anchorEl={anchor} keepMounted open={true} onClose={onClose}>
       {userIsLoggedIn && !cookbookSelected && (
@@ -87,6 +94,16 @@ export const RecipeCardMenu = ({ recipe, user, anchor, onClose }: IProps) => {
           </ListItemIcon>
           <Typography variant='inherit' noWrap>
             Remove from Cookbook
+          </Typography>
+        </MenuItem>
+      )}
+      {userIsLoggedIn && userIsAdmin && (
+        <MenuItem onClick={goToEditRecipe}>
+          <ListItemIcon>
+            <EditIcon fontSize='small' />
+          </ListItemIcon>
+          <Typography variant='inherit' noWrap>
+            Edit Recipe
           </Typography>
         </MenuItem>
       )}
