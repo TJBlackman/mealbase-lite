@@ -17,8 +17,21 @@ const QandA = [
       "MealBase is a web app that helps it's users save, organize, and search for their favorite recipes from anywhere online!",
   },
   {
+    q: 'Do I need to make an account?',
+    a:
+      'You can browse recipes without an account, but to add recipes, like recipes, create cookbooks, and create mealplans, you will need to create a free account using only a valid email address.',
+  },
+  {
+    q: 'How much is does MealBase cost to use?',
+    a: 'Mealbase is 100% free to use! There are currently no premium features that require a paid account to access.',
+  },
+  {
     q: 'Does MealBase sell user information?',
     a: "No! We've never done that and we don't plan to!",
+  },
+  {
+    q: 'How do I add a recipe to MealBase?',
+    a: '',
   },
 ];
 

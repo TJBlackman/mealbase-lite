@@ -24,7 +24,7 @@ export const AppRouter = () => {
         <Route path='/about' component={AboutPage} />
         <Route path='/edit-recipe/:recipeId' component={EditRecipePage} />
         <PrivateRoute path='/account' component={AccountPage} />
-        <Redirect from='/' to='/edit-recipe/1234' />
+        <Redirect from='/' to='/browse' />
       </Switch>
     </Router>
   );

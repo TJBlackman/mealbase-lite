@@ -7,6 +7,7 @@ import { useUserContext } from '../context/user';
 import { IRecipe, IGenericAction } from '../types';
 import { getNewState } from '../utils/copy-state';
 import { FormFeedback } from '../components/form-feedback';
+import { AccountRequiredWarning } from '../components/account-required-warning';
 
 interface ILocalState {
   url: string;
@@ -114,11 +115,7 @@ export const AddRecipeForm = ({ onSuccess }: ComponentProps) => {
         error={localState.error}
         clearError={() => dispatch({ type: 'SET ERROR', payload: '' })}
       />
-      {!user.email && (
-        <Alert severity='warning' className={errorClass} elevation={2}>
-          You must have an account to add new recipes.
-        </Alert>
-      )}
+      {!user.email && <AccountRequiredWarning text='before you add your first recipe.' className={errorClass} />}
       <Button
         variant='contained'
         className={btnClass}

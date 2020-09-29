@@ -4,11 +4,18 @@ import { Typography, Button, Divider } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { useModalContext } from '../context/modal';
 import { useCookbookContext } from '../context/cookbooks';
+import { useUserContext } from '../context/user';
 import { CookbookListItem } from '../components/cookbook-list-item';
+import { AccountRequiredWarning } from '../components/account-required-warning';
+import { makeStyles } from '@material-ui/core/styles';
 
 export const CookbooksPage = () => {
   const { showModal } = useModalContext();
   const { cookbooks } = useCookbookContext();
+  const { user } = useUserContext();
+
+  const { link } = useStyles();
+
   return (
     <Layout>
       <Typography variant='h3' component='h1'>
@@ -24,6 +31,7 @@ export const CookbooksPage = () => {
         variant='contained'
         color='primary'
         startIcon={<AddIcon />}
+        disabled={!user.email}
         onClick={() =>
           showModal({
             modalType: 'NEW COOKBOOK',
@@ -36,6 +44,18 @@ export const CookbooksPage = () => {
       {cookbooks.map((cb) => (
         <CookbookListItem key={cb._id} cookbook={cb} />
       ))}
+      {!user.email && <AccountRequiredWarning text='before you creating your first cookbook.' />}
     </Layout>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  link: {
+    fontWeight: 'bold',
+    color: theme.palette.text.primary,
+    cursor: 'pointer',
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
+  },
+}));
