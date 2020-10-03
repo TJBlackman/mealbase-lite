@@ -1,7 +1,13 @@
 import { CookbookAction, ICookbookContext } from "./types";
 import { getNewState } from "../../utils/copy-state";
+import { ICookbookRecord } from "../../types";
 
-
+const sortAlphabeticByTitle = (cookbooks: ICookbookRecord[]) => {
+  // sorts in place... idk
+  cookbooks.sort((a, b) => {
+    return a.title.toLocaleLowerCase().localeCompare(b.title.toLocaleLowerCase());
+  });
+}
 
 // cookbook reducer
 export const reducer = (state: ICookbookContext, action: CookbookAction): ICookbookContext => {
@@ -10,6 +16,7 @@ export const reducer = (state: ICookbookContext, action: CookbookAction): ICookb
 
     case 'ADD COOKBOOK': {
       newState.cookbooks.push({ ...action.payload });
+      sortAlphabeticByTitle(newState.cookbooks);
       return newState;
     }
 
@@ -19,6 +26,7 @@ export const reducer = (state: ICookbookContext, action: CookbookAction): ICookb
           ? { ...action.payload }
           : cb;
       });
+      sortAlphabeticByTitle(newState.cookbooks);
       return newState;
     }
 
@@ -34,6 +42,7 @@ export const reducer = (state: ICookbookContext, action: CookbookAction): ICookb
         ...filteredCookbooks,
         ...action.payload
       ];
+      sortAlphabeticByTitle(newState.cookbooks);
       return newState;
     }
 
