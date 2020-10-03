@@ -13,7 +13,7 @@ export const defaultRecipeContext: IRecipeContext = {
   filters: {
     search: '',
     filter: '',
-    sort: '',
+    sort: 'newest',
     limit: 20,
     page: 1,
     cookbook: '',

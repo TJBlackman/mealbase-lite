@@ -179,32 +179,6 @@ export const FilterRecipeForm = () => {
               fullWidth
               size='small'
               disabled={loadingNewRecipes}
-              focused={!loadingNewRecipes && Boolean(localState.filter)}
-            >
-              <InputLabel id='filter-label'>Filter Recipes</InputLabel>
-              <Select
-                fullWidth
-                labelId='filter-label'
-                value={localState.filter}
-                onChange={(e: React.ChangeEvent<{ value: RecipeFilterOptions }>) =>
-                  dispatch({ type: 'SET FILTER', payload: e.target.value })
-                }
-                label='Filter Recipes'
-                color='primary'
-              >
-                <MenuItem value=''>
-                  <i>No Filters</i>
-                </MenuItem>
-                <MenuItem value='liked recipes'>Liked Recipes</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item sm={4} xs={12} className={styles.gridItem}>
-            <FormControl
-              variant='outlined'
-              fullWidth
-              size='small'
-              disabled={loadingNewRecipes}
               focused={!loadingNewRecipes && Boolean(localState.sort)}
             >
               <InputLabel id='sort-label'>Sort Recipes</InputLabel>

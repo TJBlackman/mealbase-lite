@@ -31,7 +31,7 @@ const QandA = [
   },
   {
     q: 'How do I add a recipe to MealBase?',
-    a: '',
+    a: "Simply copy and paste the URL of a recipe you like from elsewhere on the web, we'll do the rest!",
   },
 ];
 

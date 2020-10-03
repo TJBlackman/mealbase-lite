@@ -24,25 +24,29 @@ export const CookbookListItem = ({ cookbook }: IProps) => {
     history.push('/browse');
   };
 
+  const showMenu = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    setMenuAnchor(e.currentTarget);
+  };
+
   return (
     <Card className={root} elevation={2}>
-      <CardContent className={cardContent}>
+      <CardContent className={cardContent} onClick={goToRecipes}>
         <Grid container alignItems='flex-start' justify='space-between' wrap='nowrap'>
           <Grid item>
-            <Typography variant='h6' component='h2' color='primary' onClick={goToRecipes}>
+            <Typography variant='h5' component='h2' color='primary'>
               {cookbook.title}
+            </Typography>
+            <Typography variant='caption' component='span'>
+              {cookbook.recipes.length} {cookbook.recipes.length === 1 ? 'Recipe' : 'Recipes'}
             </Typography>
           </Grid>
           <Grid item>
-            <Button color='primary' size='large' onClick={(e) => setMenuAnchor(e.currentTarget)}>
+            <Button color='primary' size='large' onClick={showMenu}>
               <MoreVertIcon />
             </Button>
           </Grid>
         </Grid>
-
-        <Typography variant='body1' component='p' paragraph>
-          {cookbook.recipes.length} {cookbook.recipes.length === 1 ? 'Recipe' : 'Recipes'}
-        </Typography>
 
         <Typography variant='body1' component='p'>
           {cookbook.description}
@@ -67,10 +71,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   cardContent: {
-    padding: '10px 20px',
     flex: '1 1 100%',
     display: 'flex',
     flexFlow: 'column nowrap',
     justifyContent: 'flex-start',
+    cursor: 'pointer',
   },
 }));
