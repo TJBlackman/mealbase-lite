@@ -1,6 +1,6 @@
-import React, { RefAttributes } from 'react';
-import Header from '../components/header';
+import React from 'react';
 import { Container } from '@material-ui/core';
+import Header from '../components/header';
 import { SideMenu } from '../components/side-menu';
 
 function AppLayout({ children }) {

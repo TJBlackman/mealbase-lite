@@ -5,6 +5,7 @@ import {
   saveNewUser,
   updateExistingUser,
   getSensitiveUserDataById,
+  createResetPasswordRecord
 } from '../DAL/user.dal';
 
 import {
@@ -143,3 +144,13 @@ export const markUserDeleted = async (
   }
   throw Error('Permissions are required.');
 };
+
+export const resetUserPassword = async (data: { email: string }) => {
+  const user = await queryUsers({ email: data.email });
+  if (!user) {
+    throw Error('User does not exist.');
+  }
+  const x = await createResetPasswordRecord({ userId: user[0]._id });
+  console.log(x);
+  return true;
+}

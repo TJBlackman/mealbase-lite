@@ -1,11 +1,11 @@
 import { usePassportLocalStrategy } from '../middleware/passport';
-import { createJWT, verifyJWT } from '../utils/jwt-helpers';
+import { createJWT } from '../utils/jwt-helpers';
 import express from 'express';
 import { sendResponse } from '../utils/normalize-response';
+import { resetUserPassword } from "../services/user.service";
 const router = express.Router();
 
 // POST /api/v1/auth/local
-// goal is to authenticate and send back token: jwt
 router.post('/local', usePassportLocalStrategy, async (req, res) => {
   const user: any = { ...req.user };
   const jwt = await createJWT({
@@ -42,4 +42,25 @@ router.get('/signout', (req, res, next) => {
   });
 });
 
+// POST /api/auth/reset-password
+router.post('/reset-password', async (req, res) => {
+  try {
+    const result = await resetUserPassword(req.body);
+    sendResponse({
+      req,
+      res,
+      success: true,
+      message: 'Email sent.',
+      data: result
+    });
+  }
+  catch (err) {
+    sendResponse({
+      req,
+      res,
+      success: false,
+      message: err.message,
+    })
+  }
+})
 export default router;
