@@ -1,5 +1,4 @@
 import UserModel from '../models/user.model';
-import ResetPasswordModel from "../models/password-reset-record";
 import {
   GetUsersQuery,
   GetUsersDbConditions,
@@ -134,12 +133,3 @@ export const updateExistingUser = async (data: ExistingUserData) => {
   }
   return user.toObject() as ExistingUserData;
 };
-
-export const createResetPasswordRecord = async (data: { userId: string }) => {
-  const record = new ResetPasswordModel({
-    createdAt: new Date().toUTCString(),
-    userId: data.userId
-  });
-  const savedRecord = await record.save();
-  return savedRecord.toObject();
-}

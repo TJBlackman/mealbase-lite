@@ -5,9 +5,8 @@ import {
   saveNewUser,
   updateExistingUser,
   getSensitiveUserDataById,
-  createResetPasswordRecord
 } from '../DAL/user.dal';
-
+import { createRPR, queryRPR, editRPR } from "../DAL/password-reset.dal";
 import {
   GetUsersQuery,
   ExistingUserData,
@@ -15,6 +14,8 @@ import {
   JWTUser,
   Roles,
 } from '../types/type-definitions';
+import { sendResetPasswordEmail } from "./email.service";
+import { createJWT, verifyJWT } from "../utils/jwt-helpers";
 
 export const queryAllUsers = async (
   queryString: GetUsersQuery,
@@ -145,12 +146,39 @@ export const markUserDeleted = async (
   throw Error('Permissions are required.');
 };
 
-export const resetUserPassword = async (data: { email: string }) => {
+export const requestResetPassword = async (data: { email: string }) => {
   const user = await queryUsers({ email: data.email });
   if (!user) {
     throw Error('User does not exist.');
-  }
-  const x = await createResetPasswordRecord({ userId: user[0]._id });
-  console.log(x);
+  };
+  const resetRecord = await createRPR({ userId: user[0]._id });
+  const resetJwt = await createJWT({ _id: resetRecord._id }, { expiresIn: process.env.RESET_PASSWORD_LINK_DURATION_MINUTES });
+  const y = await sendResetPasswordEmail({
+    email: data.email,
+    jwt: resetJwt
+  });
   return true;
 }
+
+export const confirmResetPassword = async (data: { jwt: string; newPassword: string; }) => {
+  const jwt = await verifyJWT<{ _id: string }>(data.jwt).catch(err => {
+    throw Error('Password link is no longer valid. Please request a new link.');
+  });
+  const rpr = await queryRPR({ _id: jwt._id });
+  if (rpr.length < 0) {
+    throw Error('Reset Password Record does not exist.');
+  };
+  if (rpr[0].valid === false) {
+    throw Error('Password link is invalid. Please request a new link.');
+  };
+  const hashedPw = await createHash(data.newPassword);
+  await updateExistingUser({
+    _id: rpr[0].userId,
+    password: hashedPw
+  });
+  // await editRPR({
+  //   _id: rpr[0]._id,
+  //   valid: false
+  // });
+  return true;
+}; 

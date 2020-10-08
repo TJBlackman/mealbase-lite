@@ -9,7 +9,6 @@ export const PrivateRoute = ({ component, role = undefined, ...rest }) => {
     return <Redirect to='/login' />;
   }
   if (role) {
-    console.log(role);
     if (!user.roles.includes(role)) {
       alert('Unauthorized.');
       return <div>hi</div>;

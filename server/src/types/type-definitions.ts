@@ -112,3 +112,9 @@ export type AddIdToCookbook = {
   recipeId: string;
   cookbookId: string;
 }
+export interface ResetPasswordRecord {
+  userId: string;
+  _id: string;
+  createdAt: string | Date;
+  valid: boolean;
+}

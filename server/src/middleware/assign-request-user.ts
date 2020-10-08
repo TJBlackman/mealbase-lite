@@ -1,4 +1,4 @@
-import { verifyJWT } from '../utils/jwt-helpers';
+import { verifyUserJWT } from '../utils/jwt-helpers';
 
 // req.user is ALWAYS false, unless this function updates it from an existing JWT
 // passport middleware for certain routes can also set this
@@ -9,7 +9,7 @@ export default async (req: any, res: any, next: any) => {
   const jwtFromCookie = req.cookies[process.env.COOKIE_NAME];
   if (jwtFromCookie) {
     try {
-      const jwtValue = await verifyJWT(jwtFromCookie);
+      const jwtValue = await verifyUserJWT(jwtFromCookie);
       req.user = jwtValue;
     } catch (err) {
       // console.log(err);

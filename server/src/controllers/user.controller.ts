@@ -10,7 +10,7 @@ import {
   markUserDeleted,
 } from '../services/user.service';
 import { sendResponse } from '../utils/normalize-response';
-import { createJWT } from '../utils/jwt-helpers';
+import { createUserJWT } from '../utils/jwt-helpers';
 import { JWTUser } from '..//types/type-definitions';
 
 // GET /api/v1/users
@@ -51,7 +51,7 @@ router.get('/my-cookie', (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const response: any = await registerNewUser(req.body);
-    const jwt = await createJWT({
+    const jwt = await createUserJWT({
       _id: response._id,
       email: response.email,
       roles: response.roles,

@@ -7,8 +7,6 @@ import { EditPasswordForm } from '../../forms/user-edit-password';
 
 export const AccountPage = () => {
   const location = useLocation();
-  console.log(location);
-
   return (
     <Layout>
       <Typography variant='h2'>User Account Settings</Typography>
