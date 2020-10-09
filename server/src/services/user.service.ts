@@ -176,9 +176,9 @@ export const confirmResetPassword = async (data: { jwt: string; newPassword: str
     _id: rpr[0].userId,
     password: hashedPw
   });
-  // await editRPR({
-  //   _id: rpr[0]._id,
-  //   valid: false
-  // });
+  await editRPR({
+    _id: rpr[0]._id,
+    valid: false
+  });
   return true;
 }; 

@@ -10,6 +10,8 @@ import { CookbooksPage } from '../pages/cookbooks.page';
 import { AboutPage } from '../pages/about.page';
 import { PrivateRoute } from '../components/private-route';
 import { EditRecipePage } from '../pages/edit-recipe.page';
+import { RequestResetPasswordPage } from '../pages/password-reset-request.page';
+import { ConfirmResetPasswordPage } from '../pages/password-reset-confirm.page';
 
 export const AppRouter = () => {
   return (
@@ -23,6 +25,8 @@ export const AppRouter = () => {
         <Route path='/add-recipe' component={AddRecipePage} />
         <Route path='/about' component={AboutPage} />
         <Route path='/edit-recipe/:recipeId' component={EditRecipePage} />
+        <Route path='/request-reset-password' component={RequestResetPasswordPage} />
+        <Route path='/confirm-reset-password/:jwt' component={ConfirmResetPasswordPage} />
         <PrivateRoute path='/account' component={AccountPage} />
         <Redirect from='/' to='/browse' />
       </Switch>

@@ -8,7 +8,7 @@ interface ResetPasswordEmailProps {
 };
 
 export const sendResetPasswordEmail = ({ email, jwt }: ResetPasswordEmailProps) => new Promise((resolve, reject) => {
-  const url = process.env.BASE_URL + '/reset-password/' + jwt;
+  const url = process.env.BASE_URL + '/confirm-reset-password/' + jwt;
   const sgOptions = {
     to: email,
     from: 'password-reset@mealbase.app',
