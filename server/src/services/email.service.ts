@@ -18,7 +18,7 @@ export const sendResetPasswordEmail = ({ email, jwt }: ResetPasswordEmailProps) 
       <h3>Password Reset Requested</h3>
       <p style="font-size: 16px;">Mealbase Lite has received a request to reset the password for this account. If you did not make this request, simply ignore this email. To proceed to reset your password, click the link below, which is valid for only 60 minutes.</p>
       <br/>
-      <p><b><a href="${url}" target="_blank">Reset Password on MealBase</a></b>
+      <p style="font-size: 16px;"><b><a href="${url}" target="_blank">Reset Password on MealBase</a></b>
       <br/>
       *Caution: Do not share this link with anyone!
       </p>
@@ -34,4 +34,4 @@ export const sendResetPasswordEmail = ({ email, jwt }: ResetPasswordEmailProps) 
       resolve(results);
     }
   })
-}); 
+});

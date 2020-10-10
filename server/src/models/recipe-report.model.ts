@@ -30,4 +30,4 @@ const RecipeReportSchema = new mongoose.Schema({
 
 const RecipeReportModel = mongoose.model(RECIPE_REPORT, RecipeReportSchema);
 
-export default RecipeReportModel; 
+export default RecipeReportModel;

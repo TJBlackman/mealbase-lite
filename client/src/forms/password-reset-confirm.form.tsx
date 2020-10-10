@@ -58,6 +58,10 @@ const reducer = (state: ILocalState, action: Action) => {
       return newState;
     }
     case 'SUBMIT FORM': {
+      if (newState.password !== newState.confirmPassword){
+        newState.error = 'Passwords do not match.'; 
+        return newState; 
+      }
       newState.loading = true;
       return newState;
     }
@@ -103,6 +107,7 @@ export const ConfirmResetPassword = ({ onSuccess }: ComponentProps) => {
         fullWidth
         label='New Password'
         variant='outlined'
+        type='password'
         value={localState.password}
         disabled={localState.loading}
         onChange={(e) =>
@@ -118,6 +123,7 @@ export const ConfirmResetPassword = ({ onSuccess }: ComponentProps) => {
         fullWidth
         label='Confirm Password'
         variant='outlined'
+        type='password'
         value={localState.confirmPassword}
         disabled={localState.loading}
         onChange={(e) =>

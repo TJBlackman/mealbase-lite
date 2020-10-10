@@ -148,7 +148,7 @@ export const markUserDeleted = async (
 
 export const requestResetPassword = async (data: { email: string }) => {
   const user = await queryUsers({ email: data.email });
-  if (!user) {
+  if (user.length < 1) {
     throw Error('User does not exist.');
   };
   const resetRecord = await createRPR({ userId: user[0]._id });
@@ -181,4 +181,4 @@ export const confirmResetPassword = async (data: { jwt: string; newPassword: str
     valid: false
   });
   return true;
-}; 
+};

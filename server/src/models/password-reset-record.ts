@@ -20,4 +20,4 @@ const PasswordResetSchema = new mongoose.Schema({
 
 const PasswordResetModel = mongoose.model(PASSWORD_RESET_RECORD, PasswordResetSchema);
 
-export default PasswordResetModel; 
+export default PasswordResetModel;
