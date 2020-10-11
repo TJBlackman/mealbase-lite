@@ -11,7 +11,8 @@ import {
 } from '../services/user.service';
 import { sendResponse } from '../utils/normalize-response';
 import { createUserJWT } from '../utils/jwt-helpers';
-import { JWTUser } from '..//types/type-definitions';
+import { JWTUser } from '../types/type-definitions';
+import { recaptchaMiddleware } from '../middleware/recaptcha';
 
 // GET /api/v1/users
 router.get('/', async (req, res, next) => {
@@ -47,8 +48,7 @@ router.get('/my-cookie', (req, res, next) => {
 })
 
 // POST /api/v1/users
-// Needs recaptcha middleware
-router.post('/', async (req, res, next) => {
+router.post('/', recaptchaMiddleware, async (req, res, next) => {
   try {
     const response: any = await registerNewUser(req.body);
     const jwt = await createUserJWT({

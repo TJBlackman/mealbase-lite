@@ -3,6 +3,8 @@ import { createUserJWT } from '../utils/jwt-helpers';
 import express from 'express';
 import { sendResponse } from '../utils/normalize-response';
 import { requestResetPassword, confirmResetPassword } from "../services/user.service";
+import { recaptchaMiddleware } from '../middleware/recaptcha';
+
 const router = express.Router();
 
 // POST /api/v1/auth/local
@@ -43,7 +45,7 @@ router.get('/signout', (req, res, next) => {
 });
 
 // POST /api/auth/request-reset-password'
-router.post('/request-reset-password', async (req, res) => {
+router.post('/request-reset-password', recaptchaMiddleware, async (req, res) => {
   try {
     await requestResetPassword(req.body);
     sendResponse({
@@ -64,7 +66,7 @@ router.post('/request-reset-password', async (req, res) => {
 });
 
 // POST /api/auth/confirm-reset-password'
-router.post('/confirm-reset-password', async (req, res) => {
+router.post('/confirm-reset-password', recaptchaMiddleware, async (req, res) => {
   try {
     const result = await confirmResetPassword(req.body);
     sendResponse({

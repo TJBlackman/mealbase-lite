@@ -5,10 +5,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { networkRequest } from '../utils/network-request';
 import { IGenericAction } from '../types';
 import { getNewState } from '../utils/copy-state';
+import ReCAPTCHA from "react-google-recaptcha";
 
 interface ILocalState {
   email: string;
   loading: boolean;
+  recaptcha: string;
   error: string | null;
   success: string | null;
 }
@@ -16,6 +18,7 @@ type Action =
   | IGenericAction<'SET EMAIL', string>
   | IGenericAction<'SET ERROR', string>
   | IGenericAction<'SET SUCCESS', string>
+  | IGenericAction<'SET RECAPTCHA', string>
   | IGenericAction<'SUBMIT FORM'>
   | IGenericAction<'RESET FORM'>;
 
@@ -27,6 +30,7 @@ interface ComponentProps {
 const defaultState: ILocalState = {
   email: '',
   loading: false,
+  recaptcha: '',
   error: null,
   success: null,
 };
@@ -42,6 +46,10 @@ const reducer = (state: ILocalState, action: Action) => {
     case 'SET ERROR': {
       newState.error = action.payload;
       newState.loading = false;
+      return newState;
+    }
+    case 'SET RECAPTCHA': {
+      newState.recaptcha = action.payload;
       return newState;
     }
     case 'SET SUCCESS': {
@@ -75,6 +83,7 @@ export const RequestResetPassword = ({ onSuccess }: ComponentProps) => {
       method: 'POST',
       body: {
         email: localState.email,
+        recaptcha: localState.recaptcha
       },
       success: (json) => {
         dispatch({ type: 'SET SUCCESS', payload: 'Reset Password Email Sent!' });
@@ -102,6 +111,10 @@ export const RequestResetPassword = ({ onSuccess }: ComponentProps) => {
             payload: e.target.value,
           })
         }
+      />
+      <ReCAPTCHA
+        sitekey={process.env.GOOGLE_RECAPTCHA_CLIENT_KEY}
+        onChange={(value: string) => dispatch({ type: 'SET RECAPTCHA', payload: value})}
       />
       <FormFeedback
         success={localState.success}

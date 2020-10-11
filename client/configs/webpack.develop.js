@@ -2,6 +2,7 @@ const path = require('path');
 const merge = require('webpack-merge');
 const shared = require('./webpack.shared');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const development = {
   mode: 'development',
@@ -19,6 +20,9 @@ const development = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../src/html/index.html'),
+    }),
+    new Dotenv({
+      path: path.join(__dirname, '.develop.env'),
     }),
   ],
 };

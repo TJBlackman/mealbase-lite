@@ -152,7 +152,7 @@ export const requestResetPassword = async (data: { email: string }) => {
     throw Error('User does not exist.');
   };
   const resetRecord = await createRPR({ userId: user[0]._id });
-  const resetJwt = await createJWT({ _id: resetRecord._id }, { expiresIn: process.env.RESET_PASSWORD_LINK_DURATION_MINUTES });
+  const resetJwt = await createJWT({ _id: resetRecord._id }, { expiresIn: process.env.PASSWORD_RESET_TIMEOUT });
   const y = await sendResetPasswordEmail({
     email: data.email,
     jwt: resetJwt

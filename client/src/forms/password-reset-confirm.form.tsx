@@ -6,10 +6,13 @@ import { networkRequest } from '../utils/network-request';
 import { IGenericAction } from '../types';
 import { getNewState } from '../utils/copy-state';
 import { useParams } from 'react-router-dom';
+import ReCAPTCHA from "react-google-recaptcha";
+
 
 interface ILocalState {
   password: string;
   confirmPassword: string;
+  recaptcha: string;
   loading: boolean;
   error: string | null;
   success: string | null;
@@ -17,6 +20,7 @@ interface ILocalState {
 type Action =
   | IGenericAction<'SET PASSWORD', string>
   | IGenericAction<'SET CONFIRM PASSWORD', string>
+  | IGenericAction<'SET RECAPTCHA', string>
   | IGenericAction<'SET ERROR', string>
   | IGenericAction<'SET SUCCESS', string>
   | IGenericAction<'SUBMIT FORM'>
@@ -30,6 +34,7 @@ interface ComponentProps {
 const defaultState: ILocalState = {
   password: '',
   confirmPassword: '',
+  recaptcha: '',
   loading: false,
   error: null,
   success: null,
@@ -47,6 +52,10 @@ const reducer = (state: ILocalState, action: Action) => {
       newState.confirmPassword = action.payload;
       return newState;
     }
+    case 'SET RECAPTCHA': {
+      newState.recaptcha = action.payload;
+      return newState;
+    }
     case 'SET ERROR': {
       newState.error = action.payload;
       newState.loading = false;
@@ -58,10 +67,6 @@ const reducer = (state: ILocalState, action: Action) => {
       return newState;
     }
     case 'SUBMIT FORM': {
-      if (newState.password !== newState.confirmPassword){
-        newState.error = 'Passwords do not match.'; 
-        return newState; 
-      }
       newState.loading = true;
       return newState;
     }
@@ -78,11 +83,14 @@ const reducer = (state: ILocalState, action: Action) => {
 // component
 export const ConfirmResetPassword = ({ onSuccess }: ComponentProps) => {
   const { jwt } = useParams<{ jwt: string }>();
-  console.log(jwt);
   const [localState, dispatch] = useReducer(reducer, defaultState);
   const { formClass, textFieldClass, btnClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
+    if (localState.password !== localState.confirmPassword){
+      dispatch({ type: 'SET ERROR', payload: 'Passwords do not match.'}); 
+      return; 
+    }
     dispatch({ type: 'SUBMIT FORM' });
     networkRequest({
       url: '/api/v1/auth/confirm-reset-password',
@@ -90,6 +98,7 @@ export const ConfirmResetPassword = ({ onSuccess }: ComponentProps) => {
       body: {
         newPassword: localState.password,
         jwt: jwt,
+        recaptcha: localState.recaptcha
       },
       success: (json) => {
         dispatch({ type: 'SET SUCCESS', payload: 'Your password has been reset! Please proceed to login.' });
@@ -132,6 +141,10 @@ export const ConfirmResetPassword = ({ onSuccess }: ComponentProps) => {
             payload: e.target.value,
           })
         }
+      />
+      <ReCAPTCHA
+        sitekey={process.env.GOOGLE_RECAPTCHA_CLIENT_KEY}
+        onChange={(value: string) => dispatch({ type: 'SET RECAPTCHA', payload: value})}
       />
       <FormFeedback
         success={localState.success}

@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
@@ -12,9 +11,6 @@ module.exports = {
   plugins: [
     // rm -rf for output folder
     new CleanWebpackPlugin(),
-    new webpack.EnvironmentPlugin({
-      APP_SESSION_STORAGE_KEY: 'MBL_APP_STATE',
-    }),
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],

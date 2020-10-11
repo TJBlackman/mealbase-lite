@@ -6,11 +6,14 @@ import { useUserContext } from '../context/user';
 import { IGenericAction } from '../types';
 import { getNewState } from '../utils/copy-state';
 import { FormFeedback } from '../components/form-feedback';
+import ReCAPTCHA from "react-google-recaptcha";
+
 
 interface ILocalState {
   email: string;
   password: string;
   confirmPw: string;
+  recaptcha: string; 
   loading: boolean;
   error: string | null;
   success: string | null;
@@ -19,6 +22,7 @@ type Action =
   | IGenericAction<'SET EMAIL', string>
   | IGenericAction<'SET PASSWORD', string>
   | IGenericAction<'SET CONFIRM PASSWORD', string>
+  | IGenericAction<'SET RECAPTCHA', string>
   | IGenericAction<'SET ERROR', string>
   | IGenericAction<'SET SUCCESS', string>
   | IGenericAction<'SUBMIT FORM'>
@@ -32,6 +36,7 @@ const defaultState: ILocalState = {
   email: '',
   password: '',
   confirmPw: '',
+  recaptcha: '',
   loading: false,
   error: null,
   success: null,
@@ -52,6 +57,10 @@ const reducer = (state: ILocalState, action: Action) => {
     case 'SET CONFIRM PASSWORD': {
       newState.confirmPw = action.payload;
       return newState;
+    }
+    case 'SET RECAPTCHA': {
+      newState.recaptcha = action.payload; 
+      return newState; 
     }
     case 'SET SUCCESS': {
       newState.success = action.payload;
@@ -84,7 +93,7 @@ const reducer = (state: ILocalState, action: Action) => {
 export const RegisterForm = ({ onSuccess }: ComponentProps) => {
   const { updateUserData } = useUserContext();
   const [localState, dispatch] = useReducer(reducer, defaultState);
-  const { formClass, textFieldClass, btnClass, errorClass } = useStyles();
+  const { formClass, textFieldClass, btnClass } = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
     if (localState.password !== localState.confirmPw) {
@@ -98,6 +107,7 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
       body: {
         email: localState.email,
         password: localState.password,
+        recaptcha: localState.recaptcha
       },
       success: (json) => {
         updateUserData(json.data);
@@ -156,6 +166,11 @@ export const RegisterForm = ({ onSuccess }: ComponentProps) => {
           })
         }
       />
+      <ReCAPTCHA
+        style={{flex: '0 0 100%'}}
+        sitekey={process.env.GOOGLE_RECAPTCHA_CLIENT_KEY}
+        onChange={(value: string) => dispatch({ type: 'SET RECAPTCHA', payload: value})}
+      />
       <FormFeedback
         success={localState.success}
         error={localState.error}
@@ -190,9 +205,5 @@ const useStyles = makeStyles({
   },
   btnClass: {
     margin: '0 0 20px 20px',
-  },
-  errorClass: {
-    flex: '1 1 100%',
-    marginBottom: '20px',
-  },
+  }
 });

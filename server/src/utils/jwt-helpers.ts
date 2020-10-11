@@ -4,7 +4,7 @@ import { JWTUser } from '../types/type-definitions';
 
 const jwtOptions = {
   issuer: 'mealbase',
-  expiresIn: process.env.JWT_DEFAULT_EXPIRE
+  expiresIn: process.env.JWT_TIMEOUT
 };
 
 export const createUserJWT = (payload: JWTUser, options?: Partial<typeof jwtOptions>) =>
