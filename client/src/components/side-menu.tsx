@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemText, ListItemIcon, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,6 +27,7 @@ const useStyles = makeStyles({
 export const SideMenu = () => {
   const classes = useStyles();
   const history = useHistory();
+  console.log(history); 
   const { user, logout } = useUserContext();
   const { toggleMenu, visible } = useSideMenuContext();
 

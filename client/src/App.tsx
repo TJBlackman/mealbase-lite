@@ -5,17 +5,21 @@ import { GlobalContextProvider } from './context';
 import { AppThemeProvider } from './components/theme-provider';
 import { ModalConductor } from './modals/index';
 import { ContextMiddleware } from './context/middleware';
+import { BrowserRouter as Router } from 'react-router-dom';
+
 
 export const App = () => {
   return (
-    <GlobalContextProvider>
-      <ContextMiddleware>
-        <AppThemeProvider>
-          <CssBaseline />
-          <AppRouter />
-          <ModalConductor />
-        </AppThemeProvider>
-      </ContextMiddleware>
-    </GlobalContextProvider>
+    <Router>
+      <GlobalContextProvider>
+        <ContextMiddleware>
+          <AppThemeProvider>
+            <CssBaseline />
+            <AppRouter />
+            <ModalConductor />
+          </AppThemeProvider>
+        </ContextMiddleware>
+      </GlobalContextProvider>
+    </Router>
   );
 };

@@ -4,6 +4,7 @@ import { getNewState } from '../../utils/copy-state';
 import { useUserContext } from '../user';
 import { useCookbookContext } from '../cookbooks';
 import { networkRequest } from '../../utils/network-request';
+import { useHistory } from 'react-router-dom'; 
 
 interface IState {
   gotInitialCookbooks: boolean;
@@ -36,6 +37,7 @@ const reducer = (state: IState, action: IActions): IState => {
 };
 
 export const ContextMiddleware = ({ children }: React.PropsWithChildren<{}>) => {
+  const history = useHistory();
   const [state, dispatch] = useReducer(reducer, defaultState);
   const { user, updateUserData } = useUserContext();
   const { addManyCookbooks } = useCookbookContext();
@@ -62,7 +64,7 @@ export const ContextMiddleware = ({ children }: React.PropsWithChildren<{}>) => 
         },
       });
     }
-  }, []);
+  });
 
   // get user's cookbooks when they login
   useEffect(() => {

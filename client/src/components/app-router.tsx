@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { LoginPage } from '../pages/login.page';
 import { RegisterPage } from '../pages/register.page';
 import { AccountPage } from '../pages/account.page';
@@ -15,7 +15,6 @@ import { ConfirmResetPasswordPage } from '../pages/password-reset-confirm.page';
 
 export const AppRouter = () => {
   return (
-    <Router>
       <Switch>
         <Route path='/login' component={LoginPage} />
         <Route path='/register' component={RegisterPage} />
@@ -30,6 +29,5 @@ export const AppRouter = () => {
         <PrivateRoute path='/account' component={AccountPage} />
         <Redirect from='/' to='/browse' />
       </Switch>
-    </Router>
   );
 };

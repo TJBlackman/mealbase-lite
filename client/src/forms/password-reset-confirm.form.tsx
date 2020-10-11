@@ -159,7 +159,7 @@ export const ConfirmResetPassword = ({ onSuccess }: ComponentProps) => {
       >
         Reset
       </Button>
-      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={localState.loading}>
+      <Button variant='contained' className={btnClass} color='primary' type='submit' disabled={localState.loading || !!localState.success}>
         {localState.loading ? <CircularProgress color='primary' size='20px' /> : 'Submit'}
       </Button>
     </form>
