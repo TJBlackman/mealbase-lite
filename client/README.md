@@ -1,4 +1,4 @@
-# MealBase UI
+# MealBase UI | Client
 
 This project is the website front-end for [MealBase.app](https://www.mealbase.app).
 
@@ -13,4 +13,4 @@ This project is the website front-end for [MealBase.app](https://www.mealbase.ap
 
 1. Run `npm run build`
    - A build directory will include all the static files for production. Simply copy them to your production server public folder.
-   - `scp -r build <USER>@64.227.84.78:~/mealbase-lite-prod/public`
+   - `scp -r build <USER>@<IP_ADDRESS>:<PATH_TO>/public`
