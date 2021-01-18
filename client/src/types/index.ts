@@ -58,15 +58,17 @@ export interface INetworkResponse {
 
 // network request
 export interface INetworkRequestOptions {
-  url: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-  headers?: object;
-  body?: object;
-  before?: () => void;
-  success?: (json: INetworkResponse) => void;
-  error?: (error: INetworkResponse) => void;
-  after?: () => void;
-  latency?: number;
+  host?: string;                                // the base domain: "https://www.domain.com"
+  url: string;                                  // the route to call: "/api/users/register"
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';   // the method to use
+  headers?: object;                             // a headers object
+  body?: object;                                // the message body
+  before?: () => void;                          // a function to be executed before calling the API
+  success?: (json: any) => void;                // a function to be executed when the api is successful
+  error?: (error: any) => void;                 // a function to be executed when the api returns an error
+  after?: () => void;                           // a function to be executed after the API call, regardless of the success or error
+  latency?: number;                             // the amount of time (ms) to wait before executing success() or error()
+  forceSuccess?: boolean;                       // force to call success(), even if the API returns an error (good for development)
 }
 
 // recipe from DB

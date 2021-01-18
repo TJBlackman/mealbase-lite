@@ -27,7 +27,6 @@ const useStyles = makeStyles({
 export const SideMenu = () => {
   const classes = useStyles();
   const history = useHistory();
-  console.log(history); 
   const { user, logout } = useUserContext();
   const { toggleMenu, visible } = useSideMenuContext();
 

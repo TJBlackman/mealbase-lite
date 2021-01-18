@@ -88,4 +88,15 @@ router.post('/confirm-reset-password', recaptchaMiddleware, async (req, res) => 
 });
 
 
+// GET /api/v1/auth/whoami
+router.get('/read-cookie', (req, res, next) => {
+  sendResponse({
+    req,
+    res,
+    data: req.user,
+    message: '',
+    success: true,
+  });
+})
+
 export default router;

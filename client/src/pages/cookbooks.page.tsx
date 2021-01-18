@@ -112,7 +112,7 @@ export const CookbooksPage = () => {
           />
         </Grid>
       </Grid>
-      <Divider />
+      <Divider style={{ margin: '20px 0' }} />
       {localState.visibleCookbooks.map((cb) => (
         <CookbookListItem key={cb._id} cookbook={cb} />
       ))}
