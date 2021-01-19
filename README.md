@@ -1,6 +1,7 @@
 # MealBase UI | Client
 
-This project is the website front-end for [MealBase.app](https://www.mealbase.app).
+This project is the website front-end for [MealBase.app](https://www.mealbase.app).\
+[Postman API Documentation](https://documenter.getpostman.com/view/1087455/TVzXBuX8)
 
 ### Development
 
@@ -56,6 +57,7 @@ Controller > Service > DAL
 - JWT cookie used for all other auth accounts
 - JWT cookie refreshed on all routes
 - req.user is ALWAYS false, unless updated by /src/middleware/jwt-middleware.ts
+- check auth against req.user, not incoming JSON payload
 
 #### Permissions and Roles
 
