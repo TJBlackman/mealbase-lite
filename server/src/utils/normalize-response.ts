@@ -35,16 +35,7 @@ export const sendResponse = async (options: IProps) => {
   if (req.user && !cookie) {
     const issuedAt = req.user.iat * 1000;
     const timeSinceThen = Date.now() - issuedAt;
-    console.log(issuedAt, timeSinceThen, timeSinceThen > twentyFourHours);
-    var time = (() => {
-      const seconds = Math.floor(timeSinceThen / (1000));
-      if (seconds > 0) {
-        return `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
-      }
-    })();
-    console.log(time);
     if (timeSinceThen > twentyFourHours) {
-      console.log('refresh cookie....')
       delete req.user.exp;
       delete req.user.iss;
       const userValuesInJwt = await createUserJWT({ ...req.user });
