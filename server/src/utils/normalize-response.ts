@@ -26,16 +26,25 @@ export const sendResponse = async (options: IProps) => {
     success
   };
 
+  // refresh existing cookie
+  if (req.user) {
+    res.cookie(process.env.COOKIE_NAME, { ...req.user }, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * process.env.COOKIE_TIMEOUT_DAYS)
+    });
+  }
+
+  // assign new cookie, or clear existing cookie
   if (cookie) {
     if (cookie === 'clear') {
       res.cookie(process.env.COOKIE_NAME, 'Happy Birthday!', {
         httpOnly: true,
-        expires: new Date('Tue Sep 19 1989 00:00:00 GMT') // 7 days
+        expires: new Date('Tue Sep 19 1989 00:00:00 GMT')
       });
     } else {
       res.cookie(process.env.COOKIE_NAME, cookie, {
         httpOnly: true,
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 7 days
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * process.env.COOKIE_TIMEOUT_DAYS)
       });
     }
   }

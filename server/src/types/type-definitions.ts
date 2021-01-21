@@ -1,3 +1,4 @@
+import { StringRegexOptions } from "joi";
 
 export interface ValidationResult {
   error: undefined | string;
@@ -38,6 +39,7 @@ export interface NewUserData {
 export interface ExistingUserData {
   createdAt?: string;
   updatedAt?: string;
+  lastActiveDate?: string;
   email?: string;
   password?: string;
   newPassword?: string;

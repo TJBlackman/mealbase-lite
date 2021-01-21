@@ -35,7 +35,8 @@ server.use(express.static('public'))
 server.use(bodyParser.json());
 server.use(cookieParser());
 server.use(passport.initialize());
-server.use('/', AssignRequestUser);
+server.use(AssignRequestUser);
+server.use(logActiveUser);
 
 // routes
 server.use('/api/v1/auth', AuthController);
