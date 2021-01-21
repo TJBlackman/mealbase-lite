@@ -30,7 +30,7 @@ export const sendResponse = async (options: IProps) => {
   if (req.user) {
     res.cookie(process.env.COOKIE_NAME, { ...req.user }, {
       httpOnly: true,
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * process.env.COOKIE_TIMEOUT_DAYS)
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * parseInt(process.env.COOKIE_TIMEOUT_DAYS))
     });
   }
 
@@ -44,7 +44,7 @@ export const sendResponse = async (options: IProps) => {
     } else {
       res.cookie(process.env.COOKIE_NAME, cookie, {
         httpOnly: true,
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * process.env.COOKIE_TIMEOUT_DAYS)
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * parseInt(process.env.COOKIE_TIMEOUT_DAYS))
       });
     }
   }
