@@ -79,7 +79,6 @@ router.put('/', allowLoggedInUsersOnly, async (req, res, next) => {
       success: true,
     });
   } catch (err) {
-    console.log(err);
     sendResponse({
       req,
       res,

@@ -8,7 +8,7 @@ const jwtOptions = {
 };
 
 export const createUserJWT = (payload: JWTUser, options?: Partial<typeof jwtOptions>) =>
-  new Promise((resolve, reject) => {
+  new Promise<string>((resolve, reject) => {
     const jwtValues = {
       email: payload.email,
       _id: payload._id,

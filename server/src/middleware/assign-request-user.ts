@@ -4,15 +4,16 @@ import { verifyUserJWT } from '../utils/jwt-helpers';
 // passport middleware for certain routes can also set this
 // add data to req.user if it's available, else it's null
 
-export default async (req: any, res: any, next: any) => {
+export async function assignRequestUser(req: any, res: any, next: any) {
   req.user = false;
   const jwtFromCookie = req.cookies[process.env.COOKIE_NAME];
   if (jwtFromCookie) {
     try {
       const jwtValue = await verifyUserJWT(jwtFromCookie);
+      console.log(jwtValue);
       req.user = jwtValue;
     } catch (err) {
-      // console.log(err);
+      console.log(err);
     }
   }
   next();

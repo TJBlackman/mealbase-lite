@@ -4,7 +4,6 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import passport from './middleware/passport';
 import cookieParser from 'cookie-parser';
-import AssignRequestUser from './middleware/assign-request-user';
 import allowLoggedInUsersOnly from './middleware/auth-users-only';
 import checkAdminExistence from './scripts/insert-admin'
 import UserController from './controllers/user.controller';
@@ -12,6 +11,8 @@ import AuthController from './controllers/auth.controller';
 import RecipeController from './controllers/recipe.controller';
 import CookbookController from './controllers/cookbook.controller';
 import MealPlanController from './controllers/mealplan.controller';
+import { assignRequestUser } from './middleware/assign-request-user';
+import { logActiveUser } from './middleware/log-active-user';
 
 // initialize express server
 const server = express();
@@ -35,7 +36,7 @@ server.use(express.static('public'))
 server.use(bodyParser.json());
 server.use(cookieParser());
 server.use(passport.initialize());
-server.use(AssignRequestUser);
+server.use(assignRequestUser);
 server.use(logActiveUser);
 
 // routes
