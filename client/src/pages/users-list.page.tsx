@@ -27,7 +27,7 @@ export const UserListPage = () => {
 
   const searchUsers = () =>
     networkRequest({
-      url: `/api/v1/users?search=${search}`,
+      url: `/api/v1/users?search=${search}&sortBy=lastActiveDate&sortOrder=-1`,
       success: (json) => setUsers(json.data),
       error: (err) => {
         alert(err.message);
@@ -42,6 +42,9 @@ export const UserListPage = () => {
         An admin can use this page to manage other user accounts.
       </Typography>
       <Grid container spacing={3} justify='flex-end' alignItems='center'>
+        <Grid item xs={12} sm='auto' style={{ flexGrow: 1 }}>
+          <Typography variant='body1'>Total Users: {users.length}</Typography>
+        </Grid>
         <Grid item xs={12} sm='auto'>
           <TextField
             fullWidth
@@ -53,7 +56,7 @@ export const UserListPage = () => {
           />
         </Grid>
         <Grid item xs={12} sm='auto'>
-          <Button variant='contained' onClick={searchUsers}>
+          <Button variant='contained' fullWidth onClick={searchUsers}>
             Search Users
           </Button>
         </Grid>
@@ -63,6 +66,7 @@ export const UserListPage = () => {
           <TableHead>
             <TableRow>
               <TableCell style={{ fontWeight: 'bold' }}>Email Address</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Last Active Date</TableCell>
               <TableCell style={{ fontWeight: 'bold' }}>Roles</TableCell>
             </TableRow>
           </TableHead>
@@ -70,6 +74,9 @@ export const UserListPage = () => {
             {users.map((user) => (
               <TableRow key={user._id} className={rowStyles} onClick={() => history.push(`/users/${user._id}`)}>
                 <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  {user.lastActiveDate ? new Date(user.lastActiveDate).toLocaleString() : 'Unknown'}
+                </TableCell>
                 <TableCell>{user.roles.join(', ')}</TableCell>
               </TableRow>
             ))}

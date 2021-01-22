@@ -3,6 +3,9 @@ export interface IUserData {
   _id: string;
   email: string;
   roles: string[];
+  createdAt: string;
+  updatedAt: string;
+  lastActiveDate: string;
 }
 
 // modal types

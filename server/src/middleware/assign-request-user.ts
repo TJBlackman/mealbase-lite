@@ -10,7 +10,6 @@ export async function assignRequestUser(req: any, res: any, next: any) {
   if (jwtFromCookie) {
     try {
       const jwtValue = await verifyUserJWT(jwtFromCookie);
-      console.log(jwtValue);
       req.user = jwtValue;
     } catch (err) {
       console.log(err);

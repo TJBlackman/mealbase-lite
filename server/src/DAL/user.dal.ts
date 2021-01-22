@@ -72,7 +72,7 @@ export const queryUsers = async (query: GetUsersQuery) => {
     const { sortBy, sortOrder } = query;
     if (sortBy) {
       // whitelist sortable properties
-      if (['email', 'createdAt', 'updatedAt', 'roles'].includes(sortBy)) {
+      if (['email', 'createdAt', 'updatedAt', 'roles', 'lastActiveDate'].includes(sortBy)) {
         fieldName = sortBy;
       }
     }

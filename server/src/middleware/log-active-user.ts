@@ -9,18 +9,15 @@ const twelveHours = 1000 * 60 * 60 * 12;
 
 export async function logActiveUser(req: any, res: Response, next: NextFunction) {
   if (req.user) {
-    console.log('Log user....')
     const issuedAt = req.user.iat * 1000;
     const date = new Date();
     const timeSinceThen = date.getTime() - issuedAt;
     if (timeSinceThen > twelveHours) {
-      console.log('yes, log user activity')
       await updateExistingUser({
         _id: req.user._id,
         lastActiveDate: date.toUTCString()
       });
     } else {
-      console.log('nope, not long enough to log user activity')
     }
   }
   next();

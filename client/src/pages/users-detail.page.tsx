@@ -10,8 +10,9 @@ import {
   Button,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import cloneDeep from 'lodash.clonedeep';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import Layout from '../layouts/app-layout';
 import { networkRequest } from '../utils/network-request';
@@ -115,6 +116,7 @@ const reducer = (state: ILocalState, action: Action) => {
 export const UserDetailPage = () => {
   const [localState, dispatch] = useReducer(reducer, defaultState);
   const { userId } = useParams<{ userId: string }>();
+  const history = useHistory();
 
   useEffect(() => {
     dispatch({ type: 'SUBMIT NETWORK REQUEST' });
@@ -168,6 +170,14 @@ export const UserDetailPage = () => {
       <Typography variant='h4' paragraph>
         User Account
       </Typography>
+      <Button
+        variant='contained'
+        startIcon={<ArrowBackIcon />}
+        style={{ marginBottom: '40px' }}
+        onClick={() => history.goBack()}
+      >
+        Back to all users
+      </Button>
       {localState.loading && (
         <CircularProgress size={50} thickness={2} style={{ display: 'block', margin: '50px auto' }} />
       )}
@@ -264,6 +274,15 @@ export const UserDetailPage = () => {
           </Grid>
         </Grid>
       )}
+
+      <Button
+        variant='contained'
+        startIcon={<ArrowBackIcon />}
+        style={{ marginTop: '40px' }}
+        onClick={() => history.goBack()}
+      >
+        Back to all users
+      </Button>
     </Layout>
   );
 };
