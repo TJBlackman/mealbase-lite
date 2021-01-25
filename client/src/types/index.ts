@@ -140,3 +140,15 @@ export interface ICookbookRecord {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IMealPlan {
+  _id: string;
+  __v: string;
+  deleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  owner: string;
+  sharedWith: string[];
+  recipes: string[];
+  title: string;
+}; 

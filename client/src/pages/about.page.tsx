@@ -1,13 +1,6 @@
 import React from 'react';
 import Layout from '../layouts/app-layout';
-import {
-  Typography,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-  Grid,
-  Divider,
-} from '@material-ui/core';
+import { Typography, Accordion, AccordionSummary, AccordionDetails, Grid, Divider } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const QandA = [
@@ -52,14 +45,14 @@ export const AboutPage = () => {
             Frequently Answered Questions
           </Typography>
           {QandA.map(({ q, a }, i) => (
-            <ExpansionPanel key={i}>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1a-content' id={`panel-${i}`}>
+            <Accordion key={i}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1a-content' id={`panel-${i}`}>
                 <Typography>{q}</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
+              </AccordionSummary>
+              <AccordionDetails>
                 <Typography>{a}</Typography>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
+              </AccordionDetails>
+            </Accordion>
           ))}
         </Grid>
       </Grid>

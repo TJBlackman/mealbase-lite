@@ -19,7 +19,10 @@ export const getMealPlans = async (query: MealPlanQuery, user: JWTUser) => {
 
 export const createNewMealPlan = async (data: MealPlanRecord, user: JWTUser) => {
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const _mealplan = await saveNewMealPlan(data);
+    const _mealplan = await saveNewMealPlan({
+      ...data,
+      owner: data.owner || user._id
+    });
     return _mealplan;
   }
 

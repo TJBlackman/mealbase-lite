@@ -68,10 +68,10 @@ export const CookbooksPage = () => {
       <Typography variant='h3' component='h1'>
         Cookbooks
       </Typography>
-      <Typography variant='h6'>
-        Cookbooks allow users to easily organize recipes they like! You might create a cookbook full of breakfast or
-        dinner recipes, a separate cookbook for cocktail recipes, or cookbook for only deserts. Cookbooks help users
-        arrange the recipes they like into groups that make sense to them!
+      <Typography variant='body1'>
+        Cookbooks can be used to create groups of recipes you like. To get started, create a new cookbook and give it
+        the title "My Favorite Recipes." Now, find a recipe you like, and click "Add to cookbook," then select your new
+        cookbook!
       </Typography>
       <Grid
         container

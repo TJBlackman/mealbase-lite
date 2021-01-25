@@ -17,7 +17,6 @@ export async function logActiveUser(req: any, res: Response, next: NextFunction)
         _id: req.user._id,
         lastActiveDate: date.toUTCString()
       });
-    } else {
     }
   }
   next();

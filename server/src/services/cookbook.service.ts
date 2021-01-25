@@ -2,6 +2,7 @@ import { queryCookBooks, saveNewCookbook, updateCookbook, addRecipeIdToCookbook,
 import { CookbookQuery, JWTUser, Roles, CookbookRecord, AddIdToCookbook } from '../types/type-definitions';
 import { userHasRole } from '../utils/validators';
 import { queryRecipeDAL } from "../DAL/recipe.dal";
+import { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } from 'constants';
 
 export const getCookbooks = async (query: CookbookQuery, user: JWTUser) => {
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
@@ -20,10 +21,12 @@ export const getCookbooks = async (query: CookbookQuery, user: JWTUser) => {
 
 export const createNewCookbook = async (data: CookbookRecord, user: JWTUser) => {
   if (userHasRole([Roles.Admin, Roles.Support], user)) {
-    const _cookbook = await saveNewCookbook(data);
+    const _cookbook = await saveNewCookbook({
+      ...data,
+      owner: data.owner || user._id
+    });
     return _cookbook;
   }
-
   const cookbook = await saveNewCookbook({
     title: data.title,
     description: data.description,

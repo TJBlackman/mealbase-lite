@@ -91,6 +91,7 @@ export const queryRecipeDAL = async (query: RecipeQuery) => {
     sort: querySort,
     lean: true,
     virtuals: true
+
   };
   const recipes = await RecipeModel.find(filter, projections, dbOptions);
   return recipes as unknown as RecipeRecord[];
@@ -185,4 +186,12 @@ export const unLikedRecipeDAL = async (_id: string) => {
 export const getUserLikedRecipeRecords = async (userId: string) => {
   const results = await RecipeLikeModel.find({ userId });
   return results as unknown as IRecipeLikeRecord[];
+}
+
+export const getRandomRecipes = async (limit: number): Promise<RecipeRecord[]> => {
+  const recipes = await RecipeModel.aggregate([
+    { $match: { deleted: false } },
+    { $sample: { size: limit } },
+  ]);
+  return recipes as RecipeRecord[];
 }

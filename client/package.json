@@ -8,10 +8,10 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@material-ui/styles": "^4.10.0",
-    "framer-motion": "^2.5.1",
     "lodash.clonedeep": "^4.5.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-ga": "^3.3.0",
     "react-google-recaptcha": "^2.1.0",
     "react-router-dom": "^5.2.0"
   },

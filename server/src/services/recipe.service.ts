@@ -1,4 +1,4 @@
-import { queryRecipeDAL, saveRecipeDAL, editRecipeDAL, getLikeRecordsByUserIdAndRecipeIds, likeRecipeDAL, unLikedRecipeDAL, getLikeRecordsByRecipeId, countRecipesDAL, getUserLikedRecipeRecords } from '../DAL/recipe.dal';
+import { queryRecipeDAL, saveRecipeDAL, editRecipeDAL, getLikeRecordsByUserIdAndRecipeIds, likeRecipeDAL, unLikedRecipeDAL, getLikeRecordsByRecipeId, countRecipesDAL, getUserLikedRecipeRecords, getRandomRecipes } from '../DAL/recipe.dal';
 import { userHasRole } from '../utils/validators'
 import { queryCookBooks } from "../DAL/cookbook.dal";
 import { JWTUser, RecipeQuery, RecipeRecord } from '../types/type-definitions';
@@ -10,6 +10,17 @@ import { markRecipesAsLiked } from "../utils/mark-recipes-as-liked";
 export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
   let totalCount = 0;
   let recipes = [];
+
+  // get random recipes
+  if (query.randomize === '1') {
+    const num = query.limit ? parseInt(query.limit) : 1;
+    const recipes = await getRandomRecipes(num);
+    return {
+      totalCount: recipes.length,
+      recipes
+    };
+  }
+
   if (query.cookbook) {
     const cookbooks = await queryCookBooks({ _id: query.cookbook });
     query.in = cookbooks[0].recipes;

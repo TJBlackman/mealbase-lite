@@ -80,6 +80,7 @@ export interface RecipeQuery extends BasicQueryOptions {
   url?: string;
   in?: string[];
   cookbook?: string;
+  randomize?: '0' | '1';
   filter?: 'liked recipes';
 }
 export interface CookbookQuery extends BasicQueryOptions {
