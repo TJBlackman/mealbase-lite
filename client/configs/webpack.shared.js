@@ -1,40 +1,40 @@
-const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
-  entry: path.join(__dirname, '../src/index.tsx'),
+  entry: path.join(__dirname, "../src/index.tsx"),
   output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, '../build'),
-    publicPath: '/',
+    filename: "main.js",
+    publicPath: "/",
+    path: path.resolve(__dirname, "../build"),
   },
   plugins: [
     // rm -rf for output folder
     new CleanWebpackPlugin(),
   ],
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.json'],
+    extensions: [".ts", ".tsx", ".js", ".json"],
   },
   module: {
     rules: [
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ['file-loader'],
+        use: ["file-loader"],
       },
       {
         test: /\.(tsx|ts)?$/,
-        loader: 'ts-loader',
+        loader: "ts-loader",
         options: {
-          configFile: path.join(__dirname, './tsconfig.json'),
+          configFile: path.join(__dirname, "./tsconfig.json"),
         },
       },
       {
         test: /\.m?js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
-            presets: ['@babel/preset-react'],
+            presets: ["@babel/preset-react"],
           },
         },
       },
