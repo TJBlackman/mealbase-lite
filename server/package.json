@@ -11,7 +11,8 @@
     "local": "nodemon --watch 'src/**/*.ts' -r dotenv/config --exec \"ts-node\" src/index.ts dotenv_config_path=configs/.local.env",
     "staging": "nodemon --watch 'src/**/*.ts' -r dotenv/config --exec \"ts-node\" src/index.ts dotenv_config_path=configs/.staging.env",
     "prod": "node -r dotenv/config ./dist/index.js dotenv_config_path=configs/.prod.env",
-    "pm2": "pm2 start configs/ecosystem.config.js"
+    "pm2": "pm2 start configs/ecosystem.config.js",
+    "build-docker": "docker build . -t mealbase-lite:latest"
   },
   "author": "",
   "license": "ISC",
