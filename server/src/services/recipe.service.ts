@@ -17,6 +17,7 @@ import { getRecipeData } from "./puppeteer.service";
 import { cleanUrl } from "../utils/clean-url";
 import { cleanRecipeTitle } from "../utils/clean-recipe-title";
 import { markRecipesAsLiked } from "../utils/mark-recipes-as-liked";
+import FailedRecipeSchema from "../models/failed-recipes.model";
 
 export const getRecipesService = async (query: RecipeQuery, user: JWTUser) => {
   let totalCount = 0;
@@ -93,7 +94,12 @@ export const newRecipeService = async (data: RecipeRecord, user: JWTUser) => {
     const recipe = await saveRecipeDAL(pptrRecipe);
     return recipe;
   } else {
-    throw Error("Recipe could not be retreived.");
+    const failedRecipe = new FailedRecipeSchema({
+      url: newUrl,
+      submittedByUser: user._id,
+    });
+    await failedRecipe.save();
+    throw Error("Recipe could not be retrieved.");
   }
 };
 

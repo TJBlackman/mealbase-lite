@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { RECIPE_RECORD } from './types';
+import mongoose from "mongoose";
+import { RECIPE_RECORD } from "./types";
 
 const RecipeSchema = new mongoose.Schema({
   createdAt: {
@@ -39,7 +39,7 @@ const RecipeSchema = new mongoose.Schema({
   likes: {
     type: Number,
     required: true,
-    default: 0
+    default: 0,
   },
   deleted: {
     type: Boolean,
@@ -49,13 +49,12 @@ const RecipeSchema = new mongoose.Schema({
   isLiked: {
     type: Boolean,
     required: true,
-    default: false
-  }
+    default: false,
+  },
 });
 
 // allows string seach on title, siteName fields
-RecipeSchema.index('title');
-RecipeSchema.index('siteName');
+RecipeSchema.index({ title: 1, siteName: 1 });
 
 const RecipeModel = mongoose.model(RECIPE_RECORD, RecipeSchema);
 

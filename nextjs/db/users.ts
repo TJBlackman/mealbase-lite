@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
-import { USER_RECORD } from "./types";
-const UserSchema = new mongoose.Schema({
+import mongoose, { Schema, model } from "mongoose";
+import { User } from "../types";
+
+const UserSchema = new Schema<User>({
   createdAt: {
     type: Date,
     required: true,
@@ -27,7 +28,7 @@ const UserSchema = new mongoose.Schema({
     trim: true,
   },
   roles: {
-    type: [{ type: String }],
+    type: [{ type: Number }],
     required: true,
   },
   deleted: {
@@ -37,9 +38,5 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-// allows searching on email address
-UserSchema.index({ email: "text" });
-
-const UserModel = mongoose.model(USER_RECORD, UserSchema);
-
-export default UserModel;
+export const UserModel =
+  mongoose.models.Users || model<User>("Users", UserSchema);
