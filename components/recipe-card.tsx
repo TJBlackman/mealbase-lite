@@ -1,22 +1,19 @@
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { Recipe } from "@src/types";
-import { Link as MuiLink } from "@mui/material";
-import Link from "next/link";
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Typography from '@mui/material/Typography';
+import { Recipe } from '@src/types';
+import { Link as MuiLink } from '@mui/material';
 
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { IconButton } from "@mui/material";
-import { useState } from "react";
-import { RecipeCardMenu } from "./recipe-card-menu";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { IconButton } from '@mui/material';
+import { useState } from 'react';
+import { RecipeCardMenu } from './recipe-card-menu';
+import { RecipeLikeButton } from './recipe-card-like-btn';
 
 type Props = {
-  recipe: Recipe & { _id: string };
+  recipe: Recipe & { _id: string; isLiked: boolean };
 };
 
 export function RecipeCard(props: Props) {
@@ -35,9 +32,9 @@ export function RecipeCard(props: Props) {
       <Card
         sx={{
           maxWidth: 345,
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
         }}
         elevation={10}
       >
@@ -54,18 +51,18 @@ export function RecipeCard(props: Props) {
             gutterBottom
             variant="h6"
             component="div"
-            sx={{ lineHeight: "1.2" }}
+            sx={{ lineHeight: '1.2' }}
           >
             <MuiLink
               href={props.recipe.url}
               target="_blank"
               referrerPolicy="no-referrer"
               sx={{
-                color: "text.primary",
-                textDecoration: "none",
-                ":hover": {
-                  color: "primary.main",
-                  textDecoration: "underline",
+                color: 'text.primary',
+                textDecoration: 'none',
+                ':hover': {
+                  color: 'primary.main',
+                  textDecoration: 'underline',
                 },
               }}
             >
@@ -76,13 +73,12 @@ export function RecipeCard(props: Props) {
             {props.recipe.description}
           </Typography>
         </CardContent>
-        <CardActions disableSpacing sx={{ justifyContent: "space-between" }}>
-          <Button aria-label="add to favorites">
-            <Typography variant="body1" component="span" sx={{ mr: "2px" }}>
-              {props.recipe.likes}
-            </Typography>
-            <FavoriteBorderIcon sx={{ fontSize: "18px" }} />
-          </Button>
+        <CardActions disableSpacing sx={{ justifyContent: 'space-between' }}>
+          <RecipeLikeButton
+            recipeId={props.recipe._id}
+            isLiked={props.recipe.isLiked || false}
+            likes={props.recipe.likes}
+          />
           <IconButton onClick={showMenu}>
             <MoreVertIcon />
           </IconButton>

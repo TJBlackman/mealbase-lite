@@ -1,6 +1,6 @@
-import { Button, Grid, TextField, MenuItem, Pagination } from "@mui/material";
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/router";
+import { Button, Grid, TextField, MenuItem, Pagination } from '@mui/material';
+import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/router';
 
 type Props = {
   totalCount: number;
@@ -14,22 +14,20 @@ export function SearchAndPage(props: Props) {
   const [search, setSearch] = useState(props.search);
   const [limit, setLimit] = useState(props.limit.toString());
 
-  console.log(router);
-
   function getUrlParams(page?: number) {
     const params = new URLSearchParams();
     if (search.length > 0) {
-      params.append("search", search);
+      params.append('search', search);
     }
-    if (limit !== "25") {
-      params.append("limit", limit);
+    if (limit !== '25') {
+      params.append('limit', limit);
     }
     if (page) {
-      params.append("page", page);
+      params.append('page', page.toString());
     }
     const paramStr = params.toString();
     if (paramStr.length < 1) {
-      return "";
+      return '';
     }
     return `?${paramStr}`;
   }
@@ -58,7 +56,7 @@ export function SearchAndPage(props: Props) {
             value={search}
             variant="standard"
             label="Search"
-            sx={{ width: "300px" }}
+            sx={{ width: '300px' }}
             onChange={(e) => setSearch(e.target.value)}
           />
         </Grid>
@@ -88,7 +86,7 @@ export function SearchAndPage(props: Props) {
           <Pagination
             count={paginationCount}
             size="small"
-            sx={{ display: "inline-block" }}
+            sx={{ display: 'inline-block' }}
             onChange={handlePage}
           />
         </Grid>

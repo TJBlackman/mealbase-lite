@@ -1,16 +1,18 @@
-import { Grid, Toolbar, Typography } from "@mui/material";
-import { Box } from "@mui/system";
-import { RecipeCard } from "@src/components/recipe-card";
-import { SearchAndPage } from "@src/components/search-and-pagination";
-import { RecipeModel } from "@src/db/recipes";
-import { Recipe } from "@src/types";
-import { GetServerSidePropsContext } from "next";
+import { Grid, Toolbar, Typography } from '@mui/material';
+import { Box } from '@mui/system';
+import { RecipeCard } from '@src/components/recipe-card';
+import { SearchAndPage } from '@src/components/search-and-pagination';
+import { RecipeLikesModel } from '@src/db/recipe-likes';
+import { RecipeModel } from '@src/db/recipes';
+import { Recipe, UserJwt } from '@src/types';
+import { verifyJwt } from '@src/utils/jwt-helpers';
+import { GetServerSidePropsContext } from 'next';
 
 /** get server side data and SSR page */
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   // calculate limit, or use default
   const limit = (() => {
-    let _limit = "25";
+    let _limit = '25';
     const { limit } = context.query;
     if (limit) {
       if (Array.isArray(limit)) {
@@ -37,32 +39,57 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       deleted: false,
     };
     if (context.query.search) {
-      result.title = { $regex: context.query.search, $options: "i" };
+      result.title = { $regex: context.query.search, $options: 'i' };
     }
     return result;
   })();
 
   // get recipes from DB
   const recipes = await RecipeModel.find(filter)
-    .select("-addedByUser -deleted -__v")
+    .select('-addedByUser -deleted -__v')
     .lean()
     .limit(limit)
     .skip(skip)
     .sort({ createdAt: 1 });
 
+  // count total recipes that match this filter
   const count = await RecipeModel.find(filter).countDocuments();
 
   // I guess .lean() doesn't work anymore and _id is an object and dates are objects
   // manually convert to strings.... ugh
-  const flatRecipes = recipes.map((recipe) => ({
+  let flatRecipes = recipes.map((recipe) => ({
     ...recipe,
     _id: recipe._id.toString(),
     createdAt: recipe.createdAt.toISOString(),
     updatedAt: recipe.updatedAt.toISOString(),
+    isLiked: false,
   }));
 
+  // if user is logged in,
+  // get their liked recipe and check if any of the above recipes are liked this user
+  const accessToken =
+    context.req.cookies[process.env.ACCESS_TOKEN_COOKIE_NAME!];
+  if (accessToken) {
+    const user = await verifyJwt<UserJwt>(accessToken).catch((_err) => {});
+    if (user) {
+      const recipeIds = flatRecipes.map((r) => r._id);
+      const likedRecipes = await RecipeLikesModel.find({
+        userId: user._id,
+        recipeId: { $in: recipeIds },
+      }).select('recipeId');
+      likedRecipes.forEach((liked) => {
+        const _likedRecipe = flatRecipes.find(
+          (recipe) => recipe._id === liked.recipeId.toString()
+        );
+        if (_likedRecipe) {
+          _likedRecipe.isLiked = true;
+        }
+      });
+    }
+  }
+
   // search from query.param.search or ""
-  const search = context.query.search || "";
+  const search = context.query.search || '';
 
   return {
     props: {
@@ -76,7 +103,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 type Props = {
-  recipes: (Recipe & { _id: string })[];
+  recipes: (Recipe & { _id: string; isLiked: boolean })[];
   count: number;
   limit: number;
   skip: number;
@@ -84,6 +111,7 @@ type Props = {
 };
 
 export default function (props: Props) {
+  console.log(props);
   return (
     <>
       <Typography variant="h5" component="h1" paragraph>
