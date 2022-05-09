@@ -7,6 +7,7 @@ interface IUserContext {
   email: string;
   roles: string[];
   setUser: (payload: { email: string; roles: Roles[] }) => void;
+  logout: () => void;
 }
 
 const defaultContext: IUserContext = {
@@ -15,6 +16,7 @@ const defaultContext: IUserContext = {
   email: "",
   roles: [],
   setUser: () => void 0,
+  logout: () => void 0,
 };
 
 const UserContext = createContext(defaultContext);
@@ -31,6 +33,10 @@ export function UserContextProvider(props: PropsWithChildren<{}>) {
     setUser: (payload) => {
       setEmail(payload.email);
       setRoles(payload.roles);
+    },
+    logout: () => {
+      setEmail("");
+      setRoles([]);
     },
   };
 

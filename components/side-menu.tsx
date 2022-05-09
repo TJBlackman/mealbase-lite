@@ -5,15 +5,15 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useUserContext } from '@src/contexts/user';
-import Link from 'next/link';
-import LoginIcon from '@mui/icons-material/Login';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import InfoIcon from '@mui/icons-material/Info';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useUserContext } from "@src/contexts/user";
+import Link from "next/link";
+import LoginIcon from "@mui/icons-material/Login";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import InfoIcon from "@mui/icons-material/Info";
 
 type Props = {
   onClose: () => void;
@@ -22,9 +22,14 @@ type Props = {
 
 export function SideMenu(props: Props) {
   const userContext = useUserContext();
+
+  function logoutUser() {
+    userContext.logout();
+  }
+
   return (
     <Drawer anchor="right" open={props.open} onClose={props.onClose}>
-      <List sx={{ width: { xs: '100vw', sm: '300px' } }}>
+      <List sx={{ width: { xs: "100vw", sm: "300px" } }}>
         <ListItem button onClick={props.onClose}>
           <ListItemIcon>
             <CloseIcon />
@@ -81,7 +86,7 @@ export function SideMenu(props: Props) {
           <>
             <Divider sx={{ mt: 2, mb: 2 }} />
             <Link href="/logout">
-              <ListItem button>
+              <ListItem button onClick={logoutUser}>
                 <ListItemIcon>
                   <AccountCircleIcon />
                 </ListItemIcon>
