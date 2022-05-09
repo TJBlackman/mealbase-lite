@@ -7,41 +7,40 @@ import {
   Button,
   Link as MuiLink,
   CircularProgress,
-} from "@mui/material";
-import { useUserContext } from "@src/contexts/user";
-import { Roles } from "@src/types";
-import { networkRequest } from "@src/utils/network-request";
-import { localLoginSchema } from "@src/validation/users";
-import Link from "next/link";
-import { FormEvent, useState } from "react";
-import { useMutation } from "react-query";
-import { useRouter } from "next/router";
+} from '@mui/material';
+import { useUserContext } from '@src/contexts/user';
+import { Roles } from '@src/types';
+import { networkRequest } from '@src/utils/network-request';
+import { localLoginSchema } from '@src/validation/users';
+import Link from 'next/link';
+import { FormEvent, useState } from 'react';
+import { useMutation } from 'react-query';
+import { useRouter } from 'next/router';
 
 export default function () {
   const router = useRouter();
   const userContext = useUserContext();
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [password, setPassword] = useState('');
 
   const mutation = useMutation(
     (payload: { email: string; password: string }) =>
       networkRequest<{ email: string; roles: Roles[] }>({
-        url: "/api/auth/login/local",
-        method: "POST",
+        url: '/api/auth/login/local',
+        method: 'POST',
         body: payload,
-        delay: 2000,
       }),
     {
       onSuccess: (data) => {
+        router.push('/browse');
         userContext.setUser({
           email: data.email,
           roles: data.roles,
         });
-        router.push("/browse");
       },
       onError: (err) => {
-        let msg = "An unknown error occurred.";
+        let msg = 'An unknown error occurred.';
         if (err instanceof Error) {
           msg = err.message;
         }
@@ -52,7 +51,7 @@ export default function () {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError("");
+    setError('');
     const validationResult = localLoginSchema.validate({ email, password });
     if (validationResult.error) {
       return setError(validationResult.error.message);
@@ -64,9 +63,9 @@ export default function () {
   }
 
   function reset() {
-    setEmail("");
-    setPassword("");
-    setError("");
+    setEmail('');
+    setPassword('');
+    setError('');
   }
 
   return (
@@ -105,7 +104,7 @@ export default function () {
             {mutation.isLoading ? (
               <CircularProgress size={20} color="primary" />
             ) : (
-              "Submit"
+              'Submit'
             )}
           </Button>
           <Button type="button" onClick={reset} disabled={mutation.isLoading}>
@@ -115,9 +114,9 @@ export default function () {
       </form>
 
       <Typography variant="body2">
-        Don't have an account?{" "}
+        Don't have an account?{' '}
         <Link href="/register" passHref>
-          <MuiLink sx={{ textDecoration: "underline" }}>Sign Up</MuiLink>
+          <MuiLink sx={{ textDecoration: 'underline' }}>Sign Up</MuiLink>
         </Link>
       </Typography>
     </Container>

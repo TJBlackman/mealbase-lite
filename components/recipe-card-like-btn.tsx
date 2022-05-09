@@ -25,7 +25,6 @@ export function RecipeLikeButton(props: Props) {
       body: {
         recipeId: props.recipeId,
       },
-      delay: 2000,
     })
   );
 

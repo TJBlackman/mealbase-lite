@@ -8,37 +8,36 @@ import {
   Link as MuiLink,
   Alert,
   CircularProgress,
-} from "@mui/material";
-import { useMutation } from "react-query";
-import Link from "next/link";
-import { FormEvent, useState } from "react";
-import { networkRequest } from "@src/utils/network-request";
-import { registerUserSchema } from "@src/validation/users";
-import { useUserContext } from "@src/contexts/user";
-import { Roles } from "@src/types";
-import { GetServerSideProps } from "next";
+} from '@mui/material';
+import { useMutation } from 'react-query';
+import Link from 'next/link';
+import { FormEvent, useState } from 'react';
+import { networkRequest } from '@src/utils/network-request';
+import { registerUserSchema } from '@src/validation/users';
+import { useUserContext } from '@src/contexts/user';
+import { Roles } from '@src/types';
+import { GetServerSideProps } from 'next';
 
 export default function () {
   const userContext = useUserContext();
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [password, setPassword] = useState('');
   const [pwMismatch, setPwMismatch] = useState(false);
 
   const mutation = useMutation((payload: { email: string; password: string }) =>
     networkRequest<{ email: string; roles: Roles[] }>({
-      url: "/api/users",
-      method: "POST",
+      url: '/api/users',
+      method: 'POST',
       body: payload,
-      delay: 2000,
     })
   );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setPwMismatch(false);
-    setError("");
+    setError('');
     if (password !== confirm) {
       return setPwMismatch(true);
     }
@@ -53,14 +52,14 @@ export default function () {
       },
       {
         onSuccess: (data) => {
-          console.log("success", data);
+          console.log('success', data);
           userContext.setUser({
             email: data.email,
             roles: data.roles,
           });
         },
         onError: (err) => {
-          let msg = "An unknown error occurred.";
+          let msg = 'An unknown error occurred.';
           if (err instanceof Error) {
             msg = err.message;
           }
@@ -71,11 +70,11 @@ export default function () {
   }
 
   function reset() {
-    setEmail("");
-    setConfirm("");
-    setPassword("");
+    setEmail('');
+    setConfirm('');
+    setPassword('');
     setPwMismatch(false);
-    setError("");
+    setError('');
   }
 
   return (
@@ -135,7 +134,7 @@ export default function () {
             {mutation.isLoading ? (
               <CircularProgress size={16} color="primary" />
             ) : (
-              "Submit"
+              'Submit'
             )}
           </Button>
           <Button type="button" onClick={reset} disabled={mutation.isLoading}>
@@ -145,9 +144,9 @@ export default function () {
       </form>
 
       <Typography variant="body2">
-        Aready have an account?{" "}
+        Aready have an account?{' '}
         <Link href="/login" passHref>
-          <MuiLink sx={{ textDecoration: "underline" }}>Sign In</MuiLink>
+          <MuiLink sx={{ textDecoration: 'underline' }}>Sign In</MuiLink>
         </Link>
       </Typography>
     </Container>

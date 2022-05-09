@@ -14,6 +14,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import InfoIcon from "@mui/icons-material/Info";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 type Props = {
   onClose: () => void;
@@ -85,12 +86,20 @@ export function SideMenu(props: Props) {
         {userContext.isLoggedIn && (
           <>
             <Divider sx={{ mt: 2, mb: 2 }} />
-            <Link href="/logout">
-              <ListItem button onClick={logoutUser}>
+            <Link href="/account">
+              <ListItem button>
                 <ListItemIcon>
                   <AccountCircleIcon />
                 </ListItemIcon>
-                <ListItemText primary="logout" />
+                <ListItemText primary="Account" />
+              </ListItem>
+            </Link>
+            <Link href="/logout">
+              <ListItem button onClick={logoutUser}>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText primary="Logout" />
               </ListItem>
             </Link>
           </>

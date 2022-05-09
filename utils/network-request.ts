@@ -1,8 +1,8 @@
 type Options = {
   url: string;
-  method?: "GET" | "PUT" | "POST" | "DELETE";
+  method?: 'GET' | 'PUT' | 'POST' | 'DELETE';
   headers?: Record<string, string>;
-  body?: Record<string, string | number | boolean>;
+  body?: Record<string, any>;
   delay?: number;
 };
 
@@ -10,10 +10,10 @@ const sleep = (num: number) => new Promise((res) => setTimeout(res, num));
 
 export async function networkRequest<T>(options: Options) {
   const response = await fetch(options.url, {
-    method: options.method || "GET",
+    method: options.method || 'GET',
     headers: {
-      "Content-Type": "application/json",
-      credentials: "include",
+      'Content-Type': 'application/json',
+      credentials: 'include',
       ...options.headers,
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
