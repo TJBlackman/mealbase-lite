@@ -76,7 +76,7 @@ export function ChangeEmailForm(props: Props) {
           type="submit"
           variant="contained"
           sx={{ mr: 2 }}
-          disabled={mutation.isLoading}
+          disabled={mutation.isLoading || notChanged}
         >
           {mutation.isLoading ? (
             <CircularProgress size={20} color="primary" />
