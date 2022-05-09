@@ -1,8 +1,8 @@
-import { Roles } from '@src/types';
-import { useQuery } from 'react-query';
-import { useUserContext } from '@src/contexts/user';
-import { PropsWithChildren, useEffect, useState } from 'react';
-import { networkRequest } from '@src/utils/network-request';
+import { Roles } from "@src/types";
+import { useQuery } from "react-query";
+import { useUserContext } from "@src/contexts/user";
+import { PropsWithChildren, useEffect, useState } from "react";
+import { networkRequest } from "@src/utils/network-request";
 import {
   AppBar,
   Toolbar,
@@ -10,11 +10,11 @@ import {
   Container,
   IconButton,
   Link as MuiLink,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import Link from 'next/link';
-import { SideMenu } from './side-menu';
-import { useRouter } from 'next/router';
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import Link from "next/link";
+import { SideMenu } from "./side-menu";
+import { useRouter } from "next/router";
 
 export function Layout(props: PropsWithChildren<{}>) {
   const userContext = useUserContext();
@@ -22,10 +22,10 @@ export function Layout(props: PropsWithChildren<{}>) {
   const [sideMenuIsOpen, setSideMenuIsOpen] = useState(true);
 
   const refreshTokensQuery = useQuery(
-    'refresh-tokens',
+    "refresh-tokens",
     () =>
       networkRequest<{ email: string; roles: Roles[] }>({
-        url: '/api/auth/refresh-tokens',
+        url: "/api/auth/refresh-tokens",
       }),
     {
       onSuccess: (data) => {
@@ -36,7 +36,7 @@ export function Layout(props: PropsWithChildren<{}>) {
       },
       onError: (err) => {
         let msg =
-          'An unknown error occurred while attempting to refresh tokens.';
+          "An unknown error occurred while attempting to refresh tokens.";
         if (err instanceof Error) {
           msg = err.message;
         }
@@ -69,13 +69,13 @@ export function Layout(props: PropsWithChildren<{}>) {
     <>
       <AppBar position="static">
         <Container>
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Toolbar sx={{ justifyContent: "space-between" }}>
             <Link href="/browse">
               <MuiLink
                 sx={{
-                  color: 'common.white',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
+                  color: "common.white",
+                  textDecoration: "none",
+                  cursor: "pointer",
                 }}
               >
                 MealBase Lite
@@ -86,8 +86,8 @@ export function Layout(props: PropsWithChildren<{}>) {
                 <Link href="/account" passHref>
                   <MuiLink
                     sx={{
-                      color: 'common.white',
-                      textDecoration: 'none',
+                      color: "common.white",
+                      textDecoration: "none",
                       mr: 2,
                     }}
                     variant="body2"
@@ -101,8 +101,8 @@ export function Layout(props: PropsWithChildren<{}>) {
                   <Link href="/login" passHref>
                     <MuiLink
                       sx={{
-                        color: 'common.white',
-                        textDecoration: 'none',
+                        color: "common.white",
+                        textDecoration: "none",
                         mr: 2,
                       }}
                       variant="body2"
@@ -113,8 +113,8 @@ export function Layout(props: PropsWithChildren<{}>) {
                   <Link href="/register" passHref>
                     <MuiLink
                       sx={{
-                        color: 'common.white',
-                        textDecoration: 'none',
+                        color: "common.white",
+                        textDecoration: "none",
                         mr: 2,
                       }}
                       variant="body2"
@@ -125,7 +125,7 @@ export function Layout(props: PropsWithChildren<{}>) {
                 </>
               )}
               <IconButton onClick={() => setSideMenuIsOpen(true)}>
-                <MenuIcon sx={{ color: 'common.white' }} />
+                <MenuIcon sx={{ color: "common.white" }} />
               </IconButton>
             </Toolbar>
           </Toolbar>
