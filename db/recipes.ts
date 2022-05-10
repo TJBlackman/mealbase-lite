@@ -1,6 +1,5 @@
-import { Recipe } from "@src/types";
-import { number, string } from "joi";
-import mongoose from "mongoose";
+import { Recipe } from '@src/types';
+import mongoose from 'mongoose';
 
 const RecipeSchema = new mongoose.Schema<Recipe>({
   createdAt: {
@@ -35,7 +34,8 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
     required: true,
   },
   addedByUser: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Users',
     required: true,
   },
   likes: {
@@ -52,4 +52,4 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
 
 export const RecipeModel =
   (mongoose.models.Recipes as mongoose.Model<Recipe, {}, {}, {}>) ||
-  mongoose.model<Recipe>("Recipes", RecipeSchema);
+  mongoose.model<Recipe>('Recipes', RecipeSchema);

@@ -5,39 +5,29 @@ import {
   TextField,
   Toolbar,
   Button,
-  Link as MuiLink,
   CircularProgress,
 } from '@mui/material';
-import { useUserContext } from '@src/contexts/user';
 import { Roles } from '@src/types';
 import { networkRequest } from '@src/utils/network-request';
-import { localLoginSchema } from '@src/validation/users';
-import Link from 'next/link';
+import { EmailSchema } from '@src/validation/users';
 import { FormEvent, useState } from 'react';
 import { useMutation } from 'react-query';
-import { useRouter } from 'next/router';
 
 export default function () {
-  const router = useRouter();
-  const userContext = useUserContext();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const [password, setPassword] = useState('');
+  const [success, setSuccess] = useState('');
 
   const mutation = useMutation(
-    (payload: { email: string; password: string }) =>
+    (email: string) =>
       networkRequest<{ email: string; roles: Roles[] }>({
-        url: '/api/auth/login/local',
+        url: '/api/auth/reset-password',
         method: 'POST',
-        body: payload,
+        body: { email },
       }),
     {
-      onSuccess: (data) => {
-        router.push('/browse');
-        userContext.setUser({
-          email: data.email,
-          roles: data.roles,
-        });
+      onSuccess: () => {
+        setSuccess('A Reset Password email has been sent to this account!');
       },
       onError: (err) => {
         let msg = 'An unknown error occurred.';
@@ -52,28 +42,27 @@ export default function () {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError('');
-    const validationResult = localLoginSchema.validate({ email, password });
+    setSuccess('');
+    const validationResult = EmailSchema.validate(email);
     if (validationResult.error) {
       return setError(validationResult.error.message);
     }
-    mutation.mutate({
-      email,
-      password,
-    });
+    mutation.mutate(email);
   }
 
   function reset() {
     setEmail('');
-    setPassword('');
     setError('');
   }
 
   return (
     <Container maxWidth="sm">
       <Typography variant="h5" component="h1">
-        Login
+        Password Reset
       </Typography>
-      <Typography paragraph>Please use the form below to log in.</Typography>
+      <Typography paragraph>
+        Please enter your email address in the form below.
+      </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
           disabled={mutation.isLoading}
@@ -83,15 +72,6 @@ export default function () {
           value={email}
           label="Email Address"
           onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          disabled={mutation.isLoading}
-          fullWidth
-          sx={{ mb: 2 }}
-          type="password"
-          label="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
         />
         {error.length > 0 && <Alert severity="error">{error}</Alert>}
         <Toolbar disableGutters>
@@ -111,21 +91,8 @@ export default function () {
             Reset
           </Button>
         </Toolbar>
+        {success.length > 0 && <Alert severity="success">{success}</Alert>}
       </form>
-
-      <Typography variant="body2" paragraph>
-        Don't have an account?{' '}
-        <Link href="/register" passHref>
-          <MuiLink sx={{ textDecoration: 'underline' }}>Sign Up</MuiLink>
-        </Link>
-      </Typography>
-      <Typography variant="body2">
-        <Link href="/reset-password" passHref>
-          <MuiLink sx={{ textDecoration: 'underline' }}>
-            I forgot my password!
-          </MuiLink>
-        </Link>
-      </Typography>
     </Container>
   );
 }
