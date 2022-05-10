@@ -56,3 +56,9 @@ type RecipeLikeRecord = {
   userId: string;
   recipeId: string;
 };
+
+type PasswordResetRecord = {
+  user: string;
+  expires: Date;
+  createdAt: Date;
+};
