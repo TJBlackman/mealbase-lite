@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 export function Layout(props: PropsWithChildren<{}>) {
   const userContext = useUserContext();
   const router = useRouter();
-  const [sideMenuIsOpen, setSideMenuIsOpen] = useState(true);
+  const [sideMenuIsOpen, setSideMenuIsOpen] = useState(false);
 
   const refreshTokensQuery = useQuery(
     "refresh-tokens",
