@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react';
-import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import LinkIcon from '@mui/icons-material/Link';
-import { Menu } from '@mui/material';
-import { Recipe } from '@src/types';
-import { useUserContext } from '@src/contexts/user';
-import { copyTextToClipboard } from '@src/utils/copy-to-clipboard';
-import CheckIcon from '@mui/icons-material/Check';
+import { useEffect, useState } from "react";
+import MenuList from "@mui/material/MenuList";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import LinkIcon from "@mui/icons-material/Link";
+import { Menu } from "@mui/material";
+import { Recipe } from "@src/types";
+import { useUserContext } from "@src/contexts/user";
+import { copyTextToClipboard } from "@src/utils/copy-to-clipboard";
+import CheckIcon from "@mui/icons-material/Check";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Link from "next/link";
 
 type Props = {
   recipe: Recipe & { _id: string };
@@ -51,18 +54,14 @@ export function RecipeCardMenu(props: Props) {
         </MenuItem>
         {userContext.isAdmin && (
           <>
-            <MenuItem>
-              <ListItemIcon>
-                <LinkIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Edit Recipe</ListItemText>
-            </MenuItem>
-            <MenuItem>
-              <ListItemIcon>
-                <LinkIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Delete Recipe</ListItemText>
-            </MenuItem>
+            <Link href={`/admin/recipes/${props.recipe._id}/edit`}>
+              <MenuItem>
+                <ListItemIcon>
+                  <EditIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Edit Recipe</ListItemText>
+              </MenuItem>
+            </Link>
           </>
         )}
       </MenuList>

@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "5f0b044a33f2610851e5c932",
+    "email": "admin001@mealbase.app",
+    "password": "$2b$10$Q0IDgFGM7o7dSW1sY6hRs.Gd8pbt5E4znCb535wUiOtIGneKku.Cq"
+  },
+  {
+    "_id": "5f0b2dc4b9cd430beac442f5",
+    "email": "tjblackman08@gmail.com",
+    "password": "$2b$10$uPdUhLByaZ/wbLVL7g/fzOKUgZ0Yf/a4CoZ6Bl0NxgMr9qcQLeMNu"
+  },
+  {
+    "_id": "5f0d2580de27d91d2d577963",
+    "email": "afbeals@hotmail.com",
+    "password": "$2b$10$KtKJNJtQHEWZp0qaYm7cBOsgTgJo8fG7zO0IWKHfhAjBd7b3KwPQu"
+  },
+  {
+    "_id": "5f4ff1bb49860026aa654215",
+    "email": "mealbase@nicbovee.com",
+    "password": "$2b$10$0VZZwYe2vW87DW6RKtPhkemIZtvtq25masNh961xZVyhge.60wjje"
+  },
+  {
+    "_id": "5f7fcdb3341d8a1f6ca20625",
+    "email": "jqnbaladsibxjoiyrr@etochq.com",
+    "password": "$2b$10$1kGGCEQOIvGpQco8oEZ4JOp1QTI0nd7HEpBrq67Z.PKgjSlnA42Qe"
+  },
+  {
+    "_id": "5f9add07f8c2833aca23e285",
+    "email": "sweepsmasterguy@gmail.com",
+    "password": "$2b$10$AcGFRfTQHidl2cIW4UBsQ.L7aMYcsKYp4j1T1dZcmjvlUbsyN4E9W"
+  },
+  {
+    "_id": "6004ee298e380f12f2f1692f",
+    "email": "sa.mcneely13@gmail.com",
+    "password": "$2b$10$QDszEuB8OoURm5j1zXLeHuZJlZzXz5YjKk9WMty8QaFpCuj1IfeXq"
+  }
+]

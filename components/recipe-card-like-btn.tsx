@@ -1,16 +1,17 @@
-import { Button, Typography } from '@mui/material';
-import { useState } from 'react';
+import { Button, Typography } from "@mui/material";
+import { useState } from "react";
 
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { useUserContext } from '@src/contexts/user';
-import { useMutation } from 'react-query';
-import { networkRequest } from '@src/utils/network-request';
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { useUserContext } from "@src/contexts/user";
+import { useMutation } from "react-query";
+import { networkRequest } from "@src/utils/network-request";
 
 type Props = {
   likes: number;
   recipeId: string;
   isLiked: boolean;
+  disabled?: boolean;
 };
 
 export function RecipeLikeButton(props: Props) {
@@ -20,8 +21,8 @@ export function RecipeLikeButton(props: Props) {
 
   const mutation = useMutation(() =>
     networkRequest({
-      url: '/api/recipes/toggle-like',
-      method: 'POST',
+      url: "/api/recipes/toggle-like",
+      method: "POST",
       body: {
         recipeId: props.recipeId,
       },
@@ -29,7 +30,7 @@ export function RecipeLikeButton(props: Props) {
   );
 
   function handleClick(e: any) {
-    if (!userContext.isLoggedIn) {
+    if (!userContext.isLoggedIn || props.disabled) {
       return;
     }
     mutation.mutate(undefined, {
@@ -47,13 +48,13 @@ export function RecipeLikeButton(props: Props) {
 
   return (
     <Button onClick={handleClick} type="button" disabled={mutation.isLoading}>
-      <Typography variant="body1" component="span" sx={{ mr: '2px' }}>
+      <Typography variant="body1" component="span" sx={{ mr: "2px" }}>
         {likes}
       </Typography>
       {isLiked ? (
-        <FavoriteIcon sx={{ fontSize: '18px' }} />
+        <FavoriteIcon sx={{ fontSize: "18px" }} />
       ) : (
-        <FavoriteBorderIcon sx={{ fontSize: '18px' }} />
+        <FavoriteBorderIcon sx={{ fontSize: "18px" }} />
       )}
     </Button>
   );

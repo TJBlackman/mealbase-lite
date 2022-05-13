@@ -94,6 +94,7 @@ export default function () {
           value={email}
           label="Email Address"
           onChange={(e) => setEmail(e.target.value)}
+          autoFocus
         />
         <TextField
           disabled={mutation.isLoading}
