@@ -1,6 +1,6 @@
 import { mongoDbConnection } from "@src/db/connection";
 import { RecipeModel } from "@src/db/recipes";
-import { Roles, UserJwt } from "@src/types";
+import { Roles, UserJwt } from "@src/types/index.d";
 import { verifyJwt } from "@src/utils/jwt-helpers";
 import { editRecipeSchema } from "@src/validation/recipes";
 import { NextApiHandler } from "next";
@@ -40,18 +40,19 @@ const handler: NextApiHandler = async (req, res) => {
     }
 
     // update recipe
-    recipe.title = req.body.title;
-    recipe.description = req.body.description;
-    recipe.image = req.body.image;
     recipe.url = req.body.url;
-    recipe.siteName = req.body.siteName;
-    recipe.deleted = req.body.deleted;
+    recipe.title = req.body.title;
     recipe.image = req.body.image;
+    recipe.deleted = req.body.deleted;
+    recipe.siteName = req.body.siteName;
+    recipe.description = req.body.description;
     recipe.updatedAt = new Date();
 
+    console.log("presave");
     await recipe.save();
+    console.log("postsave");
 
-    return res.json(recipe.toObject);
+    return res.json({ success: true });
   } catch (err) {
     let msg = `An unknown error occurred.`;
     if (err instanceof Error) {

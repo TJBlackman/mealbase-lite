@@ -2,7 +2,6 @@ import { RecipeModel } from "@src/db/recipes";
 import { Recipe } from "@src/types";
 import { GetServerSideProps } from "next";
 import {
-  Box,
   Typography,
   Container,
   Alert,
@@ -14,10 +13,12 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
-import { FormEventHandler, useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { RecipeCard } from "@src/components/recipe-card";
 import { useMutation } from "react-query";
 import { networkRequest } from "@src/utils/network-request";
+import { useRouter } from "next/router";
+import { red } from "@mui/material/colors";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -56,39 +57,69 @@ type Props = {
   error?: string;
 };
 export default function DeleteRecipePage(props: Props) {
-  const [title, setTitle] = useState(props?.recipe?.title || "");
+  const router = useRouter();
+  const [title, setTitle] = useState(props.recipe?.title || "");
   const [description, setDescription] = useState(
-    props?.recipe?.description || ""
+    props.recipe?.description || ""
   );
-  const [img, setImg] = useState(props?.recipe?.image || "");
-  const [url, setUrl] = useState(props?.recipe?.url || "");
-  const [siteName, setSiteName] = useState(props?.recipe?.siteName || "");
-  const [deleted, setDeleted] = useState(props?.recipe?.deleted || false);
+  const [img, setImg] = useState(props.recipe?.image || "");
+  const [url, setUrl] = useState(props.recipe?.url || "");
+  const [siteName, setSiteName] = useState(props.recipe?.siteName || "");
+  const [deleted, setDeleted] = useState<boolean>(
+    props.recipe?.deleted || false
+  );
 
   // API mutation
-  const mutation = useMutation((payload: RecipeWithId) =>
-    networkRequest({
-      url: `/api/recipes/edit`,
-      method: "PUT",
-      body: payload,
-    })
+  const mutation = useMutation(
+    (
+      payload: Pick<
+        RecipeWithId,
+        | "url"
+        | "title"
+        | "image"
+        | "deleted"
+        | "siteName"
+        | "description"
+        | "_id"
+      >
+    ) =>
+      networkRequest({
+        url: `/api/recipes/edit`,
+        method: "PUT",
+        body: payload,
+      })
   );
 
   // handle form submit
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    mutation.mutate(
+      {
+        _id: props.recipe!._id,
+        title,
+        description,
+        image: img,
+        url,
+        siteName,
+        deleted,
+      },
+      {
+        onSuccess: () => {
+          router.replace(router.asPath);
+        },
+      }
+    );
   }
 
   function reset() {
-    setTitle(props?.recipe?.title || "");
-    setDescription(props?.recipe?.description || "");
-    setImg(props?.recipe?.image || "");
-    setUrl(props?.recipe?.url || "");
-    setSiteName(props?.recipe?.siteName || "");
-    setDeleted(props?.recipe?.deleted || false);
+    setTitle(props.recipe?.title || "");
+    setDescription(props.recipe?.description || "");
+    setImg(props.recipe?.image || "");
+    setUrl(props.recipe?.url || "");
+    setSiteName(props.recipe?.siteName || "");
+    setDeleted(props.recipe?.deleted || false);
   }
 
-  console.log(props);
   return (
     <Container maxWidth="md">
       <Typography variant="h5" component="h1" paragraph>
@@ -149,12 +180,25 @@ export default function DeleteRecipePage(props: Props) {
                 sx={{ mb: 2 }}
                 control={
                   <Checkbox
-                    value={deleted}
+                    checked={deleted}
                     onChange={(e) => setDeleted(e.target.checked)}
+                    sx={{
+                      color: red[800],
+                      "&.Mui-checked": {
+                        color: red[600],
+                      },
+                    }}
                   />
                 }
-                label="Deleted"
+                label={
+                  <Typography color="error">
+                    {deleted ? "Deleted" : "Delete"}
+                  </Typography>
+                }
               />
+              {mutation.isError && (
+                <Alert severity="error">An error occurred.</Alert>
+              )}
               <Toolbar disableGutters>
                 <Button
                   type="submit"
@@ -176,6 +220,7 @@ export default function DeleteRecipePage(props: Props) {
                   Reset
                 </Button>
               </Toolbar>
+              {mutation.isSuccess && <Alert severity="success">Success!</Alert>}
             </form>
           </Grid>
           <Grid item xs={12} sm={6} container justifyContent="center">

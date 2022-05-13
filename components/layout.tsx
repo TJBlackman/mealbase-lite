@@ -28,6 +28,9 @@ export function Layout(props: PropsWithChildren<{}>) {
         url: "/api/auth/refresh-tokens",
       }),
     {
+      staleTime:
+        1000 * 60 * parseInt(process.env.NEXT_PUBLIC_ACCESS_TOKEN_JWT_EXPIRE!) -
+        1,
       onSuccess: (data) => {
         userContext.setUser({
           email: data.email,
@@ -131,7 +134,9 @@ export function Layout(props: PropsWithChildren<{}>) {
           </Toolbar>
         </Container>
       </AppBar>
-      <Container sx={{ pt: { xs: 2, sm: 4 } }}>{props.children}</Container>
+      <Container sx={{ pt: { xs: 2, sm: 4 }, pb: { xs: 6, sm: 12 } }}>
+        {props.children}
+      </Container>
       <SideMenu
         open={sideMenuIsOpen}
         onClose={() => setSideMenuIsOpen(false)}
