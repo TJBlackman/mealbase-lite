@@ -13,21 +13,28 @@ import { EmailSchema } from '@src/validation/users';
 import { FormEvent, useState } from 'react';
 import { useMutation } from 'react-query';
 
+export function getServerSideProps() {
+  return { props: {} };
+}
+
 export default function () {
-  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPw, setConfirmPw] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const mutation = useMutation(
     (email: string) =>
       networkRequest<{ email: string; roles: Roles[] }>({
-        url: '/api/auth/reset-password',
+        url: '/api/auth/reset-password/confirm',
         method: 'POST',
         body: { email },
       }),
     {
       onSuccess: () => {
-        setSuccess('A Reset Password email has been sent to this account!');
+        setSuccess(
+          'Your password has been updated! You may now login using your new password.'
+        );
       },
       onError: (err) => {
         let msg = 'An unknown error occurred.';
@@ -43,15 +50,15 @@ export default function () {
     e.preventDefault();
     setError('');
     setSuccess('');
-    const validationResult = EmailSchema.validate(email);
+    const validationResult = EmailSchema.validate(password);
     if (validationResult.error) {
       return setError(validationResult.error.message);
     }
-    mutation.mutate(email);
+    mutation.mutate(password);
   }
 
   function reset() {
-    setEmail('');
+    setPassword('');
     setError('');
   }
 
@@ -61,17 +68,26 @@ export default function () {
         Password Reset
       </Typography>
       <Typography paragraph>
-        Please enter your email address in the form below.
+        Please enter your new password into the fields below.
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
           disabled={mutation.isLoading}
           fullWidth
-          type="email"
+          type="password"
           sx={{ mb: 2 }}
-          value={email}
-          label="Email Address"
-          onChange={(e) => setEmail(e.target.value)}
+          value={password}
+          label="Password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <TextField
+          disabled={mutation.isLoading}
+          fullWidth
+          type="password"
+          sx={{ mb: 2 }}
+          value={confirmPw}
+          label="Confirm Password"
+          onChange={(e) => setConfirmPw(e.target.value)}
         />
         {error.length > 0 && <Alert severity="error">{error}</Alert>}
         <Toolbar disableGutters>

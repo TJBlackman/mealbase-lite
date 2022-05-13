@@ -1,11 +1,9 @@
 import { UserModel } from '@src/db/users';
 import { PasswordResetModel } from '@src/db/password-resets';
-import { RefreshTokenModel } from '@src/db/refresh-tokens';
 import { NextApiHandler } from 'next';
-import { createJwt, verifyJwt } from '@src/utils/jwt-helpers';
-import cookie from 'cookie';
-import { getFutureDate } from '@src/utils/get-expires-date';
+import { createJwt } from '@src/utils/jwt-helpers';
 import { mongoDbConnection } from '@src/db/connection';
+import { EmailSchema } from '@src/validation/users';
 
 const handler: NextApiHandler = async (req, res) => {
   try {
@@ -13,6 +11,16 @@ const handler: NextApiHandler = async (req, res) => {
       return res.status(404).send('Not Found');
     }
 
+    // validate req.body.email
+    const validationResult = EmailSchema.validate(req.body.email);
+    if (validationResult.error) {
+      return res.status(400).send(validationResult.error.message);
+    }
+
+    // db connection
+    await mongoDbConnection();
+
+    // validate account exists - don't tell client if it does/doesn't exist
     const user = await UserModel.findOne({ email: req.body.email });
     if (user) {
       const pwReset = new PasswordResetModel({
@@ -22,10 +30,13 @@ const handler: NextApiHandler = async (req, res) => {
 
       const resetJWT = await createJwt({
         type: 'reset-pw-token',
-        payload: pwReset._id.toString(),
+        payload: { _id: pwReset._id.toString() },
       });
 
-      // email user a link with their reset pw jwt
+      // TODO: email user a link with their reset pw jwt
+
+      // for now, redirect them
+      return res.redirect(307, `/reset-password/confirm/${resetJWT}`);
     }
 
     res.status(200).json({ success: true });

@@ -1,9 +1,9 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 // Create a new JWT
 export function createJwt(options: {
   payload: string | Record<string, any>;
-  type: "access-token" | "refresh-token" | "reset-pw-token";
+  type: 'access-token' | 'refresh-token' | 'reset-pw-token';
 }): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
@@ -14,13 +14,13 @@ export function createJwt(options: {
           issuer: process.env.JWT_ISSUER!,
           expiresIn: (() => {
             switch (options.type) {
-              case "refresh-token": {
+              case 'refresh-token': {
                 return process.env.REFRESH_TOKEN_JWT_EXPIRE;
               }
-              case "access-token": {
+              case 'access-token': {
                 return process.env.NEXT_PUBLIC_ACCESS_TOKEN_JWT_EXPIRE;
               }
-              case "reset-pw-token": {
+              case 'reset-pw-token': {
                 return process.env.RESET_PW_JWT_EXPIRE;
               }
               default: {
@@ -36,11 +36,11 @@ export function createJwt(options: {
           if (jwt) {
             return resolve(jwt);
           }
-          reject("Failed to create a JWT.");
+          reject('Failed to create a JWT.');
         }
       );
     } catch (err) {
-      let msg = "An unknown error occurred while trying to create a JWT.";
+      let msg = 'An unknown error occurred while trying to create a JWT.';
       if (err instanceof Error) {
         msg = err.message;
       }
@@ -66,11 +66,11 @@ export function verifyJwt<T>(str: string): Promise<T> {
           if (value) {
             return resolve(value as unknown as T);
           }
-          reject("Failed to verify a JWT.");
+          reject('Failed to verify a JWT.');
         }
       );
     } catch (err) {
-      let msg = "An error occurred while trying to verify a JWT.";
+      let msg = 'An error occurred while trying to verify a JWT.';
       if (err instanceof Error) {
         msg = err.message;
       }

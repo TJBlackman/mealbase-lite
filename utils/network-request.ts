@@ -10,6 +10,7 @@ const sleep = (num: number) => new Promise((res) => setTimeout(res, num));
 
 export async function networkRequest<T>(options: Options) {
   const response = await fetch(options.url, {
+    redirect: 'follow',
     method: options.method || 'GET',
     headers: {
       'Content-Type': 'application/json',
