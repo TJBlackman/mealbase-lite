@@ -48,9 +48,7 @@ const handler: NextApiHandler = async (req, res) => {
     recipe.description = req.body.description;
     recipe.updatedAt = new Date();
 
-    console.log("presave");
     await recipe.save();
-    console.log("postsave");
 
     return res.json({ success: true });
   } catch (err) {
