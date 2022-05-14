@@ -40,7 +40,7 @@ export function SideMenu(props: Props) {
         <Divider sx={{ mt: 2, mb: 2 }} />
         {!userContext.isLoggedIn && (
           <>
-            <Link href="/login">
+            <Link href="/login" passHref>
               <ListItem button>
                 <ListItemIcon>
                   <LoginIcon />
@@ -48,7 +48,7 @@ export function SideMenu(props: Props) {
                 <ListItemText primary="Login" />
               </ListItem>
             </Link>
-            <Link href="/register">
+            <Link href="/register" passHref>
               <ListItem button>
                 <ListItemIcon>
                   <AccountCircleIcon />
@@ -67,7 +67,7 @@ export function SideMenu(props: Props) {
             <ListItemText primary="Browse Recipes" />
           </ListItem>
         </Link>
-        <Link href="/add-recipe">
+        <Link href="/add-recipe" passHref>
           <ListItem button>
             <ListItemIcon>
               <AddBoxIcon />
@@ -75,7 +75,7 @@ export function SideMenu(props: Props) {
             <ListItemText primary="Add Recipe" />
           </ListItem>
         </Link>
-        <Link href="/">
+        <Link href="/" passHref>
           <ListItem button>
             <ListItemIcon>
               <InfoIcon />
@@ -86,7 +86,7 @@ export function SideMenu(props: Props) {
         {userContext.isLoggedIn && (
           <>
             <Divider sx={{ mt: 2, mb: 2 }} />
-            <Link href="/account">
+            <Link href="/account" passHref>
               <ListItem button>
                 <ListItemIcon>
                   <AccountCircleIcon />
@@ -94,7 +94,7 @@ export function SideMenu(props: Props) {
                 <ListItemText primary="Account" />
               </ListItem>
             </Link>
-            <Link href="/logout">
+            <Link href="/logout" passHref>
               <ListItem button onClick={logoutUser}>
                 <ListItemIcon>
                   <LogoutIcon />

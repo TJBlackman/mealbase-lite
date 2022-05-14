@@ -73,7 +73,7 @@ export function Layout(props: PropsWithChildren<{}>) {
       <AppBar position="static">
         <Container>
           <Toolbar sx={{ justifyContent: "space-between" }}>
-            <Link href="/browse">
+            <Link href="/browse" passHref>
               <MuiLink
                 sx={{
                   color: "common.white",

@@ -17,7 +17,7 @@ import { FormEvent, useState } from "react";
 import { useMutation } from "react-query";
 import { useRouter } from "next/router";
 
-export default function () {
+export default function LoginPage() {
   const router = useRouter();
   const userContext = useUserContext();
   const [email, setEmail] = useState("");
@@ -115,7 +115,7 @@ export default function () {
       </form>
 
       <Typography variant="body2" paragraph>
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/register" passHref>
           <MuiLink sx={{ textDecoration: "underline" }}>Sign Up</MuiLink>
         </Link>

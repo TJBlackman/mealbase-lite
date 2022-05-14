@@ -42,7 +42,7 @@ export function RecipeCard(props: Props) {
         }}
         elevation={10}
       >
-        <a href={props.recipe.url} target="_blank" referrerPolicy="no-referrer">
+        <a href={props.recipe.url} target="_blank" rel="noreferrer">
           <CardMedia
             component="img"
             height="194"

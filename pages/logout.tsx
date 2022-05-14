@@ -52,4 +52,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
-export default () => <p>Logout.</p>;
+export default function logout() {
+  return <p>Logout.</p>;
+}

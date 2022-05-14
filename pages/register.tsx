@@ -18,7 +18,7 @@ import { useUserContext } from "@src/contexts/user";
 import { Roles } from "@src/types";
 import { GetServerSideProps } from "next";
 
-export default function () {
+export default function RegisterPage() {
   const userContext = useUserContext();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
