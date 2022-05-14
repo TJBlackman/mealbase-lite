@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p 3050",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pm2": "pm2 start npm --name \"MealBase\" -- start"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
