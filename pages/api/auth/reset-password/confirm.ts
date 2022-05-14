@@ -24,7 +24,6 @@ const handler: NextApiHandler = async (req, res) => {
 
     // validate jwt
     const jwt = await verifyJwt<{ _id: string }>(req.body.jwt);
-    console.log('jwt', jwt);
 
     // db connection
     await mongoDbConnection();

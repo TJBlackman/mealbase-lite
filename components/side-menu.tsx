@@ -5,16 +5,16 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { useUserContext } from "@src/contexts/user";
-import Link from "next/link";
-import LoginIcon from "@mui/icons-material/Login";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import InfoIcon from "@mui/icons-material/Info";
-import LogoutIcon from "@mui/icons-material/Logout";
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { useUserContext } from '@src/contexts/user';
+import Link from 'next/link';
+import LoginIcon from '@mui/icons-material/Login';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import InfoIcon from '@mui/icons-material/Info';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 type Props = {
   onClose: () => void;
@@ -30,7 +30,7 @@ export function SideMenu(props: Props) {
 
   return (
     <Drawer anchor="right" open={props.open} onClose={props.onClose}>
-      <List sx={{ width: { xs: "100vw", sm: "300px" } }}>
+      <List sx={{ width: { xs: '100vw', sm: '300px' } }}>
         <ListItem button onClick={props.onClose}>
           <ListItemIcon>
             <CloseIcon />
@@ -40,7 +40,7 @@ export function SideMenu(props: Props) {
         <Divider sx={{ mt: 2, mb: 2 }} />
         {!userContext.isLoggedIn && (
           <>
-            <Link href="/login" passHref>
+            <Link href="/login">
               <ListItem button>
                 <ListItemIcon>
                   <LoginIcon />
@@ -48,7 +48,7 @@ export function SideMenu(props: Props) {
                 <ListItemText primary="Login" />
               </ListItem>
             </Link>
-            <Link href="/register" passHref>
+            <Link href="/register">
               <ListItem button>
                 <ListItemIcon>
                   <AccountCircleIcon />
@@ -59,7 +59,7 @@ export function SideMenu(props: Props) {
             <Divider sx={{ mt: 2, mb: 2 }} />
           </>
         )}
-        <Link href="/browse">
+        <Link href="/recipes">
           <ListItem button>
             <ListItemIcon>
               <LibraryBooksIcon />
@@ -67,7 +67,7 @@ export function SideMenu(props: Props) {
             <ListItemText primary="Browse Recipes" />
           </ListItem>
         </Link>
-        <Link href="/add-recipe" passHref>
+        <Link href="/add-recipe">
           <ListItem button>
             <ListItemIcon>
               <AddBoxIcon />
@@ -75,7 +75,7 @@ export function SideMenu(props: Props) {
             <ListItemText primary="Add Recipe" />
           </ListItem>
         </Link>
-        <Link href="/" passHref>
+        <Link href="/">
           <ListItem button>
             <ListItemIcon>
               <InfoIcon />
@@ -86,7 +86,7 @@ export function SideMenu(props: Props) {
         {userContext.isLoggedIn && (
           <>
             <Divider sx={{ mt: 2, mb: 2 }} />
-            <Link href="/account" passHref>
+            <Link href="/account">
               <ListItem button>
                 <ListItemIcon>
                   <AccountCircleIcon />
@@ -94,7 +94,7 @@ export function SideMenu(props: Props) {
                 <ListItemText primary="Account" />
               </ListItem>
             </Link>
-            <Link href="/logout" passHref>
+            <Link href="/logout">
               <ListItem button onClick={logoutUser}>
                 <ListItemIcon>
                   <LogoutIcon />

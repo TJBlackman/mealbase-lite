@@ -1,5 +1,5 @@
 import { Button, Grid, TextField, MenuItem, Pagination } from '@mui/material';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 type Props = {
@@ -13,6 +13,11 @@ export function SearchAndPage(props: Props) {
   const router = useRouter();
   const [search, setSearch] = useState(props.search);
   const [limit, setLimit] = useState(props.limit.toString());
+  const [page, setPage] = useState(Number(router.query.page) || 1);
+
+  useEffect(() => {
+    setPage(Number(router.query.page) || 1);
+  }, [router.query]);
 
   function getUrlParams(page?: number) {
     const params = new URLSearchParams();
@@ -70,7 +75,7 @@ export function SearchAndPage(props: Props) {
             sx={{ width: 80 }}
             onChange={(e) => setLimit(e.target.value)}
           >
-            {[1, 10, 25, 50, 100].map((n) => (
+            {[10, 25, 50, 100].map((n) => (
               <MenuItem key={n} value={n}>
                 {n}
               </MenuItem>
@@ -88,6 +93,7 @@ export function SearchAndPage(props: Props) {
             size="small"
             sx={{ display: 'inline-block' }}
             onChange={handlePage}
+            page={page}
           />
         </Grid>
       </Grid>
