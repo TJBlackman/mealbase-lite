@@ -1,4 +1,4 @@
-import { Browser, chromium } from 'playwright';
+import { Browser, chromium } from "playwright";
 
 export async function scrapeRecipeData(url: string) {
   let browser: Browser;
@@ -19,7 +19,7 @@ export async function scrapeRecipeData(url: string) {
           );
         }
         if (!title.content) {
-          throw Error('Title meta tag has no content.');
+          throw Error("Title meta tag has no content.");
         }
 
         // scrape the description
@@ -32,7 +32,7 @@ export async function scrapeRecipeData(url: string) {
           );
         }
         if (!description.content) {
-          throw Error('Description meta tag has no content.');
+          throw Error("Description meta tag has no content.");
         }
 
         // scrape the title
@@ -45,7 +45,7 @@ export async function scrapeRecipeData(url: string) {
           );
         }
         if (!image.content) {
-          throw Error('Image meta tag has no content.');
+          throw Error("Image meta tag has no content.");
         }
 
         // scrape the recipe URL
@@ -56,7 +56,7 @@ export async function scrapeRecipeData(url: string) {
           throw Error(`No element found with the select: [property="og:url"]`);
         }
         if (!recipeURL.content) {
-          throw Error('Image meta tag has no content.');
+          throw Error("Image meta tag has no content.");
         }
 
         // scrape the site name
@@ -69,7 +69,7 @@ export async function scrapeRecipeData(url: string) {
           );
         }
         if (!siteName.content) {
-          throw Error('Image meta tag has no content.');
+          throw Error("Image meta tag has no content.");
         }
 
         return {

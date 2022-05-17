@@ -95,7 +95,7 @@ const handler: NextApiHandler = async (req, res) => {
       description: scrapedData.description,
       image: scrapedData.image,
       siteName: scrapedData.siteName,
-      title: scrapedData.title,
+      title: scrapedData.title.replace(/\s[\-\|]\s.+/, ""),
       url: scrapedData.url,
     });
     await newRecipe.save();
