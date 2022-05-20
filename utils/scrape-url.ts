@@ -1,5 +1,10 @@
 import { Browser, chromium } from "playwright";
 
+/**
+ * Uses playwright, the newer, better version of puppeteer, to scrape recipe details from a url.
+ * @param url {string} URL of recipe to scrape
+ * @returns Recipe data
+ */
 export async function scrapeRecipeData(url: string) {
   let browser: Browser;
   try {

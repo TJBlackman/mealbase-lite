@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState } from 'react';
 import {
   Button,
   Container,
@@ -8,44 +8,44 @@ import {
   Typography,
   CircularProgress,
   Link as MuiLink,
-} from "@mui/material";
-import { useUserContext } from "@src/contexts/user";
-import { useMutation } from "react-query";
-import { networkRequest } from "@src/utils/network-request";
-import { addRecipeSchema } from "@src/validation/recipes";
-import Link from "next/link";
+} from '@mui/material';
+import { useUserContext } from '@src/contexts/user';
+import { useMutation } from 'react-query';
+import { networkRequest } from '@src/utils/network-request';
+import { addRecipeSchema } from '@src/validation/schemas/recipes';
+import Link from 'next/link';
 
 export default function AddRecipePage() {
   const userContext = useUserContext();
-  const [url, setUrl] = useState("");
-  const [error, setError] = useState("");
+  const [url, setUrl] = useState('');
+  const [error, setError] = useState('');
 
   const mutation = useMutation(
     (url: string) =>
       networkRequest({
-        url: "/api/recipes/add-recipe",
-        method: "POST",
+        url: '/api/recipes/add-recipe',
+        method: 'POST',
         body: {
           url,
         },
       }),
     {
       onError: (err) => {
-        let msg = "An unknown error occurred.";
+        let msg = 'An unknown error occurred.';
         if (err instanceof Error) {
           msg = err.message;
         }
         setError(msg);
       },
       onSuccess: (data) => {
-        console.log("success", data);
+        console.log('success', data);
       },
     }
   );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError("");
+    setError('');
     const validationResult = addRecipeSchema.validate({ url });
     if (validationResult.error) {
       return setError(validationResult.error.message);
@@ -81,18 +81,18 @@ export default function AddRecipePage() {
             {mutation.isLoading ? (
               <CircularProgress size={20} color="primary" />
             ) : (
-              "Submit"
+              'Submit'
             )}
           </Button>
         </Toolbar>
       </form>
       {!userContext.isLoggedIn && (
         <Alert severity="warning">
-          To use this feature, you must{" "}
+          To use this feature, you must{' '}
           <Link href="/login" passHref>
             <MuiLink>login</MuiLink>
-          </Link>{" "}
-          or{" "}
+          </Link>{' '}
+          or{' '}
           <Link href="/register" passHref>
             <MuiLink>register an account</MuiLink>
           </Link>
