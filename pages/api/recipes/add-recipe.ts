@@ -1,30 +1,30 @@
-import { cleanUrl } from "@src/utils/clean-url";
-import { mongoDbConnection } from "@src/db/connection";
-import { UserJwt } from "@src/types";
-import { verifyJwt } from "@src/utils/jwt-helpers";
-import { addRecipeSchema } from "@src/validation/recipes";
-import type { NextApiHandler } from "next";
-import { RecipeModel } from "@src/db/recipes";
-import { scrapeRecipeData } from "@src/utils/scrape-url";
-import { FailedRecipeModel } from "@src/db/failed-recipes";
+import { cleanUrl } from '@src/utils/clean-url';
+import { mongoDbConnection } from '@src/db/connection';
+import { UserJwt } from '@src/types';
+import { verifyJwt } from '@src/utils/jwt-helpers';
+import { addRecipeSchema } from '@src/validation/schemas/recipes';
+import type { NextApiHandler } from 'next';
+import { RecipeModel } from '@src/db/recipes';
+import { scrapeRecipeData } from '@src/utils/scrape-url';
+import { FailedRecipeModel } from '@src/db/failed-recipes';
 
 const handler: NextApiHandler = async (req, res) => {
   try {
-    if (req.method !== "POST") {
-      return res.status(404).send("Not Found");
+    if (req.method !== 'POST') {
+      return res.status(404).send('Not Found');
     }
 
     // validate logged in user
     const accessToken = req.cookies[process.env.ACCESS_TOKEN_COOKIE_NAME!];
     if (!accessToken) {
-      return res.status(401).send("Unauthorized.");
+      return res.status(401).send('Unauthorized.');
     }
     const user = await verifyJwt<UserJwt>(accessToken).catch((err) => {
-      console.log("Unable to verify Access Token JWT.");
+      console.log('Unable to verify Access Token JWT.');
       console.log(err);
     });
     if (!user) {
-      return res.status(401).send("Unauthorized.");
+      return res.status(401).send('Unauthorized.');
     }
 
     // validate incoming req.body
@@ -52,11 +52,11 @@ const handler: NextApiHandler = async (req, res) => {
 
     // scrape recipe
     let scrapedData = {
-      description: "",
-      image: "",
-      siteName: "",
-      title: "",
-      url: "",
+      description: '',
+      image: '',
+      siteName: '',
+      title: '',
+      url: '',
     };
     try {
       scrapedData = await scrapeRecipeData(_url);
@@ -109,7 +109,7 @@ const handler: NextApiHandler = async (req, res) => {
     if (err instanceof Error) {
       msg = err.message;
     } else {
-      if (typeof err === "string") {
+      if (typeof err === 'string') {
         msg = err;
       }
     }

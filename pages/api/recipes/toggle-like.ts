@@ -1,7 +1,7 @@
 import { mongoDbConnection } from '@src/db/connection';
 import { UserJwt } from '@src/types';
 import { verifyJwt } from '@src/utils/jwt-helpers';
-import { toggleRecipeLikeSchema } from '@src/validation/recipes';
+import { toggleRecipeLikeSchema } from '@src/validation/schemas/recipes';
 import type { NextApiHandler } from 'next';
 import { RecipeLikesModel } from '@src/db/recipe-likes';
 import { RecipeModel } from '@src/db/recipes';
