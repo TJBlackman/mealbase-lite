@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Roles } from "@src/types";
 import { networkRequest } from "@src/utils/network-request";
-import { EmailSchema } from "@src/validation/users";
+import { EmailSchema } from "@src/validation/schemas/users";
 import { FormEvent, useState } from "react";
 import { useMutation } from "react-query";
 

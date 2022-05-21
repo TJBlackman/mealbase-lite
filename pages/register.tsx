@@ -13,7 +13,7 @@ import { useMutation } from "react-query";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { networkRequest } from "@src/utils/network-request";
-import { registerUserSchema } from "@src/validation/users";
+import { registerUserSchema } from "@src/validation/schemas/users";
 import { useUserContext } from "@src/contexts/user";
 import { Roles } from "@src/types";
 import { GetServerSideProps } from "next";

@@ -1,5 +1,4 @@
-import { Grid, Toolbar, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { Grid, Box, Typography } from "@mui/material";
 import { RecipeCard } from "@src/components/recipe-card";
 import { SearchAndPage } from "@src/components/search-and-pagination";
 import { RecipeLikesModel } from "@src/db/recipe-likes";

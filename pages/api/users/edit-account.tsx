@@ -9,7 +9,7 @@ import {
   registerUserSchema,
   PasswordSchema,
   EmailSchema,
-} from "@src/validation/users";
+} from "@src/validation/schemas/users";
 import { RefreshTokenModel } from "@src/db/refresh-tokens";
 import { getFutureDate } from "@src/utils/get-expires-date";
 

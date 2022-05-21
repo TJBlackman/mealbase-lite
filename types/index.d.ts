@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 declare global {
   var db: {
@@ -8,8 +8,8 @@ declare global {
 }
 
 export enum Roles {
-  User = 'User',
-  Admin = 'Admin',
+  User = "User",
+  Admin = "Admin",
 }
 
 interface User {

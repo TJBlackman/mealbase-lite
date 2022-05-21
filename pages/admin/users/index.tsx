@@ -1,17 +1,31 @@
-import { Typography } from '@mui/material';
-import { UserModel } from '@src/db/users';
-import { User } from '@src/types';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps } from "next";
+import { User, Roles } from "@src/types/index.d";
+import { UserModel } from "@src/db/users";
+import { Typography } from "@mui/material";
+import { getUserJWT } from "@src/validation/server-requests";
+import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const users = await UserModel.find({}).select(
-      'email lastActiveDate deleted'
-    );
+    // validate user is logged in and isAdmin
+    const user = await getUserJWT(context.req.cookies);
+    if (!user || user.roles.indexOf(Roles.Admin) < 0) {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: false,
+        },
+      };
+    }
+
+    const users = await UserModel.find({})
+      .select("email lastActiveDate deleted")
+      .sort({ email: 1 })
+      .lean();
 
     return { props: { users: JSON.parse(JSON.stringify(users)) } };
   } catch (err) {
-    let msg = 'An unknown error has occurred.';
+    let msg = "An unknown error has occurred.";
     if (err instanceof Error) {
       msg = err.message;
     }
@@ -20,6 +34,36 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 };
+
+/**
+ * Define table columns
+ */
+const columns: GridColDef[] = [
+  {
+    field: "_id",
+    headerName: "_id",
+    width: 230,
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    width: 250,
+    flex: 1,
+  },
+  {
+    field: "lastActiveDate",
+    headerName: "Last Activity",
+    width: 150,
+    renderCell: (value) => {
+      return new Date(value.row.lastActiveDate).toLocaleDateString();
+    },
+  },
+  {
+    field: "deleted",
+    headerName: "isDeleted",
+    width: 120,
+  },
+];
 
 type Props = {
   users: (User & { _id: string })[];
@@ -30,13 +74,21 @@ export default function AdminUsersPage(props: Props) {
   if (props.error) {
     return <Typography variant="body1">Error: {props.error}</Typography>;
   }
+
   return (
     <>
-      {props.users.map((u) => (
-        <Typography variant="body2" key={u._id}>
-          {u.email}, {u.lastActiveDate}, {u.deleted ? 'true' : 'false'}
-        </Typography>
-      ))}
+      <Typography variant="body1" paragraph>
+        {props.users.length} Users
+      </Typography>
+      <DataGrid
+        rows={props.users}
+        columns={columns}
+        pageSize={100}
+        rowsPerPageOptions={[5]}
+        disableSelectionOnClick
+        getRowId={(data) => data._id}
+        sx={{ height: "65vh" }}
+      />
     </>
   );
 }

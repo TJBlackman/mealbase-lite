@@ -5,7 +5,7 @@ import type { NextApiHandler } from "next";
 import { createJwt } from "@src/utils/jwt-helpers";
 import { createHash } from "@src/utils/hash-helpers";
 import { mongoDbConnection } from "@src/db/connection";
-import { registerUserSchema } from "@src/validation/users";
+import { registerUserSchema } from "@src/validation/schemas/users";
 import { RefreshTokenModel } from "@src/db/refresh-tokens";
 import { getFutureDate } from "@src/utils/get-expires-date";
 

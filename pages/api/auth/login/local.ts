@@ -1,4 +1,4 @@
-import { localLoginSchema } from "@src/validation/users";
+import { localLoginSchema } from "@src/validation/schemas/users";
 import type { NextApiHandler } from "next";
 import { UserModel } from "@src/db/users";
 import { mongoDbConnection } from "@src/db/connection";

@@ -7,7 +7,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { networkRequest } from "@src/utils/network-request";
-import { PasswordSchema } from "@src/validation/users";
+import { PasswordSchema } from "@src/validation/schemas/users";
 import { FormEvent, useEffect, useState } from "react";
 import { useMutation } from "react-query";
 

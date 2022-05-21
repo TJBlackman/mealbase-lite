@@ -1,17 +1,25 @@
-import { UserJwt } from '@src/types';
-import { verifyJwt } from '@src/utils/jwt-helpers';
+import { UserJwt } from "@src/types";
+import { verifyJwt } from "@src/utils/jwt-helpers";
 
-export async function userIsLoggedIn(cookies: Record<string, string>) {
-  // validate logged in user is an ADMIN
+/**
+ * Check req.cookies for Access Token, and get user JWT from it
+ * @param cookies req.cookie
+ * @returns UserJWT | null
+ */
+export async function getUserJWT(
+  cookies: Record<string, string>
+): Promise<UserJwt | null> {
+  // validate request is from a logged in user
   const accessToken = cookies[process.env.ACCESS_TOKEN_COOKIE_NAME!];
   if (!accessToken) {
-    return false;
+    return null;
   }
   const user = await verifyJwt<UserJwt>(accessToken).catch((err) => {
-    console.log('Unable to verify Access Token JWT.');
+    console.log("Unable to verify Access Token JWT.");
     console.log(err);
   });
-  return;
+  if (user) {
+    return user;
+  }
+  return null;
 }
-
-export function userIsAdmin() {}

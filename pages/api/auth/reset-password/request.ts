@@ -3,7 +3,7 @@ import { PasswordResetModel } from "@src/db/password-resets";
 import { NextApiHandler } from "next";
 import { createJwt } from "@src/utils/jwt-helpers";
 import { mongoDbConnection } from "@src/db/connection";
-import { EmailSchema } from "@src/validation/users";
+import { EmailSchema } from "@src/validation/schemas/users";
 
 const handler: NextApiHandler = async (req, res) => {
   try {
