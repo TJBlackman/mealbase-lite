@@ -1,18 +1,18 @@
-import { localLoginSchema } from "@src/validation/schemas/users";
-import type { NextApiHandler } from "next";
-import { UserModel } from "@src/db/users";
-import { mongoDbConnection } from "@src/db/connection";
-import { compareHash } from "@src/utils/hash-helpers";
-import { RefreshTokenModel } from "@src/db/refresh-tokens";
-import { createJwt } from "@src/utils/jwt-helpers";
-import cookie from "cookie";
-import { getFutureDate } from "@src/utils/get-expires-date";
+import { localLoginSchema } from '@src/validation/schemas/users';
+import type { NextApiHandler } from 'next';
+import { UserModel } from '@src/db/users';
+import { mongoDbConnection } from '@src/db/connection';
+import { compareHash } from '@src/utils/hash-helpers';
+import { RefreshTokenModel } from '@src/db/refresh-tokens';
+import { createJwt } from '@src/utils/jwt-helpers';
+import cookie from 'cookie';
+import { getFutureDate } from '@src/utils/get-expires-date';
 
 const handler: NextApiHandler = async (req, res) => {
   try {
     // GET, PUT, DELETE are 404 not found
-    if (req.method !== "POST") {
-      return res.status(404).send("Not Found.");
+    if (req.method !== 'POST') {
+      return res.status(404).send('Not Found.');
     }
 
     // validate incoming payload
@@ -27,13 +27,13 @@ const handler: NextApiHandler = async (req, res) => {
     // check if user account exists
     const user = await UserModel.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(404).send("Email or password is incorrect.");
+      return res.status(404).send('Email or password is incorrect.');
     }
 
     // verify password is correct
     const isCorrectPw = await compareHash(req.body.password, user.password);
     if (!isCorrectPw) {
-      return res.status(401).send("Email or password is incorrect.");
+      return res.status(401).send('Email or password is incorrect.');
     }
 
     // create refreshToken db record
@@ -44,7 +44,7 @@ const handler: NextApiHandler = async (req, res) => {
 
     // create refreshToken JWT
     const refreshTokenJwt = await createJwt({
-      type: "refresh-token",
+      type: 'refresh-token',
       payload: {
         _id: refreshToken._id.toString(),
       },
@@ -52,7 +52,7 @@ const handler: NextApiHandler = async (req, res) => {
 
     // create access token JWT
     const accessTokenJwt = await createJwt({
-      type: "access-token",
+      type: 'access-token',
       payload: {
         _id: user._id,
         email: user.email,
@@ -61,11 +61,11 @@ const handler: NextApiHandler = async (req, res) => {
     });
 
     // set access token and refresh token as httpOnly cookies
-    res.setHeader("Set-Cookie", [
+    res.setHeader('Set-Cookie', [
       cookie.serialize(process.env.ACCESS_TOKEN_COOKIE_NAME!, accessTokenJwt, {
         httpOnly: true,
         secure: true,
-        path: "/",
+        path: '/',
       }),
       cookie.serialize(
         process.env.REFRESH_TOKEN_COOKIE_NAME!,
@@ -74,10 +74,14 @@ const handler: NextApiHandler = async (req, res) => {
           expires: getFutureDate(process.env.REFRESH_TOKEN_COOKIE_EXPIRE_DAYS!),
           httpOnly: true,
           secure: true,
-          path: "/",
+          path: '/',
         }
       ),
     ]);
+
+    // update user.lastActiveDate
+    user.lastActiveDate = new Date();
+    await user.save();
 
     // send response
     return res.status(200).json({
@@ -86,7 +90,7 @@ const handler: NextApiHandler = async (req, res) => {
       roles: user.roles,
     });
   } catch (err) {
-    let msg = "An unknown error occurred.";
+    let msg = 'An unknown error occurred.';
     if (err instanceof Error) {
       msg = err.message;
     }

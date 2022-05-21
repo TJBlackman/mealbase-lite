@@ -1,14 +1,16 @@
-import mongoose, { Schema, model } from "mongoose";
-import { User } from "../types";
+import mongoose, { Schema, model } from 'mongoose';
+import { User } from '../types';
 
 const UserSchema = new Schema<User>({
   createdAt: {
     type: Date,
     required: true,
+    default: () => Date.now(),
   },
   updatedAt: {
     type: Date,
     required: true,
+    default: () => Date.now(),
   },
   lastActiveDate: {
     type: Date,
@@ -41,4 +43,4 @@ const UserSchema = new Schema<User>({
 
 export const UserModel =
   (mongoose.models.Users as mongoose.Model<User, {}, {}, {}>) ||
-  model<User>("Users", UserSchema);
+  model<User>('Users', UserSchema);

@@ -1,18 +1,18 @@
-import cookie from "cookie";
-import { UserModel } from "@src/db/users";
-import { Roles } from "@src/types/index.d";
-import type { NextApiHandler } from "next";
-import { createJwt } from "@src/utils/jwt-helpers";
-import { createHash } from "@src/utils/hash-helpers";
-import { mongoDbConnection } from "@src/db/connection";
-import { registerUserSchema } from "@src/validation/schemas/users";
-import { RefreshTokenModel } from "@src/db/refresh-tokens";
-import { getFutureDate } from "@src/utils/get-expires-date";
+import cookie from 'cookie';
+import { UserModel } from '@src/db/users';
+import { Roles } from '@src/types/index.d';
+import type { NextApiHandler } from 'next';
+import { createJwt } from '@src/utils/jwt-helpers';
+import { createHash } from '@src/utils/hash-helpers';
+import { mongoDbConnection } from '@src/db/connection';
+import { registerUserSchema } from '@src/validation/schemas/users';
+import { RefreshTokenModel } from '@src/db/refresh-tokens';
+import { getFutureDate } from '@src/utils/get-expires-date';
 
 const handler: NextApiHandler = async (req, res) => {
   try {
-    if (req.method !== "POST") {
-      return res.status(404).send("Not Found");
+    if (req.method !== 'POST') {
+      return res.status(404).send('Not Found');
     }
 
     // validate incoming request body
@@ -27,7 +27,7 @@ const handler: NextApiHandler = async (req, res) => {
     // check for existing users
     const existingUser = await UserModel.findOne({ email: req.body.email });
     if (existingUser) {
-      res.status(409).send("Email address is already in use.");
+      res.status(409).send('Email address is already in use.');
     }
 
     // hash incoming password
@@ -38,8 +38,6 @@ const handler: NextApiHandler = async (req, res) => {
       email: req.body.email,
       password: hash,
       roles: [Roles.User],
-      updatedAt: new Date(),
-      createdAt: new Date(),
     });
     await newUser.save();
 
@@ -51,7 +49,7 @@ const handler: NextApiHandler = async (req, res) => {
 
     // create refreshToken JWT
     const refreshTokenJwt = await createJwt({
-      type: "refresh-token",
+      type: 'refresh-token',
       payload: {
         _id: refreshToken._id.toString(),
       },
@@ -59,7 +57,7 @@ const handler: NextApiHandler = async (req, res) => {
 
     // create access token JWT
     const accessTokenJwt = await createJwt({
-      type: "access-token",
+      type: 'access-token',
       payload: {
         _id: newUser._id,
         email: newUser.email,
@@ -68,11 +66,11 @@ const handler: NextApiHandler = async (req, res) => {
     });
 
     // set access token and refresh token as httpOnly cookies
-    res.setHeader("Set-Cookie", [
+    res.setHeader('Set-Cookie', [
       cookie.serialize(process.env.ACCESS_TOKEN_COOKIE_NAME!, accessTokenJwt, {
         httpOnly: true,
         secure: true,
-        path: "/",
+        path: '/',
       }),
       cookie.serialize(
         process.env.REFRESH_TOKEN_COOKIE_NAME!,
@@ -81,7 +79,7 @@ const handler: NextApiHandler = async (req, res) => {
           expires: getFutureDate(process.env.REFRESH_TOKEN_COOKIE_EXPIRE_DAYS!),
           httpOnly: true,
           secure: true,
-          path: "/",
+          path: '/',
         }
       ),
     ]);
