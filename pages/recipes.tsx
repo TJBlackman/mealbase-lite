@@ -1,17 +1,17 @@
-import { Grid, Box, Typography } from '@mui/material';
-import { RecipeCard } from '@src/components/recipe-card';
-import { SearchAndPage } from '@src/components/search-and-pagination';
-import { RecipeLikesModel } from '@src/db/recipe-likes';
-import { RecipeModel } from '@src/db/recipes';
-import { Recipe, UserJwt } from '@src/types';
-import { verifyJwt } from '@src/utils/jwt-helpers';
-import { GetServerSidePropsContext } from 'next';
+import { Grid, Box, Typography } from "@mui/material";
+import { RecipeCard } from "@src/components/recipe-card";
+import { SearchAndPage } from "@src/components/search-and-pagination";
+import { RecipeLikesModel } from "@src/db/recipe-likes";
+import { RecipeModel } from "@src/db/recipes";
+import { Recipe } from "@src/types";
+import { getUserJWT } from "@src/validation/server-requests";
+import { GetServerSidePropsContext } from "next";
 
 /** get server side data and SSR page */
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   // calculate limit, or use default
   const limit = (() => {
-    let _limit = '25';
+    let _limit = "25";
     const { limit } = context.query;
     if (limit) {
       if (Array.isArray(limit)) {
@@ -38,61 +38,48 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       deleted: false,
     };
     if (context.query.search) {
-      result.title = { $regex: context.query.search, $options: 'i' };
+      result.title = { $regex: context.query.search, $options: "i" };
     }
     return result;
   })();
 
   // get recipes from DB
   const recipes = await RecipeModel.find(filter)
-    .select('-addedByUser -deleted -__v')
-    .lean()
+    .select("-addedByUser -deleted -__v")
     .limit(limit)
     .skip(skip)
-    .sort({ createdAt: 1 });
+    .sort({ createdAt: 1 })
+    .lean();
 
   // count total recipes that match this filter
   const count = await RecipeModel.find(filter).countDocuments();
 
-  // I guess .lean() doesn't work anymore and _id is an object and dates are objects
-  // manually convert to strings.... ugh
-  let flatRecipes = recipes.map((recipe) => ({
-    ...recipe,
-    _id: recipe._id.toString(),
-    createdAt: recipe.createdAt.toISOString(),
-    updatedAt: recipe.updatedAt.toISOString(),
-    isLiked: false,
-  }));
-
   // if user is logged in,
   // get their liked recipe and check if any of the above recipes are liked this user
-  const accessToken =
-    context.req.cookies[process.env.ACCESS_TOKEN_COOKIE_NAME!];
-  if (accessToken) {
-    const user = await verifyJwt<UserJwt>(accessToken).catch((_err) => {});
-    if (user) {
-      const recipeIds = flatRecipes.map((r) => r._id);
-      const likedRecipes = await RecipeLikesModel.find({
-        userId: user._id,
-        recipeId: { $in: recipeIds },
-      }).select('recipeId');
-      likedRecipes.forEach((liked) => {
-        const _likedRecipe = flatRecipes.find(
-          (recipe) => recipe._id === liked.recipeId.toString()
-        );
-        if (_likedRecipe) {
-          _likedRecipe.isLiked = true;
-        }
-      });
-    }
+  const user = await getUserJWT(context.req.cookies);
+  if (user) {
+    const recipeIds = recipes.map((r) => r._id);
+    const likedRecipes = await RecipeLikesModel.find({
+      userId: user._id,
+      recipeId: { $in: recipeIds },
+    }).select("recipeId");
+    likedRecipes.forEach((liked) => {
+      const _likedRecipe = recipes.find(
+        (recipe) => recipe._id.toString() === liked.recipeId.toString()
+      );
+      if (_likedRecipe) {
+        // @ts-ignore
+        _likedRecipe.isLiked = true;
+      }
+    });
   }
 
   // search from query.param.search or ""
-  const search = context.query.search || '';
+  const search = context.query.search || "";
 
   return {
     props: {
-      recipes: flatRecipes,
+      recipes: JSON.parse(JSON.stringify(recipes)),
       count,
       limit,
       skip,
@@ -130,7 +117,7 @@ export default function BrowsePage(props: Props) {
         <Grid
           container
           spacing={2}
-          justifyContent={{ xs: 'center', sm: 'space-around' }}
+          justifyContent={{ xs: "center", sm: "space-around" }}
         >
           {props.recipes.map((r) => (
             <Grid item key={r._id} sx={{ mb: { sx: 2, sm: 4 } }}>

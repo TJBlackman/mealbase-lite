@@ -1,8 +1,8 @@
-import { GetServerSideProps } from 'next';
-import { User } from '@src/types/index.d';
-import { FailedRecipeModel } from '@src/db/failed-recipes';
-import { Typography } from '@mui/material';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { GetServerSideProps } from "next";
+import { User } from "@src/types/index.d";
+import { FailedRecipeModel } from "@src/db/failed-recipes";
+import { Typography } from "@mui/material";
+import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -10,7 +10,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return { props: { recipes: JSON.parse(JSON.stringify(recipes)) } };
   } catch (err) {
-    let msg = 'An unknown error has occurred.';
+    let msg = "An unknown error has occurred.";
     if (err instanceof Error) {
       msg = err.message;
     }
@@ -32,8 +32,12 @@ export default function AdminUsersPage(props: Props) {
 
   return (
     <>
-      <Typography variant="body1" paragraph>
+      <Typography variant="body1">
         {props.recipes.length} Failed Recipes
+      </Typography>
+      <Typography variant="body2" paragraph>
+        Use this page to correct any recipes that a user tried to add but was
+        unsuccessful.
       </Typography>
     </>
   );
