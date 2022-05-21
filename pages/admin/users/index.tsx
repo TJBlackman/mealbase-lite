@@ -1,23 +1,11 @@
 import { GetServerSideProps } from "next";
-import { User, Roles } from "@src/types/index.d";
+import { User } from "@src/types/index.d";
 import { UserModel } from "@src/db/users";
 import { Typography } from "@mui/material";
-import { getUserJWT } from "@src/validation/server-requests";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    // validate user is logged in and isAdmin
-    const user = await getUserJWT(context.req.cookies);
-    if (!user || user.roles.indexOf(Roles.Admin) < 0) {
-      return {
-        redirect: {
-          destination: "/login",
-          permanent: false,
-        },
-      };
-    }
-
     const users = await UserModel.find({})
       .select("email lastActiveDate deleted")
       .sort({ email: 1 })

@@ -52,7 +52,6 @@ export default function RegisterPage() {
       },
       {
         onSuccess: (data) => {
-          console.log("success", data);
           userContext.setUser({
             email: data.email,
             roles: data.roles,
@@ -153,8 +152,3 @@ export default function RegisterPage() {
     </Container>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  console.log(`cookies`, context.req.cookies);
-  return { props: {} };
-};

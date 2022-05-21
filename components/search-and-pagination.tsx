@@ -71,7 +71,6 @@ export function SearchAndPage(props: Props) {
 
   // when search is clear, go to new page without search query param
   useEffect(() => {
-    console.log(search);
     if (search.length === 0 && router.query.search) {
       updatePageUrl;
     }
@@ -92,18 +91,23 @@ export function SearchAndPage(props: Props) {
             sx={{ width: "300px", mr: 1 }}
             onChange={(e) => setSearch(e.target.value)}
             InputProps={{
-              endAdornment: (() => (
-                <InputAdornment position="end">
-                  <IconButton
-                    sx={{ color: "grey.500" }}
-                    aria-label="Clear search input"
-                    onClick={(e) => setSearch("")}
-                    edge="end"
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </InputAdornment>
-              ))(),
+              endAdornment: (() => {
+                if (search.length < 1) {
+                  return null;
+                }
+                return (
+                  <InputAdornment position="end">
+                    <IconButton
+                      sx={{ color: "grey.500" }}
+                      aria-label="Clear search input"
+                      onClick={(e) => setSearch("")}
+                      edge="end"
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </InputAdornment>
+                );
+              })(),
             }}
           />
           <Button type="submit" variant="outlined" color="primary">

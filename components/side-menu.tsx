@@ -5,16 +5,17 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { useUserContext } from '@src/contexts/user';
-import Link from 'next/link';
-import LoginIcon from '@mui/icons-material/Login';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import InfoIcon from '@mui/icons-material/Info';
-import LogoutIcon from '@mui/icons-material/Logout';
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { useUserContext } from "@src/contexts/user";
+import Link from "next/link";
+import LoginIcon from "@mui/icons-material/Login";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import InfoIcon from "@mui/icons-material/Info";
+import LogoutIcon from "@mui/icons-material/Logout";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 
 type Props = {
   onClose: () => void;
@@ -30,7 +31,7 @@ export function SideMenu(props: Props) {
 
   return (
     <Drawer anchor="right" open={props.open} onClose={props.onClose}>
-      <List sx={{ width: { xs: '100vw', sm: '300px' } }}>
+      <List sx={{ width: { xs: "100vw", sm: "300px" } }}>
         <ListItem button onClick={props.onClose}>
           <ListItemIcon>
             <CloseIcon />
@@ -75,14 +76,16 @@ export function SideMenu(props: Props) {
             <ListItemText primary="Add Recipe" />
           </ListItem>
         </Link>
-        <Link href="/">
-          <ListItem button>
-            <ListItemIcon>
-              <InfoIcon />
-            </ListItemIcon>
-            <ListItemText primary="About MealBase" />
-          </ListItem>
-        </Link>
+        {userContext.isAdmin && (
+          <Link href="/admin">
+            <ListItem button>
+              <ListItemIcon>
+                <VerifiedUserIcon />
+              </ListItemIcon>
+              <ListItemText primary="Admin" />
+            </ListItem>
+          </Link>
+        )}
         {userContext.isLoggedIn && (
           <>
             <Divider sx={{ mt: 2, mb: 2 }} />
