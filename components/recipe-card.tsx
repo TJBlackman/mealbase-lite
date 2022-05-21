@@ -1,16 +1,16 @@
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import Typography from "@mui/material/Typography";
-import { Recipe } from "@src/types";
-import { Link as MuiLink } from "@mui/material";
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Typography from '@mui/material/Typography';
+import { Recipe } from '@src/types';
+import { Link as MuiLink } from '@mui/material';
 
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { IconButton } from "@mui/material";
-import { useState } from "react";
-import { RecipeCardMenu } from "./recipe-card-menu";
-import { RecipeLikeButton } from "./recipe-card-like-btn";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { IconButton } from '@mui/material';
+import { useState } from 'react';
+import { RecipeCardMenu } from './recipe-card-menu';
+import { RecipeLikeButton } from './recipe-card-like-btn';
 
 type Props = {
   recipe: Recipe & { _id: string; isLiked: boolean };
@@ -35,10 +35,10 @@ export function RecipeCard(props: Props) {
     <>
       <Card
         sx={{
-          maxWidth: 345,
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
+          maxWidth: 350,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
         }}
         elevation={10}
       >
@@ -55,18 +55,18 @@ export function RecipeCard(props: Props) {
             gutterBottom
             variant="h6"
             component="div"
-            sx={{ lineHeight: "1.2" }}
+            sx={{ lineHeight: '1.2' }}
           >
             <MuiLink
               href={props.recipe.url}
               target="_blank"
               referrerPolicy="no-referrer"
               sx={{
-                color: "text.primary",
-                textDecoration: "none",
-                ":hover": {
-                  color: "primary.main",
-                  textDecoration: "underline",
+                color: 'text.primary',
+                textDecoration: 'none',
+                ':hover': {
+                  color: 'primary.main',
+                  textDecoration: 'underline',
                 },
               }}
             >
@@ -77,7 +77,7 @@ export function RecipeCard(props: Props) {
             {props.recipe.description}
           </Typography>
         </CardContent>
-        <CardActions disableSpacing sx={{ justifyContent: "space-between" }}>
+        <CardActions disableSpacing sx={{ justifyContent: 'space-between' }}>
           <RecipeLikeButton
             recipeId={props.recipe._id}
             isLiked={props.recipe.isLiked || false}
