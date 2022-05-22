@@ -35,7 +35,7 @@ const columns: GridColDef[] = [
   {
     field: "email",
     headerName: "Email",
-    width: 250,
+    minWidth: 250,
     flex: 1,
   },
   {
