@@ -23,7 +23,6 @@
     "cookie": "^0.5.0",
     "joi": "^17.6.0",
     "jose": "^4.8.1",
-    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.4",
     "next": "12.1.5",
     "playwright": "^1.21.1",
