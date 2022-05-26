@@ -1,17 +1,18 @@
-import { Grid, Box, Typography } from '@mui/material';
-import { RecipeCard } from '@src/components/recipe-card';
-import { SearchAndPage } from '@src/components/search-and-pagination';
-import { RecipeLikesModel } from '@src/db/recipe-likes';
-import { RecipeModel } from '@src/db/recipes';
-import { Recipe } from '@src/types';
-import { getUserJWT } from '@src/validation/server-requests';
-import { GetServerSidePropsContext } from 'next';
+import { Grid, Box, Typography } from "@mui/material";
+import { RecipeCard } from "@src/components/recipe-card";
+import { SearchAndPage } from "@src/components/search-and-pagination";
+import { RecipeLikesModel } from "@src/db/recipe-likes";
+import { RecipeModel } from "@src/db/recipes";
+import { Recipe } from "@src/types";
+import { getUserJWT } from "@src/validation/server-requests";
+import { GetServerSidePropsContext } from "next";
+import { Pagination } from "@src/components/pagination";
 
 /** get server side data and SSR page */
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   // calculate limit, or use default
   const limit = (() => {
-    let _limit = '25';
+    let _limit = "25";
     const { limit } = context.query;
     if (limit) {
       if (Array.isArray(limit)) {
@@ -38,14 +39,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       deleted: false,
     };
     if (context.query.search) {
-      result.title = { $regex: context.query.search, $options: 'i' };
+      result.title = { $regex: context.query.search, $options: "i" };
     }
     return result;
   })();
 
   // get recipes from DB
   const recipes = await RecipeModel.find(filter)
-    .select('-addedByUser -deleted -__v')
+    .select("-addedByUser -deleted -__v")
     .limit(limit)
     .skip(skip)
     .sort({ createdAt: 1 })
@@ -62,7 +63,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const likedRecipes = await RecipeLikesModel.find({
       userId: user._id,
       recipeId: { $in: recipeIds },
-    }).select('recipeId');
+    }).select("recipeId");
     likedRecipes.forEach((liked) => {
       const _likedRecipe = recipes.find(
         (recipe) => recipe._id.toString() === liked.recipeId.toString()
@@ -75,7 +76,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   // search from query.param.search or ""
-  const search = context.query.search || '';
+  const search = context.query.search || "";
 
   return {
     props: {
@@ -97,6 +98,9 @@ type Props = {
 };
 
 export default function BrowsePage(props: Props) {
+  // calculate total number of pages, given the total results and the results to show per page
+  const paginationCount = Math.ceil(Number(props.count) / Number(props.limit));
+
   return (
     <>
       <Typography variant="h5" component="h1" paragraph>
@@ -117,7 +121,7 @@ export default function BrowsePage(props: Props) {
         <Grid
           container
           spacing={2}
-          justifyContent={{ xs: 'center', sm: 'space-around' }}
+          justifyContent={{ xs: "center", sm: "space-around" }}
         >
           {props.recipes.map((r) => (
             <Grid item key={r._id} sx={{ mb: { sx: 2, sm: 4 } }}>
@@ -126,6 +130,9 @@ export default function BrowsePage(props: Props) {
           ))}
         </Grid>
       )}
+      <Box textAlign="right">
+        <Pagination paginationCount={paginationCount} />
+      </Box>
     </>
   );
 }

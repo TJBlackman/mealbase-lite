@@ -3,7 +3,6 @@ import {
   Collapse,
   TextField,
   MenuItem,
-  Pagination,
   Toolbar,
   Grid,
   IconButton,
@@ -15,6 +14,7 @@ import { useRouter } from "next/router";
 import ClearIcon from "@mui/icons-material/Clear";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Pagination } from "@src/components/pagination";
 
 type Props = {
   totalCount: number;
@@ -190,13 +190,7 @@ export function SearchAndPage(props: Props) {
         <Typography variant="body2">
           Found {props.totalCount} recipe{props.totalCount !== 1 && "s"}.
         </Typography>
-        <Pagination
-          count={paginationCount}
-          size="small"
-          sx={{ display: "inline-block" }}
-          onChange={(e, page) => setPage(page)}
-          page={page}
-        />
+        <Pagination paginationCount={paginationCount} />
       </Toolbar>
     </>
   );
