@@ -1,14 +1,14 @@
-import { UserModel } from '@src/db/users';
-import { PasswordResetModel } from '@src/db/password-resets';
-import { NextApiHandler } from 'next';
-import { createJwt } from '@src/utils/jwt-helpers2';
-import { mongoDbConnection } from '@src/db/connection';
-import { EmailSchema } from '@src/validation/schemas/users';
+import { UserModel } from "@src/db/users";
+import { PasswordResetModel } from "@src/db/password-resets";
+import { NextApiHandler } from "next";
+import { createJwt } from "@src/utils/jwt-helpers";
+import { mongoDbConnection } from "@src/db/connection";
+import { EmailSchema } from "@src/validation/schemas/users";
 
 const handler: NextApiHandler = async (req, res) => {
   try {
-    if (req.method !== 'POST') {
-      return res.status(404).send('Not Found');
+    if (req.method !== "POST") {
+      return res.status(404).send("Not Found");
     }
 
     // validate req.body.email
@@ -29,7 +29,7 @@ const handler: NextApiHandler = async (req, res) => {
       await pwReset.save();
 
       const resetJWT = await createJwt({
-        type: 'reset-pw-token',
+        type: "reset-pw-token",
         payload: { _id: pwReset._id.toString() },
       });
 
@@ -43,7 +43,7 @@ const handler: NextApiHandler = async (req, res) => {
     res.status(200).json({ success: true });
   } catch (err) {
     console.log(err);
-    let msg = 'An unknown error occurred.';
+    let msg = "An unknown error occurred.";
     if (err instanceof Error) {
       msg = err.message;
     }

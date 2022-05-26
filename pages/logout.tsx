@@ -1,7 +1,7 @@
-import { GetServerSideProps } from 'next';
-import { RefreshTokenModel } from '@src/db/refresh-tokens';
-import cookie from 'cookie';
-import { verifyJwt } from '@src/utils/jwt-helpers2';
+import { GetServerSideProps } from "next";
+import { RefreshTokenModel } from "@src/db/refresh-tokens";
+import cookie from "cookie";
+import { verifyJwt } from "@src/utils/jwt-helpers";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // delete refresh token record from db
@@ -21,25 +21,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   // set headers to remove cookies from browser
-  context.res.setHeader('Set-Cookie', [
+  context.res.setHeader("Set-Cookie", [
     cookie.serialize(
       process.env.ACCESS_TOKEN_COOKIE_NAME!,
-      'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       {
         httpOnly: true,
         secure: true,
-        path: '/',
+        path: "/",
         maxAge: 0,
       }
     ),
     cookie.serialize(
       process.env.REFRESH_TOKEN_COOKIE_NAME!,
-      'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       {
         maxAge: 0,
         httpOnly: true,
         secure: true,
-        path: '/',
+        path: "/",
       }
     ),
   ]);
@@ -47,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     redirect: {
       permanent: false,
-      destination: '/',
+      destination: "/",
     },
   };
 };

@@ -1,80 +1,41 @@
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from "jose";
 
-// Create a new JWT
-export function createJwt(options: {
-  payload: string | Record<string, any>;
-  type: 'access-token' | 'refresh-token' | 'reset-pw-token';
-}): Promise<string> {
-  return new Promise((resolve, reject) => {
-    try {
-      jwt.sign(
-        options.payload,
-        process.env.JWT_SECRET!,
-        {
-          issuer: process.env.JWT_ISSUER!,
-          expiresIn: (() => {
-            switch (options.type) {
-              case 'refresh-token': {
-                return process.env.REFRESH_TOKEN_JWT_EXPIRE;
-              }
-              case 'access-token': {
-                return process.env.NEXT_PUBLIC_ACCESS_TOKEN_JWT_EXPIRE;
-              }
-              case 'reset-pw-token': {
-                return process.env.RESET_PW_JWT_EXPIRE;
-              }
-              default: {
-                throw Error(`Unknown JWT type: "${options.type}"`);
-              }
-            }
-          })(),
-        },
-        (err, jwt) => {
-          if (err) {
-            return reject(err);
+// create key object from JWT secret
+const JWT_KEY = new TextEncoder().encode(process.env.JWT_SECRET!);
+
+// create a JWT
+export async function createJwt(options: {
+  payload: Record<string, any>;
+  type: "access-token" | "refresh-token" | "reset-pw-token";
+}) {
+  const jwt = await new SignJWT(options.payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setIssuer(process.env.JWT_ISSUER!)
+    .setExpirationTime(
+      (() => {
+        switch (options.type) {
+          case "refresh-token": {
+            return process.env.REFRESH_TOKEN_JWT_EXPIRE!;
           }
-          if (jwt) {
-            return resolve(jwt);
+          case "access-token": {
+            return process.env.NEXT_PUBLIC_ACCESS_TOKEN_JWT_EXPIRE!;
           }
-          reject('Failed to create a JWT.');
+          case "reset-pw-token": {
+            return process.env.RESET_PW_JWT_EXPIRE!;
+          }
+          default: {
+            throw Error(`Unknown JWT type: "${options.type}"`);
+          }
         }
-      );
-    } catch (err) {
-      let msg = 'An unknown error occurred while trying to create a JWT.';
-      if (err instanceof Error) {
-        msg = err.message;
-      }
-      reject(msg);
-    }
-  });
+      })()
+    )
+    .sign(JWT_KEY);
+  return jwt;
 }
 
-// verify a JWT is valid
-export function verifyJwt<T>(str: string): Promise<T> {
-  return new Promise((resolve, reject) => {
-    try {
-      jwt.verify(
-        str,
-        process.env.JWT_SECRET!,
-        {
-          issuer: process.env.JWT_ISSUER!,
-        },
-        (err, value) => {
-          if (err) {
-            return reject(err);
-          }
-          if (value) {
-            return resolve(value as unknown as T);
-          }
-          reject('Failed to verify a JWT.');
-        }
-      );
-    } catch (err) {
-      let msg = 'An error occurred while trying to verify a JWT.';
-      if (err instanceof Error) {
-        msg = err.message;
-      }
-      reject(msg);
-    }
-  });
+// verify a JWT is valid (signed, not expired)
+export async function verifyJwt<T>(str: string) {
+  const payload = await jwtVerify(str, JWT_KEY);
+  return payload.payload as unknown as T;
 }

@@ -1,36 +1,36 @@
-import cookie from 'cookie';
-import { UserModel } from '@src/db/users';
-import { Roles, UserJwt } from '@src/types/index.d';
-import type { NextApiHandler } from 'next';
-import { createJwt, verifyJwt } from '@src/utils/jwt-helpers2';
-import { createHash, compareHash } from '@src/utils/hash-helpers';
-import { mongoDbConnection } from '@src/db/connection';
+import cookie from "cookie";
+import { UserModel } from "@src/db/users";
+import { Roles, UserJwt } from "@src/types/index.d";
+import type { NextApiHandler } from "next";
+import { createJwt, verifyJwt } from "@src/utils/jwt-helpers";
+import { createHash, compareHash } from "@src/utils/hash-helpers";
+import { mongoDbConnection } from "@src/db/connection";
 import {
   registerUserSchema,
   PasswordSchema,
   EmailSchema,
-} from '@src/validation/schemas/users';
-import { RefreshTokenModel } from '@src/db/refresh-tokens';
-import { getFutureDate } from '@src/utils/get-expires-date';
+} from "@src/validation/schemas/users";
+import { RefreshTokenModel } from "@src/db/refresh-tokens";
+import { getFutureDate } from "@src/utils/get-expires-date";
 
 const handler: NextApiHandler = async (req, res) => {
   try {
     // must be a put request
-    if (req.method !== 'PUT') {
-      return res.status(404).send('Not Found');
+    if (req.method !== "PUT") {
+      return res.status(404).send("Not Found");
     }
 
     // validate logged in user
     const accessToken = req.cookies[process.env.ACCESS_TOKEN_COOKIE_NAME!];
     if (!accessToken) {
-      return res.status(401).send('Unauthorized.');
+      return res.status(401).send("Unauthorized.");
     }
     const userJwt = await verifyJwt<UserJwt>(accessToken).catch((err) => {
-      console.log('Unable to verify Access Token JWT.');
+      console.log("Unable to verify Access Token JWT.");
       console.log(err);
     });
     if (!userJwt) {
-      return res.status(401).send('Unauthorized.');
+      return res.status(401).send("Unauthorized.");
     }
 
     // validate password fields, if it exists
@@ -59,7 +59,7 @@ const handler: NextApiHandler = async (req, res) => {
     // get user record from db
     const userDocument = await UserModel.findById(userJwt._id);
     if (!userDocument) {
-      return res.status(404).send('User account not found.');
+      return res.status(404).send("User account not found.");
     }
 
     // handle password, if it exists
@@ -69,7 +69,7 @@ const handler: NextApiHandler = async (req, res) => {
         userDocument.password
       );
       if (!isCorrectPw) {
-        return res.status(401).send('Incorrect password.');
+        return res.status(401).send("Incorrect password.");
       }
       const newPwHash = await createHash(req.body.newPw);
       userDocument.password = newPwHash;

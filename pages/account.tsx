@@ -1,10 +1,10 @@
-import { Container, Typography } from '@mui/material';
-import { UserModel } from '@src/db/users';
-import { ChangeEmailForm } from '@src/forms/change-email';
-import { ChangePasswordForm } from '@src/forms/change-password';
-import { User, UserJwt } from '@src/types';
-import { verifyJwt } from '@src/utils/jwt-helpers2';
-import { GetServerSidePropsContext } from 'next';
+import { Container, Typography } from "@mui/material";
+import { UserModel } from "@src/db/users";
+import { ChangeEmailForm } from "@src/forms/change-email";
+import { ChangePasswordForm } from "@src/forms/change-password";
+import { User, UserJwt } from "@src/types";
+import { verifyJwt } from "@src/utils/jwt-helpers";
+import { GetServerSidePropsContext } from "next";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   // if user does not have a valid access token, redirect them to /login
@@ -14,7 +14,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       redirect: {
         permanent: false,
-        destination: '/login',
+        destination: "/login",
       },
     };
   }
@@ -39,13 +39,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     redirect: {
       permanent: false,
-      destination: '/login',
+      destination: "/login",
     },
   };
 }
 
 type Props = {
-  user: Omit<User, 'password'>;
+  user: Omit<User, "password">;
 };
 
 export default function AccountPage(props: Props) {

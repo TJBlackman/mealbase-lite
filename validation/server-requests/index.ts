@@ -1,5 +1,5 @@
-import { UserJwt } from '@src/types';
-import { verifyJwt } from '@src/utils/jwt-helpers2';
+import { UserJwt } from "@src/types";
+import { verifyJwt } from "@src/utils/jwt-helpers";
 
 /**
  * Check req.cookies for Access Token, and get user JWT from it
@@ -15,7 +15,7 @@ export async function getUserJWT(
     return null;
   }
   const user = await verifyJwt<UserJwt>(accessToken).catch((err) => {
-    console.log('Unable to verify Access Token JWT.');
+    console.log("Unable to verify Access Token JWT.");
     console.log(err);
   });
   if (user) {
