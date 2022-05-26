@@ -4,7 +4,7 @@ import { UserModel } from '@src/db/users';
 import { mongoDbConnection } from '@src/db/connection';
 import { compareHash } from '@src/utils/hash-helpers';
 import { RefreshTokenModel } from '@src/db/refresh-tokens';
-import { createJwt } from '@src/utils/jwt-helpers';
+import { createJwt } from '@src/utils/jwt-helpers2';
 import cookie from 'cookie';
 import { getFutureDate } from '@src/utils/get-expires-date';
 

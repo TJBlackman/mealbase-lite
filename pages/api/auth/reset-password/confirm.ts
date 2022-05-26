@@ -1,19 +1,19 @@
-import { UserModel } from "@src/db/users";
-import { PasswordResetModel } from "@src/db/password-resets";
-import { RefreshTokenModel } from "@src/db/refresh-tokens";
-import { NextApiHandler } from "next";
-import { createJwt, verifyJwt } from "@src/utils/jwt-helpers";
-import cookie from "cookie";
-import { getFutureDate } from "@src/utils/get-expires-date";
-import { mongoDbConnection } from "@src/db/connection";
-import { resetPasswordConfirmSchema } from "@src/validation/schemas/users";
-import { createHash } from "@src/utils/hash-helpers";
+import { UserModel } from '@src/db/users';
+import { PasswordResetModel } from '@src/db/password-resets';
+import { RefreshTokenModel } from '@src/db/refresh-tokens';
+import { NextApiHandler } from 'next';
+import { createJwt, verifyJwt } from '@src/utils/jwt-helpers2';
+import cookie from 'cookie';
+import { getFutureDate } from '@src/utils/get-expires-date';
+import { mongoDbConnection } from '@src/db/connection';
+import { resetPasswordConfirmSchema } from '@src/validation/schemas/users';
+import { createHash } from '@src/utils/hash-helpers';
 
 const handler: NextApiHandler = async (req, res) => {
   try {
     // validate method type
-    if (req.method !== "POST") {
-      return res.status(404).send("Not Found");
+    if (req.method !== 'POST') {
+      return res.status(404).send('Not Found');
     }
 
     // validate request body
@@ -31,13 +31,13 @@ const handler: NextApiHandler = async (req, res) => {
     // get reset pw record from db
     const record = await PasswordResetModel.findById(jwt._id);
     if (!record) {
-      return res.status(404).send("Record not found.");
+      return res.status(404).send('Record not found.');
     }
 
     // get user that is saved in PW reset record
     const user = await UserModel.findById(record.user);
     if (!user) {
-      return res.status(404).send("User not found.");
+      return res.status(404).send('User not found.');
     }
 
     // hash new password
@@ -50,7 +50,7 @@ const handler: NextApiHandler = async (req, res) => {
     res.status(200).json({ success: true });
   } catch (err) {
     console.log(err);
-    let msg = "An unknown error occurred.";
+    let msg = 'An unknown error occurred.';
     if (err instanceof Error) {
       msg = err.message;
     }

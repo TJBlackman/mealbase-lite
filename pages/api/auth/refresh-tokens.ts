@@ -1,7 +1,7 @@
 import { UserModel } from '@src/db/users';
 import { RefreshTokenModel } from '@src/db/refresh-tokens';
 import { NextApiHandler } from 'next';
-import { createJwt, verifyJwt } from '@src/utils/jwt-helpers';
+import { createJwt, verifyJwt } from '@src/utils/jwt-helpers2';
 import cookie from 'cookie';
 import { getFutureDate } from '@src/utils/get-expires-date';
 import { mongoDbConnection } from '@src/db/connection';

@@ -2,7 +2,7 @@ import cookie from 'cookie';
 import { UserModel } from '@src/db/users';
 import { Roles } from '@src/types/index.d';
 import type { NextApiHandler } from 'next';
-import { createJwt } from '@src/utils/jwt-helpers';
+import { createJwt } from '@src/utils/jwt-helpers2';
 import { createHash } from '@src/utils/hash-helpers';
 import { mongoDbConnection } from '@src/db/connection';
 import { registerUserSchema } from '@src/validation/schemas/users';

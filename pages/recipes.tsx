@@ -4,7 +4,7 @@ import { SearchAndPage } from '@src/components/search-and-pagination';
 import { RecipeLikesModel } from '@src/db/recipe-likes';
 import { RecipeModel } from '@src/db/recipes';
 import { Recipe, UserJwt } from '@src/types';
-import { verifyJwt } from '@src/utils/jwt-helpers';
+import { verifyJwt } from '@src/utils/jwt-helpers2';
 import { GetServerSidePropsContext } from 'next';
 
 /** get server side data and SSR page */
