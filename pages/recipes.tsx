@@ -3,8 +3,8 @@ import { RecipeCard } from '@src/components/recipe-card';
 import { SearchAndPage } from '@src/components/search-and-pagination';
 import { RecipeLikesModel } from '@src/db/recipe-likes';
 import { RecipeModel } from '@src/db/recipes';
-import { Recipe, UserJwt } from '@src/types';
-import { verifyJwt } from '@src/utils/jwt-helpers2';
+import { Recipe } from '@src/types';
+import { getUserJWT } from '@src/validation/server-requests';
 import { GetServerSidePropsContext } from 'next';
 
 /** get server side data and SSR page */
@@ -46,45 +46,32 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // get recipes from DB
   const recipes = await RecipeModel.find(filter)
     .select('-addedByUser -deleted -__v')
-    .lean()
     .limit(limit)
     .skip(skip)
-    .sort({ createdAt: 1 });
+    .sort({ createdAt: 1 })
+    .lean();
 
   // count total recipes that match this filter
   const count = await RecipeModel.find(filter).countDocuments();
 
-  // I guess .lean() doesn't work anymore and _id is an object and dates are objects
-  // manually convert to strings.... ugh
-  let flatRecipes = recipes.map((recipe) => ({
-    ...recipe,
-    _id: recipe._id.toString(),
-    createdAt: recipe.createdAt.toISOString(),
-    updatedAt: recipe.updatedAt.toISOString(),
-    isLiked: false,
-  }));
-
   // if user is logged in,
   // get their liked recipe and check if any of the above recipes are liked this user
-  const accessToken =
-    context.req.cookies[process.env.ACCESS_TOKEN_COOKIE_NAME!];
-  if (accessToken) {
-    const user = await verifyJwt<UserJwt>(accessToken).catch((_err) => {});
-    if (user) {
-      const recipeIds = flatRecipes.map((r) => r._id);
-      const likedRecipes = await RecipeLikesModel.find({
-        userId: user._id,
-        recipeId: { $in: recipeIds },
-      }).select('recipeId');
-      likedRecipes.forEach((liked) => {
-        const _likedRecipe = flatRecipes.find(
-          (recipe) => recipe._id === liked.recipeId.toString()
-        );
-        if (_likedRecipe) {
-          _likedRecipe.isLiked = true;
-        }
-      });
-    }
+  const user = await getUserJWT(context.req.cookies);
+  if (user) {
+    const recipeIds = recipes.map((r) => r._id);
+    const likedRecipes = await RecipeLikesModel.find({
+      userId: user._id,
+      recipeId: { $in: recipeIds },
+    }).select('recipeId');
+    likedRecipes.forEach((liked) => {
+      const _likedRecipe = recipes.find(
+        (recipe) => recipe._id.toString() === liked.recipeId.toString()
+      );
+      if (_likedRecipe) {
+        // @ts-ignore
+        _likedRecipe.isLiked = true;
+      }
+    });
   }
 
   // search from query.param.search or ""
@@ -92,7 +79,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   return {
     props: {
-      recipes: flatRecipes,
+      recipes: JSON.parse(JSON.stringify(recipes)),
       count,
       limit,
       skip,
