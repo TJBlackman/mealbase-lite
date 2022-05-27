@@ -7,6 +7,11 @@ const RefreshTokenSchema = new Schema<RefreshToken>({
     ref: "Users",
     required: true,
   },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: () => new Date(),
+  },
 });
 
 export const RefreshTokenModel =

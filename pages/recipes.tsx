@@ -130,7 +130,7 @@ export default function BrowsePage(props: Props) {
           ))}
         </Grid>
       )}
-      <Box textAlign="right">
+      <Box textAlign="right" pt={3}>
         <Pagination paginationCount={paginationCount} />
       </Box>
     </>

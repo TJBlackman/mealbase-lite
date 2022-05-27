@@ -23,9 +23,10 @@ interface User {
   deleted: Boolean;
 }
 
-type RefreshToken = {
+interface RefreshToken {
   userId: string;
-};
+  createdAt: Date;
+}
 
 type UserJwt = {
   email: string;
