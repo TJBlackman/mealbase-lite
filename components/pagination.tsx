@@ -3,12 +3,17 @@ import { useState, useEffect } from "react";
 import { Pagination as MuiPagination } from "@mui/material";
 
 type Props = {
-  paginationCount: number;
+  totalCount: number;
 };
 
 export function Pagination(props: Props) {
   const router = useRouter();
   const [page, setPage] = useState(Number(router.query.page) || 1);
+
+  // calculate total number of pages, given the total results and the results to show per page
+  const paginationCount = Math.ceil(
+    Number(props.totalCount) / Number(router.query.limit || 25)
+  );
 
   //  on page change, update the url param and go to the new page
   useEffect(() => {
@@ -36,7 +41,7 @@ export function Pagination(props: Props) {
 
   return (
     <MuiPagination
-      count={props.paginationCount}
+      count={paginationCount}
       size="small"
       sx={{ display: "inline-block" }}
       onChange={(e, page) => setPage(page)}

@@ -8,6 +8,8 @@ import {
   IconButton,
   InputAdornment,
   Typography,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -15,20 +17,26 @@ import ClearIcon from "@mui/icons-material/Clear";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Pagination } from "@src/components/pagination";
+import { useUserContext } from "@src/contexts/user";
 
 type Props = {
   totalCount: number;
-  limit: number;
-  skip: number;
-  search: string;
 };
 
 export function SearchAndPage(props: Props) {
+  const userContext = useUserContext();
   const router = useRouter();
   const [showFilters, setShowFilters] = useState(false);
-  const [search, setSearch] = useState<string>(props.search);
-  const [limit, setLimit] = useState(props.limit.toString());
+  const [search, setSearch] = useState<string>(
+    (router.query.search as string) || ""
+  );
+  const [limit, setLimit] = useState(
+    (router.query.limit as string)?.toString() || "25"
+  );
   const [page, setPage] = useState(Number(router.query.page) || 1);
+  const [liked, setLiked] = useState(
+    router.query?.likedRecipes === "1" ? true : false
+  );
 
   // build a query parameter object so we can request new page of results
   function getUrlParams() {
@@ -41,6 +49,9 @@ export function SearchAndPage(props: Props) {
     }
     if (page !== 1) {
       params.append("page", page.toString());
+    }
+    if (liked) {
+      params.append("likedRecipes", "1");
     }
     const paramStr = params.toString();
     return paramStr.length > 0 ? `?${paramStr}` : "";
@@ -62,15 +73,10 @@ export function SearchAndPage(props: Props) {
     }
   }
 
-  // calculate total number of pages, given the total results and the results to show per page
-  const paginationCount = Math.ceil(
-    Number(props.totalCount) / Number(props.limit)
-  );
-
-  // when search is clear, go to new page without search query param
+  // when search is cleared, go to new page without search query param
   useEffect(() => {
     if (search.length === 0 && router.query.search) {
-      updatePageUrl;
+      updatePageUrl();
     }
   }, [search, router.query.search]);
 
@@ -87,7 +93,7 @@ export function SearchAndPage(props: Props) {
   }, [router.query, search]);
 
   // update page url and results when these things change
-  useEffect(updatePageUrl, [page, limit]);
+  useEffect(updatePageUrl, [page, limit, liked]);
 
   return (
     <>
@@ -177,6 +183,19 @@ export function SearchAndPage(props: Props) {
               ))}
             </TextField>
           </Grid>
+          {userContext.isLoggedIn && (
+            <Grid item>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={liked}
+                    onChange={(e) => setLiked(e.target.checked)}
+                  />
+                }
+                label="Liked Recipes"
+              />
+            </Grid>
+          )}
         </Grid>
       </Collapse>
       <Toolbar
@@ -190,7 +209,7 @@ export function SearchAndPage(props: Props) {
         <Typography variant="body2">
           Found {props.totalCount} recipe{props.totalCount !== 1 && "s"}.
         </Typography>
-        <Pagination paginationCount={paginationCount} />
+        <Pagination totalCount={props.totalCount} />
       </Toolbar>
     </>
   );

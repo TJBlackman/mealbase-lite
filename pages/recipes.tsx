@@ -10,6 +10,22 @@ import { Pagination } from "@src/components/pagination";
 
 /** get server side data and SSR page */
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // get userJWT, if user is logged in
+  const user = await getUserJWT(context.req.cookies);
+
+  // array of liked recipe ids
+  const likedRecipes: string[] = [];
+
+  // if user is logged in
+  // And, they are requesting their liked recipes, get them all
+  if (user && context.query.likedRecipes) {
+    const result = await RecipeLikesModel.find({ userId: user._id })
+      .select("recipeId")
+      .lean();
+
+    result.forEach((r) => likedRecipes.push(r.recipeId.toString()));
+  }
+
   // calculate limit, or use default
   const limit = (() => {
     let _limit = "25";
@@ -41,6 +57,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     if (context.query.search) {
       result.title = { $regex: context.query.search, $options: "i" };
     }
+    if (context.query.likedRecipes) {
+      result._id = { $in: likedRecipes };
+    }
     return result;
   })();
 
@@ -52,18 +71,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     .sort({ createdAt: 1 })
     .lean();
 
-  // count total recipes that match this filter
-  const count = await RecipeModel.find(filter).countDocuments();
-
-  // if user is logged in,
-  // get their liked recipe and check if any of the above recipes are liked this user
-  const user = await getUserJWT(context.req.cookies);
+  // if user is logged,
+  // mark recipe as "liked" by currently logged in user
   if (user) {
     const recipeIds = recipes.map((r) => r._id);
     const likedRecipes = await RecipeLikesModel.find({
       userId: user._id,
       recipeId: { $in: recipeIds },
     }).select("recipeId");
+
     likedRecipes.forEach((liked) => {
       const _likedRecipe = recipes.find(
         (recipe) => recipe._id.toString() === liked.recipeId.toString()
@@ -75,44 +91,30 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     });
   }
 
-  // search from query.param.search or ""
-  const search = context.query.search || "";
+  // count total recipes that match this filter
+  const totalCount = await RecipeModel.find(filter).countDocuments();
 
   return {
     props: {
       recipes: JSON.parse(JSON.stringify(recipes)),
-      count,
-      limit,
-      skip,
-      search,
+      totalCount,
     },
   };
 }
 
 type Props = {
   recipes: (Recipe & { _id: string; isLiked: boolean })[];
-  count: number;
-  limit: number;
-  skip: number;
-  search: string;
+  totalCount: number;
 };
 
 export default function BrowsePage(props: Props) {
-  // calculate total number of pages, given the total results and the results to show per page
-  const paginationCount = Math.ceil(Number(props.count) / Number(props.limit));
-
   return (
     <>
       <Typography variant="h5" component="h1" paragraph>
         Browse Recipes
       </Typography>
       <Box mb={4}>
-        <SearchAndPage
-          totalCount={props.count}
-          limit={props.limit}
-          skip={props.skip}
-          search={props.search}
-        />
+        <SearchAndPage totalCount={props.totalCount} />
       </Box>
       {props.recipes.length < 1 && (
         <Box textAlign="center">No Recipes Found!</Box>
@@ -131,7 +133,7 @@ export default function BrowsePage(props: Props) {
         </Grid>
       )}
       <Box textAlign="right" pt={3}>
-        <Pagination paginationCount={paginationCount} />
+        <Pagination totalCount={props.totalCount} />
       </Box>
     </>
   );
