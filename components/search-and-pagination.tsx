@@ -15,6 +15,8 @@ import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/router";
 import ClearIcon from "@mui/icons-material/Clear";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import Favorite from "@mui/icons-material/Favorite";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Pagination } from "@src/components/pagination";
 import { useUserContext } from "@src/contexts/user";
@@ -190,6 +192,8 @@ export function SearchAndPage(props: Props) {
                   <Checkbox
                     checked={liked}
                     onChange={(e) => setLiked(e.target.checked)}
+                    icon={<FavoriteBorder />}
+                    checkedIcon={<Favorite />}
                   />
                 }
                 label="Liked Recipes"
