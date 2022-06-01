@@ -5,56 +5,50 @@ import {
   TextField,
   Toolbar,
   Typography,
-} from "@mui/material";
-import { networkRequest } from "@src/utils/network-request";
-import { FormEvent, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+} from '@mui/material';
+import { networkRequest } from '@src/utils/network-request';
+import { FormEvent, useState } from 'react';
+import { useMutation, useQuery } from 'react-query';
+import { editDomainHashSchema } from '@src/validation/schemas/domain-hashes';
 
 type Props = {
   domainHashId: string;
 };
 
 export function EditDomainHashForm(props: Props) {
-  const [selector, setSelector] = useState("");
-  const [error, setError] = useState("");
+  const [domain, setDomain] = useState('');
+  const [selector, setSelector] = useState('');
+  const [error, setError] = useState('');
 
-  const query = useQuery(["domain hash", props.domainHashId], () =>
+  const query = useQuery(['domain hash', props.domainHashId], () =>
     networkRequest({
-      url: "/",
+      url: `/admin/domain-hashes/${props.domainHashId}`,
     })
   );
 
-  const mutation = useMutation((payload: { email: string }) =>
-    networkRequest<{ email: string }>({
-      url: "/api/users/edit-account",
-      method: "PUT",
-      body: payload,
-    })
+  const mutation = useMutation(
+    (payload: { domain: string; selector: string }) =>
+      networkRequest<{ email: string }>({
+        url: '/api/users/edit-account',
+        method: 'PUT',
+        body: payload,
+      })
   );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError("");
-    const validationResult = EmailSchema.validate(email);
+    setError('');
+    const payload = { domain, selector };
+    const validationResult = editDomainHashSchema.validate(payload);
     if (validationResult.error) {
       setError(validationResult.error.message);
     }
-    mutation.mutate(
-      { email },
-      {
-        onSuccess: (data) => {
-          router.reload();
-        },
-      }
-    );
+    mutation.mutate(payload, {
+      onSuccess: (data) => {
+        console.log(data);
+      },
+    });
   }
-
-  function reset() {
-    setEmail(props.email);
-    setError("");
-  }
-
-  const notChanged = email === props.email;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -63,9 +57,9 @@ export function EditDomainHashForm(props: Props) {
       </Typography>
       <TextField
         fullWidth
-        label="Email Address"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        label="Domain"
+        value={domain}
+        onChange={(e) => setDomain(e.target.value)}
         disabled={mutation.isLoading}
         sx={{ mb: 2 }}
       />
@@ -75,22 +69,13 @@ export function EditDomainHashForm(props: Props) {
           type="submit"
           variant="contained"
           sx={{ mr: 2 }}
-          disabled={mutation.isLoading || notChanged}
+          disabled={mutation.isLoading}
         >
           {mutation.isLoading ? (
             <CircularProgress size={20} color="primary" />
           ) : (
-            "Submit"
+            'Submit'
           )}
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          type="button"
-          onClick={reset}
-          disabled={mutation.isLoading}
-        >
-          Reset
         </Button>
       </Toolbar>
     </form>
