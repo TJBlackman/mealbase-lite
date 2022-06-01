@@ -68,6 +68,8 @@ type PasswordResetRecord = {
 type DomainHashSelector = {
   domain: string;
   selector: string;
+  isDynamic: boolean;
   createdAt: Date;
   updatedAt: Date;
+  isDynamic: boolean;
 };

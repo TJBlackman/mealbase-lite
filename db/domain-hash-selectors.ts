@@ -11,6 +11,11 @@ const DomainHashSelectorsSchema = new mongoose.Schema<DomainHashSelector>({
     required: true,
     default: "",
   },
+  isDynamic: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   createdAt: {
     type: Date,
     required: true,
