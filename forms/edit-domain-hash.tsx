@@ -8,18 +8,21 @@ import {
 } from "@mui/material";
 import { networkRequest } from "@src/utils/network-request";
 import { FormEvent, useState } from "react";
-import { useMutation } from "react-query";
-import { useRouter } from "next/router";
-import { EmailSchema } from "@src/validation/schemas/users";
+import { useMutation, useQuery } from "react-query";
 
 type Props = {
-  email: string;
+  domainHashId: string;
 };
 
-export function ChangeEmailForm(props: Props) {
-  const router = useRouter();
-  const [email, setEmail] = useState(props.email);
+export function EditDomainHashForm(props: Props) {
+  const [selector, setSelector] = useState("");
   const [error, setError] = useState("");
+
+  const query = useQuery(["domain hash", props.domainHashId], () =>
+    networkRequest({
+      url: "/",
+    })
+  );
 
   const mutation = useMutation((payload: { email: string }) =>
     networkRequest<{ email: string }>({

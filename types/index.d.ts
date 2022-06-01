@@ -64,3 +64,10 @@ type PasswordResetRecord = {
   expires: Date;
   createdAt: Date;
 };
+
+type DomainHashSelector = {
+  domain: string;
+  selector: string;
+  createdAt: Date;
+  updatedAt: Date;
+};

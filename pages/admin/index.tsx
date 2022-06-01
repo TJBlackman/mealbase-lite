@@ -40,6 +40,14 @@ export default function Page() {
             </ListItemSecondaryAction>
           </ListItem>
         </Link>
+        <Link href="/admin/domain-hashes" passHref>
+          <ListItem button divider>
+            <ListItemText primary="Domain Hashes" />
+            <ListItemSecondaryAction>
+              <ChevronRightIcon />
+            </ListItemSecondaryAction>
+          </ListItem>
+        </Link>
       </List>
     </>
   );
