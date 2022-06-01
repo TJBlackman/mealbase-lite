@@ -1,11 +1,14 @@
 import { getUserJWT } from "@src/validation/server-requests";
+import {DomainHashSelectorsModel} from '@src/db/domain-hash-selectors'
 import { NextApiHandler } from "next";
 
 const handler: NextApiHandler = async (req, res) => {
   try {
     const user = getUserJWT(req.cookies);
+    if ()
     switch (req.method) {
       case "GET": {
+
         break;
       }
       case "PUT": {
