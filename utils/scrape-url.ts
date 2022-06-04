@@ -1,11 +1,17 @@
-import { Browser, chromium } from "playwright";
+import { Browser, chromium } from 'playwright';
 
 /**
  * Uses playwright, the newer, better version of puppeteer, to scrape recipe details from a url.
  * @param url {string} URL of recipe to scrape
  * @returns Recipe data
  */
-export async function scrapeRecipeData(url: string) {
+export async function scrapeRecipeData(
+  url: string,
+  hashSelector: {
+    isDynamic: boolean;
+    selector: string;
+  } | null
+) {
   let browser: Browser;
   try {
     browser = await chromium.launch();
@@ -13,7 +19,7 @@ export async function scrapeRecipeData(url: string) {
     await page.goto(url);
     await page.waitForLoadState();
     const result = await page
-      .evaluate(async () => {
+      .evaluate(async (hashSelector) => {
         // scrape the title
         const title = document.querySelector<HTMLMetaElement>(
           '[property="og:title"]'
@@ -24,7 +30,7 @@ export async function scrapeRecipeData(url: string) {
           );
         }
         if (!title.content) {
-          throw Error("Title meta tag has no content.");
+          throw Error('Title meta tag has no content.');
         }
 
         // scrape the description
@@ -37,7 +43,7 @@ export async function scrapeRecipeData(url: string) {
           );
         }
         if (!description.content) {
-          throw Error("Description meta tag has no content.");
+          throw Error('Description meta tag has no content.');
         }
 
         // scrape the title
@@ -50,7 +56,7 @@ export async function scrapeRecipeData(url: string) {
           );
         }
         if (!image.content) {
-          throw Error("Image meta tag has no content.");
+          throw Error('Image meta tag has no content.');
         }
 
         // scrape the recipe URL
@@ -61,7 +67,7 @@ export async function scrapeRecipeData(url: string) {
           throw Error(`No element found with the select: [property="og:url"]`);
         }
         if (!recipeURL.content) {
-          throw Error("Image meta tag has no content.");
+          throw Error('Image meta tag has no content.');
         }
 
         // scrape the site name
@@ -74,7 +80,21 @@ export async function scrapeRecipeData(url: string) {
           );
         }
         if (!siteName.content) {
-          throw Error("Image meta tag has no content.");
+          throw Error('Image meta tag has no content.');
+        }
+
+        // optionally, get the hash of the recipe so the URL can jump directly to the recipe.
+        // ie: www.recipes.com/best-tacos#tasty-recipes-2301
+        let hash = '';
+        if (hashSelector) {
+          if (!hashSelector.isDynamic) {
+            hash = hashSelector.selector;
+          } else {
+            const _hash = document.querySelector(hashSelector.selector);
+            if (_hash) {
+              hash = '#' + _hash.id;
+            }
+          }
         }
 
         return {
@@ -83,9 +103,11 @@ export async function scrapeRecipeData(url: string) {
           siteName: siteName.content,
           title: title.content,
           url: recipeURL.content,
+          hash: hash,
         };
-      })
+      }, hashSelector)
       .catch((err) => {
+        console.log(err);
         throw Error(err.message);
       });
 

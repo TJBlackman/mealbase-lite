@@ -31,6 +31,8 @@ export function RecipeCard(props: Props) {
     setAnchor(null);
   }
 
+  const _url = props.recipe.url + props.recipe.hash;
+
   return (
     <>
       <Card
@@ -42,7 +44,7 @@ export function RecipeCard(props: Props) {
         }}
         elevation={10}
       >
-        <a href={props.recipe.url} target="_blank" rel="noreferrer">
+        <a href={_url} target="_blank" rel="noreferrer">
           <CardMedia
             component="img"
             height="194"
@@ -58,7 +60,7 @@ export function RecipeCard(props: Props) {
             sx={{ lineHeight: '1.2' }}
           >
             <MuiLink
-              href={props.recipe.url}
+              href={_url}
               target="_blank"
               referrerPolicy="no-referrer"
               sx={{

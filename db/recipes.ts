@@ -1,5 +1,5 @@
-import { Recipe } from "@src/types";
-import mongoose from "mongoose";
+import { Recipe } from '@src/types';
+import mongoose from 'mongoose';
 
 const RecipeSchema = new mongoose.Schema<Recipe>({
   createdAt: {
@@ -35,7 +35,7 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
   },
   addedByUser: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: 'Users',
     required: true,
   },
   likes: {
@@ -48,6 +48,11 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
     required: true,
     default: false,
   },
+  hash: {
+    type: String,
+    required: true,
+    default: '',
+  },
 });
 
 // allows string seach on title, siteName fields
@@ -56,4 +61,4 @@ RecipeSchema.index({ siteName: 1 });
 
 export const RecipeModel =
   (mongoose.models.Recipes as mongoose.Model<Recipe, {}, {}, {}>) ||
-  mongoose.model<Recipe>("Recipes", RecipeSchema);
+  mongoose.model<Recipe>('Recipes', RecipeSchema);

@@ -1,6 +1,6 @@
-import { RecipeModel } from "@src/db/recipes";
-import { Recipe } from "@src/types";
-import { GetServerSideProps } from "next";
+import { RecipeModel } from '@src/db/recipes';
+import { Recipe } from '@src/types';
+import { GetServerSideProps } from 'next';
 import {
   Typography,
   Container,
@@ -12,13 +12,13 @@ import {
   Toolbar,
   Button,
   CircularProgress,
-} from "@mui/material";
-import { useState, FormEvent, useEffect } from "react";
-import { RecipeCard } from "@src/components/recipe-card";
-import { useMutation } from "react-query";
-import { networkRequest } from "@src/utils/network-request";
-import { useRouter } from "next/router";
-import { red } from "@mui/material/colors";
+} from '@mui/material';
+import { useState, FormEvent, useEffect } from 'react';
+import { RecipeCard } from '@src/components/recipe-card';
+import { useMutation } from 'react-query';
+import { networkRequest } from '@src/utils/network-request';
+import { useRouter } from 'next/router';
+import { red } from '@mui/material/colors';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -38,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return { props };
   } catch (error) {
-    let msg = "An unknown error occurred.";
+    let msg = 'An unknown error occurred.';
     if (error instanceof Error) {
       msg = error.message;
     }
@@ -58,13 +58,14 @@ type Props = {
 };
 export default function DeleteRecipePage(props: Props) {
   const router = useRouter();
-  const [title, setTitle] = useState(props.recipe?.title || "");
+  const [title, setTitle] = useState(props.recipe?.title || '');
   const [description, setDescription] = useState(
-    props.recipe?.description || ""
+    props.recipe?.description || ''
   );
-  const [img, setImg] = useState(props.recipe?.image || "");
-  const [url, setUrl] = useState(props.recipe?.url || "");
-  const [siteName, setSiteName] = useState(props.recipe?.siteName || "");
+  const [img, setImg] = useState(props.recipe?.image || '');
+  const [url, setUrl] = useState(props.recipe?.url || '');
+  const [hash, setHash] = useState(props.recipe?.hash || '');
+  const [siteName, setSiteName] = useState(props.recipe?.siteName || '');
   const [deleted, setDeleted] = useState<boolean>(
     props.recipe?.deleted || false
   );
@@ -74,18 +75,18 @@ export default function DeleteRecipePage(props: Props) {
     (
       payload: Pick<
         RecipeWithId,
-        | "url"
-        | "title"
-        | "image"
-        | "deleted"
-        | "siteName"
-        | "description"
-        | "_id"
+        | 'url'
+        | 'title'
+        | 'image'
+        | 'deleted'
+        | 'siteName'
+        | 'description'
+        | '_id'
       >
     ) =>
       networkRequest({
         url: `/api/recipes/edit`,
-        method: "PUT",
+        method: 'PUT',
         body: payload,
       })
   );
@@ -112,12 +113,13 @@ export default function DeleteRecipePage(props: Props) {
   }
 
   function reset() {
-    setTitle(props.recipe?.title || "");
-    setDescription(props.recipe?.description || "");
-    setImg(props.recipe?.image || "");
-    setUrl(props.recipe?.url || "");
-    setSiteName(props.recipe?.siteName || "");
+    setTitle(props.recipe?.title || '');
+    setDescription(props.recipe?.description || '');
+    setImg(props.recipe?.image || '');
+    setUrl(props.recipe?.url || '');
+    setSiteName(props.recipe?.siteName || '');
     setDeleted(props.recipe?.deleted || false);
+    setHash(props.recipe?.hash || '');
   }
 
   return (
@@ -170,6 +172,14 @@ export default function DeleteRecipePage(props: Props) {
               />
               <TextField
                 sx={{ mb: 2 }}
+                label="Hash"
+                value={hash}
+                onChange={(e) => setHash(e.target.value)}
+                fullWidth
+                variant="outlined"
+              />
+              <TextField
+                sx={{ mb: 2 }}
                 label="Site Name"
                 value={siteName}
                 onChange={(e) => setSiteName(e.target.value)}
@@ -184,7 +194,7 @@ export default function DeleteRecipePage(props: Props) {
                     onChange={(e) => setDeleted(e.target.checked)}
                     sx={{
                       color: red[800],
-                      "&.Mui-checked": {
+                      '&.Mui-checked': {
                         color: red[600],
                       },
                     }}
@@ -192,7 +202,7 @@ export default function DeleteRecipePage(props: Props) {
                 }
                 label={
                   <Typography color="error">
-                    {deleted ? "Deleted" : "Delete"}
+                    {deleted ? 'Deleted' : 'Delete'}
                   </Typography>
                 }
               />
@@ -209,7 +219,7 @@ export default function DeleteRecipePage(props: Props) {
                   {mutation.isLoading ? (
                     <CircularProgress size={20} color="primary" />
                   ) : (
-                    "Submit"
+                    'Submit'
                   )}
                 </Button>
                 <Button

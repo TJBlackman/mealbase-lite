@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/34818545/4927236
-export function domain_from_url(url: string): string {
-  let result = "";
+export function domainFromUrl(url: string): string {
+  let result = '';
   var match;
   if (
     (match = url.match(
