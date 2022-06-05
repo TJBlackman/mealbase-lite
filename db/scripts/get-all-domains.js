@@ -13,7 +13,7 @@ const Recipes = mongoose.model('Recipes', {
   },
   hash: {
     type: String,
-    required: true,
+    required: false,
     default: '',
   },
 });

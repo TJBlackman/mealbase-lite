@@ -50,7 +50,7 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
   },
   hash: {
     type: String,
-    required: true,
+    required: false,
     default: '',
   },
 });

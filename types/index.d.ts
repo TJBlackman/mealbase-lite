@@ -45,7 +45,7 @@ interface Recipe {
   likes: number;
   deleted: boolean;
   addedByUser: string;
-  hash: string;
+  hash?: string;
 }
 
 type ScrapedRecipeDate = Pick<

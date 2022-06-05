@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState } from 'react';
 import {
   Button,
   Container,
@@ -8,50 +8,67 @@ import {
   Typography,
   CircularProgress,
   Link as MuiLink,
-} from "@mui/material";
-import { useUserContext } from "@src/contexts/user";
-import { useMutation } from "react-query";
-import { networkRequest } from "@src/utils/network-request";
-import { addRecipeSchema } from "@src/validation/schemas/recipes";
-import Link from "next/link";
+  Box,
+  Grid,
+} from '@mui/material';
+import { useUserContext } from '@src/contexts/user';
+import { useMutation } from 'react-query';
+import { networkRequest } from '@src/utils/network-request';
+import { addRecipeSchema } from '@src/validation/schemas/recipes';
+import Link from 'next/link';
+import { RecipeCard } from '@src/components/recipe-card';
+import { Recipe } from '@src/types';
 
 export default function AddRecipePage() {
   const userContext = useUserContext();
-  const [url, setUrl] = useState("");
-  const [error, setError] = useState("");
+  const [url, setUrl] = useState('');
+  const [error, setError] = useState('');
 
   const mutation = useMutation(
     (url: string) =>
-      networkRequest({
-        url: "/api/recipes/add-recipe",
-        method: "POST",
+      networkRequest<
+        Recipe & {
+          _id: string;
+          isLiked: boolean;
+        }
+      >({
+        url: '/api/recipes/add-recipe',
+        method: 'POST',
         body: {
           url,
         },
       }),
     {
       onError: (err) => {
-        let msg = "An unknown error occurred.";
+        let msg = 'An unknown error occurred.';
         if (err instanceof Error) {
           msg = err.message;
         }
         setError(msg);
       },
-      onSuccess: (data) => {},
+      onSuccess: (data) => {
+        setUrl('');
+      },
     }
   );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError("");
+    setError('');
     const validationResult = addRecipeSchema.validate({ url });
     if (validationResult.error) {
       return setError(validationResult.error.message);
     }
+    mutation.reset();
     mutation.mutate(url);
   }
 
   const disabled = !userContext.isLoggedIn || mutation.isLoading;
+
+  if (mutation.isSuccess) {
+    console.log('data', mutation.data);
+  }
+
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" component="h1">
@@ -79,18 +96,28 @@ export default function AddRecipePage() {
             {mutation.isLoading ? (
               <CircularProgress size={20} color="primary" />
             ) : (
-              "Submit"
+              'Submit'
             )}
           </Button>
         </Toolbar>
       </form>
+      {mutation.isSuccess && (
+        <>
+          <Alert severity="success" sx={{ mb: 2 }}>
+            Recipe successfully added to MealBase!
+          </Alert>
+          <Grid container justifyContent="center">
+            <RecipeCard recipe={mutation.data} />
+          </Grid>
+        </>
+      )}
       {!userContext.isLoggedIn && (
         <Alert severity="warning">
-          To use this feature, you must{" "}
+          To use this feature, you must{' '}
           <Link href="/login" passHref>
             <MuiLink>login</MuiLink>
-          </Link>{" "}
-          or{" "}
+          </Link>{' '}
+          or{' '}
           <Link href="/register" passHref>
             <MuiLink>register an account</MuiLink>
           </Link>

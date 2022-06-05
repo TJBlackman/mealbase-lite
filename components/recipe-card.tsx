@@ -31,7 +31,10 @@ export function RecipeCard(props: Props) {
     setAnchor(null);
   }
 
-  const _url = props.recipe.url + props.recipe.hash;
+  let _url = props.recipe.url;
+  if (props.recipe.hash) {
+    _url += props.recipe.hash;
+  }
 
   return (
     <>
