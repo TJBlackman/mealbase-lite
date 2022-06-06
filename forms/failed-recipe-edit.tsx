@@ -1,6 +1,6 @@
-import { FormEvent, useEffect, useState } from "react";
-import { useQuery, useMutation } from "react-query";
-import { networkRequest } from "@src/utils/network-request";
+import { FormEvent, useEffect, useState } from 'react';
+import { useQuery, useMutation } from 'react-query';
+import { networkRequest } from '@src/utils/network-request';
 import {
   FormControlLabel,
   Checkbox,
@@ -8,7 +8,7 @@ import {
   CircularProgress,
   Alert,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 
 type Props = {
   id: string;
@@ -17,12 +17,13 @@ type Props = {
 
 export function EditFailedRecipeEdit(props: Props) {
   const [checked, setChecked] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   // query record info
-  const query = useQuery(["failed recipe", props.id], () =>
-    networkRequest<{ resolved: boolean }>({
+  const query = useQuery(['failed recipe', props.id], () =>
+    networkRequest<{ resolved: boolean; url: string }>({
       url: `/api/admin/failed-recipes/${props.id}`,
+      delay: 2000,
     })
   );
 
@@ -35,14 +36,14 @@ export function EditFailedRecipeEdit(props: Props) {
   const mutation = useMutation((payload: { resolved: boolean }) =>
     networkRequest({
       url: `/api/admin/failed-recipes/${props.id}`,
-      method: "PUT",
+      method: 'PUT',
       body: payload,
     })
   );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError("");
+    setError('');
     mutation.mutate(
       { resolved: checked },
       {
@@ -55,12 +56,16 @@ export function EditFailedRecipeEdit(props: Props) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Typography>Resolve that recipe has been added.</Typography>
+      {query.isLoading && <Typography variant="body2">Loading...</Typography>}
+      {query.isSuccess && (
+        <Typography variant="body2">{query.data.url}</Typography>
+      )}
+      <br />
       <FormControlLabel
         control={
           <Checkbox
-            defaultChecked
             checked={checked}
+            disabled={query.isLoading}
             onChange={(e) => setChecked(e.target.checked)}
           />
         }
@@ -71,12 +76,12 @@ export function EditFailedRecipeEdit(props: Props) {
         type="submit"
         variant="contained"
         sx={{ mr: 2 }}
-        disabled={mutation.isLoading || !checked}
+        disabled={mutation.isLoading || !checked || query.isLoading}
       >
         {mutation.isLoading ? (
           <CircularProgress size={20} color="primary" />
         ) : (
-          "Save"
+          'Save'
         )}
       </Button>
     </form>
