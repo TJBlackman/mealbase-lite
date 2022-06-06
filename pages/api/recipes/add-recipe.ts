@@ -102,7 +102,7 @@ const handler: NextApiHandler = async (req, res) => {
     // remove some fields, return the rest
     const { addedByUser, deleted, ...rest } = newRecipe.toObject();
 
-    res.send(rest);
+    return res.send(rest);
   } catch (err) {
     let msg = `An unknown error occurred.`;
     if (err instanceof Error) {
@@ -112,7 +112,7 @@ const handler: NextApiHandler = async (req, res) => {
         msg = err;
       }
     }
-    res.status(500).send(msg);
+    return res.status(500).send(msg);
   }
 };
 
