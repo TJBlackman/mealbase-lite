@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 declare global {
   var db: {
@@ -8,9 +8,9 @@ declare global {
 }
 
 export enum Roles {
-  User = 'User',
-  AdminReadOnly = 'Admin ReadOnly',
-  Admin = 'Admin',
+  User = "User",
+  AdminReadOnly = "Admin ReadOnly",
+  Admin = "Admin",
 }
 
 interface User {
@@ -50,13 +50,14 @@ interface Recipe {
 
 type ScrapedRecipeDate = Pick<
   Recipe,
-  'description' | 'image' | 'siteName' | 'title' | 'url' | 'hash'
+  "description" | "image" | "siteName" | "title" | "url" | "hash"
 >;
 
 type FailedRecipe = {
   url: string;
   addedByUser: string;
   createdAt: Date;
+  resolvedDate: Date;
   resolved: boolean;
 };
 

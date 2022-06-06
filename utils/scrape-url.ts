@@ -1,4 +1,4 @@
-import { Browser, chromium } from 'playwright';
+import { Browser, chromium } from "playwright";
 
 /**
  * Uses playwright, the newer, better version of puppeteer, to scrape recipe details from a url.
@@ -30,7 +30,7 @@ export async function scrapeRecipeData(
           );
         }
         if (!title.content) {
-          throw Error('Title meta tag has no content.');
+          throw Error("Title meta tag has no content.");
         }
 
         // scrape the description
@@ -43,7 +43,7 @@ export async function scrapeRecipeData(
           );
         }
         if (!description.content) {
-          throw Error('Description meta tag has no content.');
+          throw Error("Description meta tag has no content.");
         }
 
         // scrape the title
@@ -56,7 +56,7 @@ export async function scrapeRecipeData(
           );
         }
         if (!image.content) {
-          throw Error('Image meta tag has no content.');
+          throw Error("Image meta tag has no content.");
         }
 
         // scrape the recipe URL
@@ -67,7 +67,7 @@ export async function scrapeRecipeData(
           throw Error(`No element found with the select: [property="og:url"]`);
         }
         if (!recipeURL.content) {
-          throw Error('Image meta tag has no content.');
+          throw Error("Image meta tag has no content.");
         }
 
         // scrape the site name
@@ -80,19 +80,19 @@ export async function scrapeRecipeData(
           );
         }
         if (!siteName.content) {
-          throw Error('Image meta tag has no content.');
+          throw Error("Image meta tag has no content.");
         }
 
         // optionally, get the hash of the recipe so the URL can jump directly to the recipe.
         // ie: www.recipes.com/best-tacos#tasty-recipes-2301
-        let hash = '';
+        let hash = "";
         if (hashSelector) {
           if (!hashSelector.isDynamic) {
             hash = hashSelector.selector;
           } else {
             const _hash = document.querySelector(hashSelector.selector);
             if (_hash) {
-              hash = '#' + _hash.id;
+              hash = "#" + _hash.id;
             }
           }
         }
@@ -115,8 +115,10 @@ export async function scrapeRecipeData(
     return result;
   } catch (err) {
     // @ts-ignore
-    browser.close();
-    // @ts-ignore
-    throw Error(err);
+    if (browser) {
+      browser?.close?.();
+    }
+    console.log(err);
+    throw Error((err as Error).message);
   }
 }
