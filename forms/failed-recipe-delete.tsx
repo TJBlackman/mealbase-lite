@@ -1,6 +1,6 @@
-import { FormEvent, useEffect, useState } from 'react';
-import { useQuery, useMutation } from 'react-query';
-import { networkRequest } from '@src/utils/network-request';
+import { FormEvent, useEffect, useState } from "react";
+import { useQuery, useMutation } from "react-query";
+import { networkRequest } from "@src/utils/network-request";
 import {
   FormControlLabel,
   Checkbox,
@@ -8,7 +8,7 @@ import {
   CircularProgress,
   Alert,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 
 type Props = {
   id: string;
@@ -17,10 +17,10 @@ type Props = {
 
 export function DeleteFailedRecipeEdit(props: Props) {
   const [checked, setChecked] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // query record info
-  const query = useQuery(['failed recipe', props.id], () =>
+  const query = useQuery(["failed recipe", props.id], () =>
     networkRequest<{ resolved: boolean }>({
       url: `/api/admin/failed-recipes/${props.id}`,
     })
@@ -29,19 +29,19 @@ export function DeleteFailedRecipeEdit(props: Props) {
   const mutation = useMutation(() =>
     networkRequest({
       url: `/api/admin/failed-recipes/${props.id}`,
-      method: 'DELETE',
+      method: "DELETE",
     })
   );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError('');
+    setError("");
     mutation.mutate(undefined, {
       onSuccess: (data) => {
         props.onSuccess?.();
       },
       onError: (err) => {
-        console.log('err', err);
+        console.log("err", err);
         setError((err as Error).message);
       },
     });
@@ -70,7 +70,7 @@ export function DeleteFailedRecipeEdit(props: Props) {
         {mutation.isLoading ? (
           <CircularProgress size={20} color="primary" />
         ) : (
-          'Delete'
+          "Delete"
         )}
       </Button>
     </form>

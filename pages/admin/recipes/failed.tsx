@@ -1,31 +1,31 @@
-import { GetServerSideProps } from 'next';
-import EditIcon from '@mui/icons-material/Edit';
-import { User } from '@src/types/index.d';
-import { FailedRecipeModel } from '@src/db/failed-recipes';
+import { GetServerSideProps } from "next";
+import EditIcon from "@mui/icons-material/Edit";
+import { User } from "@src/types/index.d";
+import { FailedRecipeModel } from "@src/db/failed-recipes";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   Divider,
   Typography,
-} from '@mui/material';
-import { useRouter } from 'next/router';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { useState } from 'react';
-import { EditDomainHashForm } from '@src/forms/edit-domain-hash';
-import { EditFailedRecipeEdit } from '@src/forms/failed-recipe-edit';
-import { DeleteFailedRecipeEdit } from '@src/forms/failed-recipe-delete';
+} from "@mui/material";
+import { useRouter } from "next/router";
+import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
+import { useState } from "react";
+import { EditDomainHashForm } from "@src/forms/edit-domain-hash";
+import { EditFailedRecipeEdit } from "@src/forms/failed-recipe-edit";
+import { DeleteFailedRecipeEdit } from "@src/forms/failed-recipe-delete";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const recipes = await FailedRecipeModel.find({})
-      .populate('addedByUser', 'email')
+      .populate("addedByUser", "email")
       .sort({ createdAt: -1 })
       .lean();
 
     return { props: { recipes: JSON.parse(JSON.stringify(recipes)) } };
   } catch (err) {
-    let msg = 'An unknown error has occurred.';
+    let msg = "An unknown error has occurred.";
     if (err instanceof Error) {
       msg = err.message;
     }
@@ -42,10 +42,10 @@ type Props = {
 
 export default function FailedRecipesPage(props: Props) {
   const router = useRouter();
-  const [editRecordId, setEditRecordIs] = useState<null | string>(null);
+  const [editRecordId, setEditRecordId] = useState<null | string>(null);
 
   function dismissDialog() {
-    setEditRecordIs(null);
+    setEditRecordId(null);
   }
 
   function refreshPage() {
@@ -62,46 +62,46 @@ export default function FailedRecipesPage(props: Props) {
    */
   const columns: GridColDef[] = [
     {
-      field: '_id',
-      headerName: '_id',
+      field: "_id",
+      headerName: "_id",
       width: 230,
     },
     {
-      field: 'url',
-      headerName: 'URL',
+      field: "url",
+      headerName: "URL",
       minWidth: 250,
       flex: 1,
     },
     {
-      field: 'addedByUser',
-      headerName: 'User Email',
+      field: "addedByUser",
+      headerName: "User Email",
       width: 150,
       flex: 1,
       valueGetter: (data) => data.value.email,
     },
     {
-      field: 'createdAt',
-      headerName: 'Date',
+      field: "createdAt",
+      headerName: "Date Failed",
       width: 180,
       renderCell: (data) => {
         return new Date(data.value).toLocaleString();
       },
     },
     {
-      field: 'resolved',
-      headerName: 'Resolved',
+      field: "resolved",
+      headerName: "Resolved",
       width: 120,
     },
     {
-      field: 'edit',
-      headerName: 'Edit',
+      field: "edit",
+      headerName: "Edit",
       width: 100,
       renderCell: (value) => {
         return (
           <GridActionsCellItem
             icon={<EditIcon />}
             label="Edit"
-            onClick={() => setEditRecordIs(value.row._id)}
+            onClick={() => setEditRecordId(value.row._id)}
           />
         );
       },
@@ -124,7 +124,7 @@ export default function FailedRecipesPage(props: Props) {
         rowsPerPageOptions={[100]}
         disableSelectionOnClick
         getRowId={(data) => data._id}
-        sx={{ height: '65vh' }}
+        sx={{ height: "65vh" }}
         columnVisibilityModel={{ _id: false }}
       />
       <Dialog
@@ -136,12 +136,12 @@ export default function FailedRecipesPage(props: Props) {
         <DialogTitle>Failed Recipe</DialogTitle>
         <DialogContent>
           <EditFailedRecipeEdit
-            id={editRecordId || ''}
+            id={editRecordId || ""}
             onSuccess={refreshPage}
           />
           <Divider sx={{ mt: 3, mb: 3 }} />
           <DeleteFailedRecipeEdit
-            id={editRecordId || ''}
+            id={editRecordId || ""}
             onSuccess={refreshPage}
           />
         </DialogContent>
