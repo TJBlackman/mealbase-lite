@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 declare global {
   var db: {
@@ -8,9 +8,9 @@ declare global {
 }
 
 export enum Roles {
-  User = "User",
-  AdminReadOnly = "Admin ReadOnly",
-  Admin = "Admin",
+  User = 'User',
+  AdminReadOnly = 'Admin ReadOnly',
+  Admin = 'Admin',
 }
 
 interface User {
@@ -50,7 +50,7 @@ interface Recipe {
 
 type ScrapedRecipeDate = Pick<
   Recipe,
-  "description" | "image" | "siteName" | "title" | "url" | "hash"
+  'description' | 'image' | 'siteName' | 'title' | 'url' | 'hash'
 >;
 
 type FailedRecipe = {
@@ -80,3 +80,26 @@ type DomainHashSelector = {
   updatedAt: Date;
   isDynamic: boolean;
 };
+
+enum MealPlanPermissions {
+  ReadOnly = 'ReadOnly',
+  CompleteRecipes = 'CompleteRecipes',
+  EditRecipes = 'EditRecipes',
+  EditUsers = 'EditUsers',
+  Owner = 'Owner',
+}
+
+interface MealPlan {
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
+  recipes: {
+    recipe: Recipe;
+    isCooked: boolean;
+  }[];
+  members: {
+    member: string;
+    permission: MealPlanPermissions[];
+  }[];
+  owner: string;
+}

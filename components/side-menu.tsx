@@ -5,17 +5,18 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { useUserContext } from "@src/contexts/user";
-import Link from "next/link";
-import LoginIcon from "@mui/icons-material/Login";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import InfoIcon from "@mui/icons-material/Info";
-import LogoutIcon from "@mui/icons-material/Logout";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { useUserContext } from '@src/contexts/user';
+import Link from 'next/link';
+import LoginIcon from '@mui/icons-material/Login';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import InfoIcon from '@mui/icons-material/Info';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import LogoutIcon from '@mui/icons-material/Logout';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 
 type Props = {
   onClose: () => void;
@@ -31,7 +32,7 @@ export function SideMenu(props: Props) {
 
   return (
     <Drawer anchor="right" open={props.open} onClose={props.onClose}>
-      <List sx={{ width: { xs: "100vw", sm: "300px" } }}>
+      <List sx={{ width: { xs: '100vw', sm: '300px' } }}>
         <ListItem button onClick={props.onClose}>
           <ListItemIcon>
             <CloseIcon />
@@ -76,6 +77,16 @@ export function SideMenu(props: Props) {
             <ListItemText primary="Add Recipe" />
           </ListItem>
         </Link>
+        {userContext.isLoggedIn && (
+          <Link href="/app/meal-plans">
+            <ListItem button>
+              <ListItemIcon>
+                <RestaurantIcon />
+              </ListItemIcon>
+              <ListItemText primary="Meal Plans" />
+            </ListItem>
+          </Link>
+        )}
         {userContext.isAdmin && (
           <Link href="/admin">
             <ListItem button>
@@ -89,7 +100,7 @@ export function SideMenu(props: Props) {
         {userContext.isLoggedIn && (
           <>
             <Divider sx={{ mt: 2, mb: 2 }} />
-            <Link href="/account">
+            <Link href="/app/account">
               <ListItem button>
                 <ListItemIcon>
                   <AccountCircleIcon />
