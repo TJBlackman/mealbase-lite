@@ -69,14 +69,6 @@ export function SideMenu(props: Props) {
             <ListItemText primary="Browse Recipes" />
           </ListItem>
         </Link>
-        <Link href="/add-recipe">
-          <ListItem button>
-            <ListItemIcon>
-              <AddBoxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Add Recipe" />
-          </ListItem>
-        </Link>
         {userContext.isLoggedIn && (
           <Link href="/app/meal-plans">
             <ListItem button>
@@ -87,19 +79,27 @@ export function SideMenu(props: Props) {
             </ListItem>
           </Link>
         )}
-        {userContext.isAdmin && (
-          <Link href="/admin">
-            <ListItem button>
-              <ListItemIcon>
-                <VerifiedUserIcon />
-              </ListItemIcon>
-              <ListItemText primary="Admin" />
-            </ListItem>
-          </Link>
-        )}
+        <Link href="/add-recipe">
+          <ListItem button>
+            <ListItemIcon>
+              <AddBoxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Add Recipe" />
+          </ListItem>
+        </Link>
         {userContext.isLoggedIn && (
           <>
             <Divider sx={{ mt: 2, mb: 2 }} />
+            {userContext.isAdmin && (
+              <Link href="/admin">
+                <ListItem button>
+                  <ListItemIcon>
+                    <VerifiedUserIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Admin" />
+                </ListItem>
+              </Link>
+            )}
             <Link href="/app/account">
               <ListItem button>
                 <ListItemIcon>
