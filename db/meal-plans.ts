@@ -1,5 +1,5 @@
-import { MealPlan } from "@src/types";
-import mongoose from "mongoose";
+import { MealPlan } from '@src/types';
+import mongoose from 'mongoose';
 
 const MealPlanSchema = new mongoose.Schema<MealPlan>({
   title: {
@@ -9,14 +9,16 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
   createdAt: {
     type: Date,
     required: true,
+    default: () => new Date(),
   },
   updatedAt: {
     type: Date,
     required: true,
+    default: () => new Date(),
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: 'Users',
     required: true,
   },
   members: {
@@ -26,7 +28,7 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
       {
         member: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Users",
+          ref: 'Users',
         },
         permission: {
           type: [String],
@@ -42,7 +44,7 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
       {
         recipe: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Recipes",
+          ref: 'Recipes',
           required: true,
         },
         isCooked: {
@@ -57,4 +59,4 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
 
 export const MealPlansModel =
   (mongoose.models.MealPlans as mongoose.Model<MealPlan, {}, {}, {}>) ||
-  mongoose.model<MealPlan>("MealPlans", MealPlanSchema);
+  mongoose.model<MealPlan>('MealPlans', MealPlanSchema);
