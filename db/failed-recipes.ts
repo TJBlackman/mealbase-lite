@@ -7,8 +7,9 @@ const FailedRecipeSchema = new mongoose.Schema<FailedRecipe>({
     required: true,
   },
   addedByUser: {
-    type: String,
     required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users",
   },
   createdAt: {
     type: Date,

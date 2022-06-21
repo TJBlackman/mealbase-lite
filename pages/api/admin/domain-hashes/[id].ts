@@ -1,5 +1,6 @@
 import { getUserJWT } from "@src/validation/server-requests";
 import { DomainHashSelectorsModel } from "@src/db/domain-hash-selectors";
+import { mongoDbConnection } from "@src/db/connection";
 import { NextApiHandler } from "next";
 import { Roles } from "@src/types/index.d";
 import { editDomainHashSchema } from "@src/validation/schemas/domain-hashes";
@@ -11,6 +12,9 @@ const handler: NextApiHandler = async (req, res) => {
     if (!user || user.roles.indexOf(Roles.Admin) < 0) {
       return res.status(401).send("Unauthorized");
     }
+
+    // connect to db
+    await mongoDbConnection();
 
     switch (req.method) {
       case "GET": {

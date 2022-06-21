@@ -57,6 +57,7 @@ type FailedRecipe = {
   url: string;
   addedByUser: string;
   createdAt: Date;
+  resolvedDate: Date;
   resolved: boolean;
 };
 
@@ -79,3 +80,26 @@ type DomainHashSelector = {
   updatedAt: Date;
   isDynamic: boolean;
 };
+
+enum MealPlanPermissions {
+  ReadOnly = 'ReadOnly',
+  CompleteRecipes = 'CompleteRecipes',
+  EditRecipes = 'EditRecipes',
+  EditUsers = 'EditUsers',
+  Owner = 'Owner',
+}
+
+interface MealPlan {
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
+  recipes: {
+    recipe: Recipe;
+    isCooked: boolean;
+  }[];
+  members: {
+    member: string;
+    permission: MealPlanPermissions[];
+  }[];
+  owner: string;
+}

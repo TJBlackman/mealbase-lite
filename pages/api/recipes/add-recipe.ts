@@ -1,32 +1,32 @@
-import { cleanUrl } from '@src/utils/clean-url';
-import { mongoDbConnection } from '@src/db/connection';
-import { ScrapedRecipeDate, UserJwt } from '@src/types';
-import { verifyJwt } from '@src/utils/jwt-helpers';
-import { addRecipeSchema } from '@src/validation/schemas/recipes';
-import type { NextApiHandler } from 'next';
-import { RecipeModel } from '@src/db/recipes';
-import { scrapeRecipeData } from '@src/utils/scrape-url';
-import { FailedRecipeModel } from '@src/db/failed-recipes';
-import { domainFromUrl } from '@src/utils/get-domain-from-url';
-import { DomainHashSelectorsModel } from '@src/db/domain-hash-selectors';
+import { cleanUrl } from "@src/utils/clean-url";
+import { mongoDbConnection } from "@src/db/connection";
+import { ScrapedRecipeDate, UserJwt } from "@src/types";
+import { verifyJwt } from "@src/utils/jwt-helpers";
+import { addRecipeSchema } from "@src/validation/schemas/recipes";
+import type { NextApiHandler } from "next";
+import { RecipeModel } from "@src/db/recipes";
+import { scrapeRecipeData } from "@src/utils/scrape-url";
+import { FailedRecipeModel } from "@src/db/failed-recipes";
+import { domainFromUrl } from "@src/utils/get-domain-from-url";
+import { DomainHashSelectorsModel } from "@src/db/domain-hash-selectors";
 
 const handler: NextApiHandler = async (req, res) => {
   try {
-    if (req.method !== 'POST') {
-      return res.status(404).send('Not Found');
+    if (req.method !== "POST") {
+      return res.status(404).send("Not Found");
     }
 
     // validate logged in user
     const accessToken = req.cookies[process.env.ACCESS_TOKEN_COOKIE_NAME!];
     if (!accessToken) {
-      return res.status(401).send('Unauthorized.');
+      return res.status(401).send("Unauthorized.");
     }
     const user = await verifyJwt<UserJwt>(accessToken).catch((err) => {
-      console.log('Unable to verify Access Token JWT.');
+      console.log("Unable to verify Access Token JWT.");
       console.log(err);
     });
     if (!user) {
-      return res.status(401).send('Unauthorized.');
+      return res.status(401).send("Unauthorized.");
     }
 
     // validate incoming req.body
@@ -61,7 +61,8 @@ const handler: NextApiHandler = async (req, res) => {
     try {
       scrapedData = await scrapeRecipeData(_url, domainHash);
     } catch (err) {
-      const existingFailed = await FailedRecipeModel.find({
+      console.log(err);
+      const existingFailed = await FailedRecipeModel.findOne({
         url: req.body.url,
       });
       if (!existingFailed) {
@@ -92,7 +93,7 @@ const handler: NextApiHandler = async (req, res) => {
       description: scrapedData.description,
       image: scrapedData.image,
       siteName: scrapedData.siteName,
-      title: scrapedData.title.replace(/\s[\-\|]\s.+/, ''), // try to remove siteName from recipe title
+      title: scrapedData.title.replace(/\s[\-\|]\s.+/, ""), // try to remove siteName from recipe title
       url: scrapedData.url,
       hash: scrapedData.hash,
     });
@@ -101,17 +102,17 @@ const handler: NextApiHandler = async (req, res) => {
     // remove some fields, return the rest
     const { addedByUser, deleted, ...rest } = newRecipe.toObject();
 
-    res.send(rest);
+    return res.send(rest);
   } catch (err) {
     let msg = `An unknown error occurred.`;
     if (err instanceof Error) {
       msg = err.message;
     } else {
-      if (typeof err === 'string') {
+      if (typeof err === "string") {
         msg = err;
       }
     }
-    res.status(500).send(msg);
+    return res.status(500).send(msg);
   }
 };
 

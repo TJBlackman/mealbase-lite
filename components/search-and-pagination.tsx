@@ -10,16 +10,16 @@ import {
   Typography,
   FormControlLabel,
   Checkbox,
-} from "@mui/material";
-import { useState, FormEvent, useEffect } from "react";
-import { useRouter } from "next/router";
-import ClearIcon from "@mui/icons-material/Clear";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
-import Favorite from "@mui/icons-material/Favorite";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Pagination } from "@src/components/pagination";
-import { useUserContext } from "@src/contexts/user";
+} from '@mui/material';
+import { useState, FormEvent, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import ClearIcon from '@mui/icons-material/Clear';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import Favorite from '@mui/icons-material/Favorite';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Pagination } from '@src/components/pagination';
+import { useUserContext } from '@src/contexts/user';
 
 type Props = {
   totalCount: number;
@@ -30,33 +30,33 @@ export function SearchAndPage(props: Props) {
   const router = useRouter();
   const [showFilters, setShowFilters] = useState(false);
   const [search, setSearch] = useState<string>(
-    (router.query.search as string) || ""
+    (router.query.search as string) || ''
   );
   const [limit, setLimit] = useState(
-    (router.query.limit as string)?.toString() || "25"
+    (router.query.limit as string)?.toString() || '25'
   );
   const [page, setPage] = useState(Number(router.query.page) || 1);
   const [liked, setLiked] = useState(
-    router.query?.likedRecipes === "1" ? true : false
+    router.query?.likedRecipes === '1' ? true : false
   );
 
   // build a query parameter object so we can request new page of results
   function getUrlParams() {
     const params = new URLSearchParams();
     if (search.length > 0) {
-      params.append("search", search);
+      params.append('search', search);
     }
-    if (limit !== "25") {
-      params.append("limit", limit);
+    if (limit !== '25') {
+      params.append('limit', limit);
     }
     if (page !== 1) {
-      params.append("page", page.toString());
+      params.append('page', page.toString());
     }
     if (liked) {
-      params.append("likedRecipes", "1");
+      params.append('likedRecipes', '1');
     }
     const paramStr = params.toString();
-    return paramStr.length > 0 ? `?${paramStr}` : "";
+    return paramStr.length > 0 ? `?${paramStr}` : '';
   }
 
   // update the page URL according to state - call this to get new results
@@ -84,7 +84,7 @@ export function SearchAndPage(props: Props) {
 
   // clear search input
   function clearInput() {
-    setSearch("");
+    setSearch('');
   }
 
   // if search was used, and then cleared, refetch recipes with no search phrase
@@ -102,22 +102,23 @@ export function SearchAndPage(props: Props) {
       <Toolbar
         disableGutters
         sx={{
-          justifyContent: "space-between",
-          flexWrap: { xs: "wrap", sm: "nowrap" },
-          alignItems: "flex-end",
+          justifyContent: 'space-between',
+          flexWrap: { xs: 'wrap', sm: 'nowrap' },
+          alignItems: 'flex-end',
           marginBottom: 1,
+          minHeight: { xs: 44, sm: 44 },
         }}
       >
         <form
           onSubmit={handleSubmit}
-          style={{ display: "flex", alignItems: "flex-end" }}
+          style={{ display: 'flex', alignItems: 'flex-end' }}
         >
           <TextField
             size="small"
             value={search}
             variant="standard"
             label="Search"
-            sx={{ width: { xs: "65vw", sm: "300px" }, mr: 1 }}
+            sx={{ width: { xs: '65vw', sm: '300px' }, mr: 1 }}
             onChange={(e) => setSearch(e.target.value)}
             InputProps={{
               endAdornment: (() => {
@@ -127,7 +128,7 @@ export function SearchAndPage(props: Props) {
                 return (
                   <InputAdornment position="end">
                     <IconButton
-                      sx={{ color: "grey.500" }}
+                      sx={{ color: 'grey.500' }}
                       aria-label="Clear search input"
                       onClick={clearInput}
                       edge="end"
@@ -146,17 +147,17 @@ export function SearchAndPage(props: Props) {
         <Button
           onClick={(e) => setShowFilters(!showFilters)}
           startIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-          variant={showFilters ? "contained" : "text"}
+          variant={showFilters ? 'contained' : 'text'}
           sx={{
-            width: { xs: "100%", sm: "unset" },
+            width: { xs: '100%', sm: 'unset' },
             marginTop: { xs: 1, sm: 0 },
-            color: showFilters ? "common.paper" : "grey.500",
+            color: showFilters ? 'common.paper' : 'grey.500',
           }}
         >
           Filters
         </Button>
       </Toolbar>
-      <Collapse in={showFilters} sx={{ overflow: "hidden" }}>
+      <Collapse in={showFilters} sx={{ overflow: 'hidden' }}>
         <Grid
           container
           flexDirection="row-reverse"
@@ -164,7 +165,7 @@ export function SearchAndPage(props: Props) {
           rowSpacing={2}
           sx={{
             backgroundColor: `grey.100`,
-            borderRadius: "5px",
+            borderRadius: '5px',
           }}
           p={1}
         >
@@ -178,7 +179,7 @@ export function SearchAndPage(props: Props) {
               sx={{ width: 80 }}
               onChange={(e) => setLimit(e.target.value)}
             >
-              {["10", "25", "50", "100"].map((n) => (
+              {['10', '25', '50', '100'].map((n) => (
                 <MenuItem key={n} value={n}>
                   {n}
                 </MenuItem>
@@ -205,13 +206,13 @@ export function SearchAndPage(props: Props) {
       <Toolbar
         disableGutters
         sx={{
-          alignItems: "flex-end",
-          justifyContent: "space-between",
-          minHeight: "36px !important",
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          minHeight: { xs: 36, sm: 36 },
         }}
       >
         <Typography variant="body2">
-          Found {props.totalCount} recipe{props.totalCount !== 1 && "s"}.
+          Found {props.totalCount} recipe{props.totalCount !== 1 && 's'}.
         </Typography>
         <Pagination totalCount={props.totalCount} />
       </Toolbar>
