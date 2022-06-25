@@ -13,7 +13,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import Link from 'next/link';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
-import { AddRecipeToMealplanDialog } from './add-recipe-to-mealplan-dialog';
 import { AddRecipeToMealPlanForm } from '@src/forms/meal-plans/add-recipe';
 
 type Props = {
