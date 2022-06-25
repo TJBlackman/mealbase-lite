@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LinkIcon from '@mui/icons-material/Link';
-import { Dialog, Menu, Typography } from '@mui/material';
+import { Dialog, DialogContent, Menu, Typography } from '@mui/material';
 import { Recipe } from '@src/types';
 import { useUserContext } from '@src/contexts/user';
 import { copyTextToClipboard } from '@src/utils/copy-to-clipboard';
@@ -14,6 +14,7 @@ import Link from 'next/link';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { AddRecipeToMealplanDialog } from './add-recipe-to-mealplan-dialog';
+import { AddRecipeToMealPlanForm } from '@src/forms/meal-plans/add-recipe';
 
 type Props = {
   recipe: Recipe & { _id: string };
@@ -94,12 +95,10 @@ export function RecipeCardMenu(props: Props) {
           )}
         </MenuList>
       </Menu>
-      <Dialog open={mealplanDialog}>
-        <AddRecipeToMealplanDialog
-          recipe={props.recipe}
-          open={mealplanDialog}
-          onClose={() => setMealplanDialog(false)}
-        />
+      <Dialog open={mealplanDialog} onClose={() => setMealplanDialog(false)}>
+        <DialogContent>
+          <AddRecipeToMealPlanForm recipe={props.recipe} />
+        </DialogContent>
       </Dialog>
     </>
   );
