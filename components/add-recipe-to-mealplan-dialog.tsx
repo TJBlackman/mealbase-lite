@@ -9,10 +9,10 @@ import {
   MenuItem,
   Button,
   Toolbar,
-} from '@mui/material';
-import { useMealPlansQuery } from '@src/queries/meal-plans';
-import { RecipeDocument } from '@src/types';
-import React, { useState, useEffect } from 'react';
+} from "@mui/material";
+import { useMealPlansQuery } from "@src/queries/meal-plans";
+import { RecipeDocument } from "@src/types";
+import React, { useState, useEffect } from "react";
 
 /**
  * When a user wants to add a recipe to a meal plan,
@@ -21,7 +21,7 @@ import React, { useState, useEffect } from 'react';
  * or add it to a newly created mealplan.
  */
 
-const CREATE_NEW_MEALPLAN = 'CREATE NEW MEALPLAN';
+const CREATE_NEW_MEALPLAN = "CREATE NEW MEALPLAN";
 
 type Props = {
   open: boolean;
@@ -31,8 +31,8 @@ type Props = {
 
 export const AddRecipeToMealplanDialog = (props: Props) => {
   const mealplansQuery = useMealPlansQuery();
-  const [selectedMealplan, setSelectedMealplan] = useState('');
-  const [mealplanTitle, setMealplanTitle] = useState('');
+  const [selectedMealplan, setSelectedMealplan] = useState("");
+  const [mealplanTitle, setMealplanTitle] = useState("");
 
   // set the default name for a new mealplan, if it has not been updated yet
   // also, set the value of Select to be the first mealplan (most recent mealplan)
@@ -49,7 +49,6 @@ export const AddRecipeToMealplanDialog = (props: Props) => {
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
-      <DialogTitle>Add Recipe to Meal Plan</DialogTitle>
       <DialogContent>
         {mealplansQuery.isLoading && <CircularProgress />}
         {mealplansQuery.isError && (
@@ -60,11 +59,14 @@ export const AddRecipeToMealplanDialog = (props: Props) => {
         {mealplansQuery.isSuccess && (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              Add the recipe{' '}
-              <Typography color="primary" component="span">
+              <Typography variant="h6">Add Recipe to Meal Plan</Typography>
+              <Typography paragraph color="textSecondary">
+                Add the recipe to an existing meal plan, or create a new meal
+                plan.
+              </Typography>
+              <Typography color="primary" paragraph>
                 {props.recipe.title}
-              </Typography>{' '}
-              to an existing meal plan, or create a new meal plan.
+              </Typography>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -102,7 +104,7 @@ export const AddRecipeToMealplanDialog = (props: Props) => {
                   {mealplansQuery.isLoading ? (
                     <CircularProgress size={20} color="primary" />
                   ) : (
-                    'Save'
+                    "Save"
                   )}
                 </Button>
                 <Button
