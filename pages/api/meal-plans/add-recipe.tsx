@@ -38,7 +38,11 @@ const handler: NextApiHandler = async (req, res) => {
       const mealplan = new MealPlansModel({
         title: req.body.mealplanTitle,
         owner: user._id,
-        recipes: [req.body.recipeId],
+        recipes: [
+          {
+            recipe: req.body.recipeId,
+          },
+        ],
       });
       await mealplan.save();
       savedMealplan = mealplan.toObject();
@@ -50,7 +54,7 @@ const handler: NextApiHandler = async (req, res) => {
       if (!mealplan) {
         return res.status(404).send('Not Found');
       }
-      mealplan.recipes.push(req.body.mealplanId);
+      mealplan.recipes.push({ recipe: req.body.mealplanId, isCooked: false });
       await mealplan.save();
       savedMealplan = mealplan.toObject();
     }

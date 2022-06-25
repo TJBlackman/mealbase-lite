@@ -13,6 +13,12 @@ import { FormEvent, useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 
 const CREATE_NEW_MEALPLAN = 'CREATE NEW MEALPLAN';
+
+type RequestBody = { recipeId: string } & (
+  | { mealplanId: string }
+  | { mealplanTitle: string }
+);
+
 type Props = {
   recipe: RecipeDocument;
 };
@@ -35,9 +41,10 @@ export function AddRecipeToMealPlanForm(props: Props) {
     }
   }, [mealplansQuery.dataUpdatedAt]);
 
-  const mutation = useMutation((payload: { title: string }) =>
+  // mutation
+  const mutation = useMutation((payload: RequestBody) =>
     networkRequest({
-      url: '/api/meal-plans/new',
+      url: '/api/meal-plans/add-recipe',
       method: 'POST',
       body: payload,
     })
@@ -45,7 +52,19 @@ export function AddRecipeToMealPlanForm(props: Props) {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // mutation.mutate({ title });
+    if (selectedMealplan === CREATE_NEW_MEALPLAN) {
+      // create a new mealplan
+      mutation.mutate({
+        recipeId: props.recipe._id,
+        mealplanTitle: mealplanTitle,
+      });
+    } else {
+      // add recipe to existing mealplan
+      mutation.mutate({
+        recipeId: props.recipe._id,
+        mealplanId: selectedMealplan,
+      });
+    }
   }
 
   const disabled = mealplansQuery.isLoading || mutation.isLoading;
