@@ -8,12 +8,11 @@ import {
 import { MealPlan } from '@src/types/index.d';
 import { MealPlansModel } from '@src/db/meal-plans';
 import { useState } from 'react';
-import { CreateMealPlanForm } from '@src/forms/meal-plan-create';
+import { CreateMealPlanForm } from '@src/forms/meal-plans/create';
 import { mongoDbConnection } from '@src/db/connection';
 import { getUserJWT } from '@src/validation/server-requests';
 import { GetServerSideProps } from 'next';
 import error from 'next/error';
-import { NextResponse } from 'next/server';
 
 // get server side data
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -35,7 +34,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const mealplans = await MealPlansModel.find({ owner: user._id });
     const count = await MealPlansModel.count({ ownder: user._id });
 
-    return { props: { mealplans, count } };
+    return {
+      props: { mealplans: JSON.parse(JSON.stringify(mealplans)), count },
+    };
   } catch (err) {
     console.log(error);
     let msg = 'An unknown error occurred.';
@@ -47,12 +48,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 type Props = {
-  mealplans: MealPlan[]; 
-  count: number; 
+  mealplans: MealPlan[];
+  count: number;
   error?: string;
-}
+};
 
-export default function MealPlansPage() {
+export default function MealPlansPage(props: Props) {
   const [isVisible, setIsVisible] = useState(false);
   return (
     <>
@@ -65,13 +66,19 @@ export default function MealPlansPage() {
         manage all your Meal plans!
       </Typography>
       <Button onClick={() => setIsVisible(true)}>Create New Meal Plan</Button>
-      {props.error && (<Typography>An error occurred: {props.error}</Typography>)}
+      {props.error && (
+        <Typography color="error">Error: {props.error}</Typography>
+      )}
       <Dialog open={isVisible} onClose={() => setIsVisible(false)}>
         <DialogTitle>Create a New Meal Plan</DialogTitle>
         <DialogContent>
           <CreateMealPlanForm />
         </DialogContent>
       </Dialog>
+      <p>TODO: Add a DataGrid to this page with all the mealplans</p>
+      {props.mealplans.map((m) => (
+        <p>{m.title}</p>
+      ))}
     </>
   );
 }
