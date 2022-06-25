@@ -22,8 +22,10 @@ const handler: NextApiHandler = async (req, res) => {
     // connect to db
     await mongoDbConnection();
 
-    // get all this users mealplans
-    const mealplans = await MealPlansModel.find({ owner: user._id });
+    // get all this users mealplans, reverse chronologically
+    const mealplans = await MealPlansModel.find({ owner: user._id }).sort({
+      createdAt: -1,
+    });
 
     return res.json(JSON.parse(JSON.stringify(mealplans)));
   } catch (err) {
