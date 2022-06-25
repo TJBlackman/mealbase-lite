@@ -23,6 +23,8 @@ interface User {
   deleted: Boolean;
 }
 
+type UserDocument = User & { _id: string };
+
 interface RefreshToken {
   userId: string;
   createdAt: Date;
@@ -47,6 +49,8 @@ interface Recipe {
   addedByUser: string;
   hash?: string;
 }
+
+type RecipeDocument = Recipe & { _id: string };
 
 type ScrapedRecipeDate = Pick<
   Recipe,
@@ -103,3 +107,5 @@ interface MealPlan {
   }[];
   owner: string;
 }
+
+type MealPlanDocument = MealPlan & { _id: string };

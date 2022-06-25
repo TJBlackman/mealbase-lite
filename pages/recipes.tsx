@@ -73,7 +73,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       .select('-addedByUser -deleted -__v')
       .limit(limit)
       .skip(skip)
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .lean();
 
     // if user is logged,

@@ -13,7 +13,6 @@ import LoginIcon from '@mui/icons-material/Login';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import InfoIcon from '@mui/icons-material/Info';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import LogoutIcon from '@mui/icons-material/Logout';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
