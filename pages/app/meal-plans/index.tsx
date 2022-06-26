@@ -13,6 +13,8 @@ import { mongoDbConnection } from '@src/db/connection';
 import { getUserJWT } from '@src/validation/server-requests';
 import { GetServerSideProps } from 'next';
 import error from 'next/error';
+import EditIcon from '@mui/icons-material/Edit';
+import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 
 // get server side data
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -55,6 +57,52 @@ type Props = {
 
 export default function MealPlansPage(props: Props) {
   const [isVisible, setIsVisible] = useState(false);
+
+  /**
+   * Define table columns
+   */
+  const columns: GridColDef[] = [
+    {
+      field: '_id',
+      headerName: '_id',
+      width: 230,
+    },
+    {
+      field: 'title',
+      headerName: 'Title',
+      minWidth: 250,
+      flex: 1,
+    },
+    {
+      field: 'recipes',
+      headerName: '# Recipes',
+      width: 150,
+      valueGetter: (data) => data.value.length,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created',
+      width: 180,
+      renderCell: (data) => {
+        return new Date(data.value).toLocaleString();
+      },
+    },
+    {
+      field: 'edit',
+      headerName: 'Edit',
+      width: 100,
+      renderCell: (value) => {
+        return (
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            // onClick={() => setEditRecordId(value.row._id)}
+          />
+        );
+      },
+    },
+  ];
+
   return (
     <>
       <Typography variant="h5" component="h1">
@@ -75,10 +123,16 @@ export default function MealPlansPage(props: Props) {
           <CreateMealPlanForm />
         </DialogContent>
       </Dialog>
-      <p>TODO: Add a DataGrid to this page with all the mealplans</p>
-      {props.mealplans.map((m) => (
-        <p>{m.title}</p>
-      ))}
+      <DataGrid
+        rows={props.mealplans}
+        columns={columns}
+        pageSize={100}
+        rowsPerPageOptions={[100]}
+        disableSelectionOnClick
+        getRowId={(data) => data._id}
+        sx={{ height: '65vh' }}
+        columnVisibilityModel={{ _id: false }}
+      />
     </>
   );
 }
