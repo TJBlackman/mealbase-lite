@@ -10,16 +10,26 @@ import { networkRequest } from '@src/utils/network-request';
 import { FormEvent, useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 
-export function CreateMealPlanForm() {
+type Props = {
+  onSuccess?: () => void;
+};
+
+export function CreateMealPlanForm(props: Props) {
   const [title, setTitle] = useState('');
   const countQuery = useMealPlanCountQuery();
 
-  const mutation = useMutation((payload: { title: string }) =>
-    networkRequest({
-      url: '/api/meal-plans/new',
-      method: 'POST',
-      body: payload,
-    })
+  const mutation = useMutation(
+    (payload: { title: string }) =>
+      networkRequest({
+        url: '/api/meal-plans/new',
+        method: 'POST',
+        body: payload,
+      }),
+    {
+      onSuccess: () => {
+        props.onSuccess?.();
+      },
+    }
   );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {

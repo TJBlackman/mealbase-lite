@@ -15,6 +15,7 @@ import { GetServerSideProps } from 'next';
 import error from 'next/error';
 import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
 
 // get server side data
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -56,7 +57,9 @@ type Props = {
 };
 
 export default function MealPlansPage(props: Props) {
+  console.log(props);
   const [isVisible, setIsVisible] = useState(false);
+  const { refreshSSP } = useRefreshServerSideProps();
 
   /**
    * Define table columns
@@ -120,7 +123,12 @@ export default function MealPlansPage(props: Props) {
       <Dialog open={isVisible} onClose={() => setIsVisible(false)}>
         <DialogTitle>Create a New Meal Plan</DialogTitle>
         <DialogContent>
-          <CreateMealPlanForm />
+          <CreateMealPlanForm
+            onSuccess={() => {
+              refreshSSP();
+              setIsVisible(false);
+            }}
+          />
         </DialogContent>
       </Dialog>
       <DataGrid
