@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-export const useRefreshServerSideProps = () => {
+type Props = {
+  data: any;
+};
+
+export const useRefreshServerSideProps = (props: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // when props.data changes, loading is complete
+  useEffect(() => {
+    setIsLoading(false);
+  }, [props.data]);
+
   const refreshSSP = () => {
+    setIsLoading(true);
     router.replace(router.asPath);
   };
 
-  return { refreshSSP };
+  return { refreshSSP, isLoading };
 };

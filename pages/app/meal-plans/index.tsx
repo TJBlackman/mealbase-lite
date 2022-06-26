@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Stack,
 } from '@mui/material';
 import { MealPlan } from '@src/types/index.d';
 import { MealPlansModel } from '@src/db/meal-plans';
@@ -57,9 +58,8 @@ type Props = {
 };
 
 export default function MealPlansPage(props: Props) {
-  console.log(props);
   const [isVisible, setIsVisible] = useState(false);
-  const { refreshSSP } = useRefreshServerSideProps();
+  const { refreshSSP, isLoading } = useRefreshServerSideProps({ data: props });
 
   /**
    * Define table columns
@@ -132,14 +132,22 @@ export default function MealPlansPage(props: Props) {
         </DialogContent>
       </Dialog>
       <DataGrid
-        rows={props.mealplans}
-        columns={columns}
         pageSize={100}
-        rowsPerPageOptions={[100]}
-        disableSelectionOnClick
-        getRowId={(data) => data._id}
+        columns={columns}
+        loading={isLoading}
+        rows={props.mealplans}
         sx={{ height: '65vh' }}
+        disableSelectionOnClick
+        rowsPerPageOptions={[100]}
+        getRowId={(data) => data._id}
         columnVisibilityModel={{ _id: false }}
+        components={{
+          NoRowsOverlay: () => (
+            <Stack height="100%" alignItems="center" justifyContent="center">
+              No Meal Plans created yet!
+            </Stack>
+          ),
+        }}
       />
     </>
   );
