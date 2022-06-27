@@ -98,7 +98,7 @@ interface MealPlan {
   createdAt: Date;
   updatedAt: Date;
   recipes: {
-    recipe: Recipe;
+    recipe: RecipeDocument;
     isCooked: boolean;
   }[];
   members: {
