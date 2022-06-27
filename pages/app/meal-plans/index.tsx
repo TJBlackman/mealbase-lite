@@ -5,6 +5,8 @@ import {
   DialogTitle,
   DialogContent,
   Stack,
+  LinearProgress,
+  Link as MuiLink,
 } from '@mui/material';
 import { MealPlan } from '@src/types/index.d';
 import { MealPlansModel } from '@src/db/meal-plans';
@@ -17,6 +19,7 @@ import error from 'next/error';
 import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
+import Link from 'next/link';
 
 // get server side data
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -35,7 +38,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // connect to db
     await mongoDbConnection();
 
-    const mealplans = await MealPlansModel.find({ owner: user._id });
+    const mealplans = await MealPlansModel.find({ owner: user._id }).sort({
+      createdAt: -1,
+    });
     const count = await MealPlansModel.count({ ownder: user._id });
 
     return {
@@ -75,11 +80,18 @@ export default function MealPlansPage(props: Props) {
       headerName: 'Title',
       minWidth: 250,
       flex: 1,
+      renderCell: (props) => {
+        return (
+          <Link href={`/app/meal-plans/${props.row._id}`}>
+            <MuiLink sx={{ cursor: 'pointer' }}>{props.value}</MuiLink>
+          </Link>
+        );
+      },
     },
     {
       field: 'recipes',
-      headerName: '# Recipes',
-      width: 150,
+      headerName: 'Recipes',
+      width: 100,
       valueGetter: (data) => data.value.length,
     },
     {
@@ -93,7 +105,7 @@ export default function MealPlansPage(props: Props) {
     {
       field: 'edit',
       headerName: 'Edit',
-      width: 100,
+      width: 80,
       renderCell: (value) => {
         return (
           <GridActionsCellItem
@@ -144,9 +156,10 @@ export default function MealPlansPage(props: Props) {
         components={{
           NoRowsOverlay: () => (
             <Stack height="100%" alignItems="center" justifyContent="center">
-              No Meal Plans created yet!
+              No meal plans created yet!
             </Stack>
           ),
+          LoadingOverlay: LinearProgress,
         }}
       />
     </>
