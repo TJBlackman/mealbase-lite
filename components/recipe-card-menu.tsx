@@ -67,20 +67,20 @@ export function RecipeCardMenu(props: Props) {
             </ListItemText>
           </MenuItem>
           {userContext.isLoggedIn && (
-            <>
-              <MenuItem onClick={() => setMealplanDialog(true)}>
-                <ListItemIcon>
-                  <RestaurantIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Add to Meal Plan</ListItemText>
-              </MenuItem>
-              <MenuItem>
-                <ListItemIcon>
-                  <MenuBookIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Add to Collection</ListItemText>
-              </MenuItem>
-            </>
+            <MenuItem onClick={() => setMealplanDialog(true)}>
+              <ListItemIcon>
+                <RestaurantIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Add to Meal Plan</ListItemText>
+            </MenuItem>
+          )}
+          {userContext.isLoggedIn && (
+            <MenuItem>
+              <ListItemIcon>
+                <MenuBookIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Add to Collection</ListItemText>
+            </MenuItem>
           )}
           {userContext.isAdmin && (
             <Link href={`/admin/recipes/${props.recipe._id}/edit`}>
