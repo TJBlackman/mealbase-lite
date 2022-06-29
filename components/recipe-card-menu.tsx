@@ -96,7 +96,12 @@ export function RecipeCardMenu(props: Props) {
       </Menu>
       <Dialog open={mealplanDialog} onClose={() => setMealplanDialog(false)}>
         <DialogContent>
-          <AddRecipeToMealPlanForm recipe={props.recipe} />
+          <AddRecipeToMealPlanForm
+            recipe={props.recipe}
+            onSuccess={() => {
+              setTimeout(() => setMealplanDialog(false), 3000);
+            }}
+          />
         </DialogContent>
       </Dialog>
     </>

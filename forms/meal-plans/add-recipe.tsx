@@ -5,6 +5,7 @@ import {
   Button,
   CircularProgress,
   MenuItem,
+  Alert,
 } from '@mui/material';
 import { useMealPlansQuery } from '@src/queries/meal-plans';
 import { RecipeDocument } from '@src/types';
@@ -21,6 +22,7 @@ type RequestBody = { recipeId: string } & (
 
 type Props = {
   recipe: RecipeDocument;
+  onSuccess?: () => void;
 };
 
 export function AddRecipeToMealPlanForm(props: Props) {
@@ -42,12 +44,16 @@ export function AddRecipeToMealPlanForm(props: Props) {
   }, [mealplansQuery.dataUpdatedAt]);
 
   // mutation
-  const mutation = useMutation((payload: RequestBody) =>
-    networkRequest({
-      url: '/api/meal-plans/add-recipe',
-      method: 'POST',
-      body: payload,
-    })
+  const mutation = useMutation(
+    (payload: RequestBody) =>
+      networkRequest({
+        url: '/api/meal-plans/add-recipe',
+        method: 'POST',
+        body: payload,
+      }),
+    {
+      onSuccess: props.onSuccess,
+    }
   );
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -123,12 +129,16 @@ export function AddRecipeToMealPlanForm(props: Props) {
         <Button
           type="submit"
           variant="contained"
-          sx={{ mr: 2 }}
-          disabled={disabled}
+          sx={{ mr: 2, mb: 1 }}
+          disabled={disabled || mutation.isSuccess}
         >
           {disabled ? <CircularProgress size={20} color="primary" /> : 'Save'}
         </Button>
       </Toolbar>
+      {mutation.isError && (
+        <Alert severity="error">{mutation.error as string}</Alert>
+      )}
+      {mutation.isSuccess && <Alert severity="success">Recipe Added!</Alert>}
     </form>
   );
 }
