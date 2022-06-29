@@ -38,7 +38,12 @@ export function AddRecipeToMealPlanForm(props: Props) {
         setMealplanTitle(`Meal Plan #${mealplansQuery.data.length + 1}`);
       }
       if (!selectedMealplan) {
-        setSelectedMealplan(mealplansQuery.data[0]._id);
+        if (mealplansQuery.data.length) {
+          setSelectedMealplan(mealplansQuery.data[0]._id);
+        } else {
+          // if no meal plans exist yet, set the selection to "Create New Mealplan"
+          setSelectedMealplan(CREATE_NEW_MEALPLAN);
+        }
       }
     }
   }, [mealplansQuery.dataUpdatedAt]);

@@ -56,10 +56,10 @@ const handler: NextApiHandler = async (req, res) => {
       }
       // filter out this recipe, if it already exists.
       mealplan.recipes = mealplan.recipes.filter(
-        (item) => item.recipe !== req.body.mealplanId
+        (item) => item.recipe.toString() !== req.body.recipeId
       );
       // add requested recipe id
-      mealplan.recipes.push({ recipe: req.body.mealplanId, isCooked: false });
+      mealplan.recipes.push({ recipe: req.body.recipeId, isCooked: false });
       await mealplan.save();
       savedMealplan = mealplan.toObject();
     }

@@ -49,8 +49,6 @@ type Props = {
 };
 
 export default function MealPlanDetailsPage(props: Props) {
-  console.log(props);
-
   return (
     <>
       <Typography variant="h5" component="h1" paragraph color="primary">
