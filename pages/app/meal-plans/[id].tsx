@@ -1,15 +1,8 @@
-import {
-  Divider,
-  List,
-  Typography,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Avatar,
-} from '@mui/material';
+import { Divider, List, Toolbar, Typography } from '@mui/material';
 import { GetServerSideProps } from 'next';
 import { MealPlansModel } from '@src/db/meal-plans';
 import { MealPlanDocument } from '@src/types';
+import { RecipeListItem } from '@src/components/meal-plans/recipe-list-item';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -61,22 +54,14 @@ export default function MealPlanDetailsPage(props: Props) {
 
       {props.mealplan && (
         <>
-          <Typography paragraph>
-            Recipes ({props.mealplan?.recipes.length})
-          </Typography>
+          <Toolbar sx={{ justifyContent: 'space-between' }}>
+            <Typography>Recipes ({props.mealplan?.recipes.length})</Typography>
+            <Typography>Cooked</Typography>
+          </Toolbar>
           <Divider />
           <List>
             {props.mealplan.recipes.map((item) => (
-              <ListItem key={item.recipe._id}>
-                <ListItemAvatar>
-                  <Avatar
-                    alt={item.recipe.title}
-                    src={item.recipe.image}
-                    variant="rounded"
-                  />
-                </ListItemAvatar>
-                <ListItemText primary={item.recipe.title} />
-              </ListItem>
+              <RecipeListItem recipe={item.recipe} isCooked={item.isCooked} />
             ))}
           </List>
         </>
