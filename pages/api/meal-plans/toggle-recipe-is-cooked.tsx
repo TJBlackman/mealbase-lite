@@ -53,7 +53,12 @@ const handler: NextApiHandler = async (req, res) => {
 
     await mealplan.save();
 
-    const payload = JSON.parse(JSON.stringify(mealplan.toObject()));
+    const payload = JSON.parse(
+      JSON.stringify({
+        mealplan: mealplan.toObject(),
+        isCooked: recipe.isCooked,
+      })
+    );
     return res.status(200).json(payload);
   } catch (err) {
     console.log(err);
