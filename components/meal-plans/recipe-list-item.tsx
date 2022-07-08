@@ -7,16 +7,31 @@ import {
   Checkbox,
   Link as MuiLink,
 } from '@mui/material';
+import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
+import { useToggleRecipeIsCookedMutation } from '@src/mutations/meal-plans/toggle-recipe-is-cooked';
 import { RecipeDocument } from '@src/types';
 import React, { useState } from 'react';
 
 type Props = {
+  mealplanId: string;
   recipe: RecipeDocument;
   isCooked: boolean;
 };
 
 export const RecipeListItem = (props: Props) => {
   const [isCooked, setIsCooked] = useState(props.isCooked);
+  const toggleRecipeMutation = useToggleRecipeIsCookedMutation();
+
+  function toggleRecipe() {
+    toggleRecipeMutation.mutate(
+      { mealplanId: props.mealplanId, recipeId: props.recipe._id },
+      {
+        onSuccess: (response) => {
+          setIsCooked(response.isCooked);
+        },
+      }
+    );
+  }
 
   return (
     <ListItem
@@ -39,7 +54,11 @@ export const RecipeListItem = (props: Props) => {
         secondary={props.recipe.siteName}
       />
       <ListItemSecondaryAction>
-        <Checkbox checked={isCooked} />
+        <Checkbox
+          checked={isCooked}
+          onChange={toggleRecipe}
+          disabled={toggleRecipeMutation.isLoading}
+        />
       </ListItemSecondaryAction>
     </ListItem>
   );

@@ -61,7 +61,11 @@ export default function MealPlanDetailsPage(props: Props) {
           <Divider />
           <List>
             {props.mealplan.recipes.map((item) => (
-              <RecipeListItem recipe={item.recipe} isCooked={item.isCooked} />
+              <RecipeListItem
+                recipe={item.recipe}
+                isCooked={item.isCooked}
+                mealplanId={props.mealplan!._id}
+              />
             ))}
           </List>
         </>
