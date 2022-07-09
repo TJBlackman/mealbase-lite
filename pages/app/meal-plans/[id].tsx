@@ -1,8 +1,18 @@
-import { Divider, List, Toolbar, Typography } from '@mui/material';
-import { GetServerSideProps } from 'next';
-import { MealPlansModel } from '@src/db/meal-plans';
-import { MealPlanDocument } from '@src/types';
-import { RecipeListItem } from '@src/components/meal-plans/recipe-list-item';
+import {
+  Divider,
+  List,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { GetServerSideProps } from "next";
+import { MealPlansModel } from "@src/db/meal-plans";
+import { MealPlanDocument } from "@src/types";
+import { RecipeTableRow } from "@src/components/meal-plans/recipe-table-row";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -10,21 +20,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (context.params && context.params.id) {
       const mealplan = await MealPlansModel.findById(context.params.id)
         .populate({
-          path: 'recipes',
-          populate: 'recipe',
+          path: "recipes",
+          populate: "recipe",
         })
         .lean()
         .catch((err) => {
           console.log(err);
         });
       if (mealplan) {
+        // sort recipes so uncooked recipes are first
+        mealplan.recipes.sort((item) => (item.isCooked ? 1 : -1));
         props.mealplan = JSON.parse(JSON.stringify(mealplan));
       }
     }
 
     return { props };
   } catch (error) {
-    let msg = 'An unknown error occurred.';
+    let msg = "An unknown error occurred.";
     if (error instanceof Error) {
       msg = error.message;
     }
@@ -45,7 +57,7 @@ export default function MealPlanDetailsPage(props: Props) {
   return (
     <>
       <Typography variant="h5" component="h1" paragraph color="primary">
-        {props.mealplan?.title || 'Meal Plan Details'}
+        {props.mealplan?.title || "Meal Plan Details"}
       </Typography>
 
       {!props.mealplan && (
@@ -54,20 +66,23 @@ export default function MealPlanDetailsPage(props: Props) {
 
       {props.mealplan && (
         <>
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Typography>Recipes ({props.mealplan?.recipes.length})</Typography>
-            <Typography>Cooked</Typography>
-          </Toolbar>
           <Divider />
-          <List>
-            {props.mealplan.recipes.map((item) => (
-              <RecipeListItem
-                recipe={item.recipe}
-                isCooked={item.isCooked}
-                mealplanId={props.mealplan!._id}
-              />
-            ))}
-          </List>
+          <Table>
+            <TableHead>
+              <TableCell>Recipes</TableCell>
+              <TableCell>Cooked</TableCell>
+              <TableCell>Delete</TableCell>
+            </TableHead>
+            <TableBody>
+              {props.mealplan.recipes.map((item) => (
+                <RecipeTableRow
+                  recipe={item.recipe}
+                  isCooked={item.isCooked}
+                  mealplanId={props.mealplan!._id}
+                />
+              ))}
+            </TableBody>
+          </Table>
         </>
       )}
     </>
