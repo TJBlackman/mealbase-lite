@@ -2,7 +2,7 @@ import { getUserJWT } from '@src/validation/server-requests';
 import { NextApiHandler } from 'next';
 import { MealPlansModel } from '@src/db/meal-plans';
 import { mongoDbConnection } from '@src/db/connection';
-import { addRecipeToMealplanSchema } from '@src/validation/schemas/add-recipe-to-mealplan';
+import { addRecipeToMealplanSchema } from '@src/validation/schemas/meal-plans/add-recipe';
 
 /**
  * A user can add a recipe to an existing meal plan.
