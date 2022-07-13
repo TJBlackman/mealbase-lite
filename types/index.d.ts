@@ -85,12 +85,11 @@ type DomainHashSelector = {
   isDynamic: boolean;
 };
 
-enum MealPlanPermissions {
+export enum MealPlanPermissions {
   ReadOnly = 'ReadOnly',
   CompleteRecipes = 'CompleteRecipes',
   EditRecipes = 'EditRecipes',
   EditUsers = 'EditUsers',
-  Owner = 'Owner',
 }
 
 interface MealPlan {

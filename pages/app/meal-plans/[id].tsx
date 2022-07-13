@@ -6,12 +6,19 @@ import {
   TableHead,
   Typography,
   TableContainer,
+  Toolbar,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from '@mui/material';
 import { GetServerSideProps } from 'next';
 import { MealPlansModel } from '@src/db/meal-plans';
-import { MealPlanDocument } from '@src/types';
+import { MealPlanDocument } from '@src/types/index.d';
 import { RecipeTableRow } from '@src/components/meal-plans/recipe-table-row';
 import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
+import { useState } from 'react';
+import { InviteUserToMealPlanForm } from '@src/forms/meal-plans/invite-user';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -54,6 +61,12 @@ type Props = {
 
 export default function MealPlanDetailsPage(props: Props) {
   const refreshSSPHook = useRefreshServerSideProps({ data: props.mealplan });
+  const [showInviteUserDialog, setShowInviteUserDialog] = useState(true);
+
+  function closeDialog() {
+    setShowInviteUserDialog(false);
+  }
+
   return (
     <>
       <Typography variant="h5" component="h1" paragraph color="primary">
@@ -86,6 +99,30 @@ export default function MealPlanDetailsPage(props: Props) {
               </TableBody>
             </Table>
           </TableContainer>
+          <br />
+          <TableContainer sx={{ maxWidth: '100vw', overflow: 'scroll' }}>
+            <Table sx={{ minWidth: '500px' }}>
+              <TableHead>
+                <TableCell>Users</TableCell>
+                <TableCell>Permission</TableCell>
+              </TableHead>
+              <TableBody></TableBody>
+            </Table>
+          </TableContainer>
+          <Toolbar disableGutters>
+            <Button onClick={() => setShowInviteUserDialog(true)}>
+              Invite User
+            </Button>
+          </Toolbar>
+          <Dialog open={showInviteUserDialog} onClose={closeDialog}>
+            <DialogTitle>Invite User to Meal Plan</DialogTitle>
+            <DialogContent>
+              <InviteUserToMealPlanForm
+                mealplanId={props.mealplan._id}
+                onCancel={closeDialog}
+              />
+            </DialogContent>
+          </Dialog>
         </>
       )}
     </>
