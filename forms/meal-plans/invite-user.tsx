@@ -70,16 +70,6 @@ export const InviteUserToMealPlanForm = (props: Props) => {
       <FormControlLabel
         control={
           <Checkbox
-            value={MealPlanPermissions.ReadOnly}
-            onChange={handleCheckbox}
-          />
-        }
-        sx={{ display: 'block' }}
-        label="Read only access"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
             value={MealPlanPermissions.CompleteRecipes}
             onChange={handleCheckbox}
           />

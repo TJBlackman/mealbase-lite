@@ -86,7 +86,6 @@ type DomainHashSelector = {
 };
 
 export enum MealPlanPermissions {
-  ReadOnly = 'ReadOnly',
   CompleteRecipes = 'CompleteRecipes',
   EditRecipes = 'EditRecipes',
   EditUsers = 'EditUsers',
@@ -101,7 +100,7 @@ interface MealPlan {
     isCooked: boolean;
   }[];
   members: {
-    member: string;
+    email: string;
     permission: MealPlanPermissions[];
   }[];
   owner: string;
