@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 declare global {
   var db: {
@@ -8,10 +8,15 @@ declare global {
 }
 
 export enum Roles {
-  User = 'User',
-  AdminReadOnly = 'Admin ReadOnly',
-  Admin = 'Admin',
+  User = "User",
+  Admin = "Admin",
 }
+
+type ObjectIdString = string;
+
+type With_Id<T> = T & {
+  _id: ObjectIdString;
+};
 
 interface User {
   createdAt: Date;
@@ -23,18 +28,17 @@ interface User {
   deleted: Boolean;
 }
 
-type UserDocument = User & { _id: string };
+type UserDocument = With_Id<User>;
 
 interface RefreshToken {
-  userId: string;
+  userId: ObjectIdString;
   createdAt: Date;
 }
 
-type UserJwt = {
+type UserJwt = With_Id<{
   email: string;
   roles: Roles[];
-  _id: string;
-};
+}>;
 
 interface Recipe {
   createdAt: Date;
@@ -46,32 +50,32 @@ interface Recipe {
   siteName: string;
   likes: number;
   deleted: boolean;
-  addedByUser: string;
+  addedByUser: ObjectIdString;
   hash?: string;
 }
 
-type RecipeDocument = Recipe & { _id: string };
+type RecipeDocument = With_Id<Recipe>;
 
 type ScrapedRecipeDate = Pick<
   Recipe,
-  'description' | 'image' | 'siteName' | 'title' | 'url' | 'hash'
+  "description" | "image" | "siteName" | "title" | "url" | "hash"
 >;
 
 type FailedRecipe = {
   url: string;
-  addedByUser: string;
+  addedByUser: ObjectIdString;
   createdAt: Date;
   resolvedDate: Date;
   resolved: boolean;
 };
 
 type RecipeLikeRecord = {
-  userId: string;
+  userId: ObjectIdString;
   recipeId: string;
 };
 
 type PasswordResetRecord = {
-  user: string;
+  user: ObjectIdString;
   expires: Date;
   createdAt: Date;
 };
@@ -86,9 +90,9 @@ type DomainHashSelector = {
 };
 
 export enum MealPlanPermissions {
-  CompleteRecipes = 'CompleteRecipes',
-  EditRecipes = 'EditRecipes',
-  EditUsers = 'EditUsers',
+  CompleteRecipes = "CompleteRecipes",
+  EditRecipes = "EditRecipes",
+  EditUsers = "EditUsers",
 }
 
 interface MealPlan {
@@ -96,14 +100,17 @@ interface MealPlan {
   createdAt: Date;
   updatedAt: Date;
   recipes: {
-    recipe: RecipeDocument;
+    recipe: ObjectIdString;
     isCooked: boolean;
   }[];
   members: {
-    email: string;
-    permission: MealPlanPermissions[];
+    member: ObjectIdString;
+    permissions: MealPlanPermissions[];
   }[];
-  owner: string;
+  pendingMembers: {
+    _id: ObjectIdString;
+  }[];
+  owner: ObjectIdString;
 }
 
-type MealPlanDocument = MealPlan & { _id: string };
+type MealPlanDocument = With_Id<MealPlan>;
