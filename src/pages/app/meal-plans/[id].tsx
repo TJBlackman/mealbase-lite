@@ -3,6 +3,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableRow,
   TableHead,
   Typography,
   TableContainer,
@@ -11,14 +12,14 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-} from '@mui/material';
-import { GetServerSideProps } from 'next';
-import { MealPlansModel } from '@src/db/meal-plans';
-import { MealPlanDocument } from '@src/types/index.d';
-import { RecipeTableRow } from '@src/components/meal-plans/recipe-table-row';
-import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
-import { useState } from 'react';
-import { InviteUserToMealPlanForm } from '@src/forms/meal-plans/invite-user';
+} from "@mui/material";
+import { GetServerSideProps } from "next";
+import { MealPlansModel } from "@src/db/meal-plans";
+import { MealPlanDocument } from "@src/types/index.d";
+import { RecipeTableRow } from "@src/components/meal-plans/recipe-table-row";
+import { useRefreshServerSideProps } from "@src/hooks/refresh-serverside-props";
+import { useState } from "react";
+import { InviteUserToMealPlanForm } from "@src/forms/meal-plans/invite-user";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -26,8 +27,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (context.params && context.params.id) {
       const mealplan = await MealPlansModel.findById(context.params.id)
         .populate({
-          path: 'recipes',
-          populate: 'recipe',
+          path: "recipes",
+          populate: "recipe",
         })
         .lean()
         .catch((err) => {
@@ -42,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return { props };
   } catch (error) {
-    let msg = 'An unknown error occurred.';
+    let msg = "An unknown error occurred.";
     if (error instanceof Error) {
       msg = error.message;
     }
@@ -70,7 +71,7 @@ export default function MealPlanDetailsPage(props: Props) {
   return (
     <>
       <Typography variant="h5" component="h1" paragraph color="primary">
-        {props.mealplan?.title || 'Meal Plan Details'}
+        {props.mealplan?.title || "Meal Plan Details"}
       </Typography>
 
       {!props.mealplan && (
@@ -80,16 +81,19 @@ export default function MealPlanDetailsPage(props: Props) {
       {props.mealplan && (
         <>
           <Divider />
-          <TableContainer sx={{ maxWidth: '100vw', overflow: 'scroll' }}>
-            <Table sx={{ minWidth: '500px' }}>
+          <TableContainer sx={{ maxWidth: "100vw", overflow: "scroll" }}>
+            <Table sx={{ minWidth: "500px" }}>
               <TableHead>
-                <TableCell>Recipes</TableCell>
-                <TableCell>Cooked</TableCell>
-                <TableCell>Delete</TableCell>
+                <TableRow>
+                  <TableCell>Recipes</TableCell>
+                  <TableCell>Cooked</TableCell>
+                  <TableCell>Delete</TableCell>
+                </TableRow>
               </TableHead>
               <TableBody>
                 {props.mealplan.recipes.map((item) => (
                   <RecipeTableRow
+                    key={item.recipe._id}
                     recipe={item.recipe}
                     isCooked={item.isCooked}
                     mealplanId={props.mealplan!._id}
@@ -100,11 +104,13 @@ export default function MealPlanDetailsPage(props: Props) {
             </Table>
           </TableContainer>
           <br />
-          <TableContainer sx={{ maxWidth: '100vw', overflow: 'scroll' }}>
-            <Table sx={{ minWidth: '500px' }}>
+          <TableContainer sx={{ maxWidth: "100vw", overflow: "scroll" }}>
+            <Table sx={{ minWidth: "500px" }}>
               <TableHead>
-                <TableCell>Users</TableCell>
-                <TableCell>Permission</TableCell>
+                <TableRow>
+                  <TableCell>Users</TableCell>
+                  <TableCell>Permission</TableCell>
+                </TableRow>
               </TableHead>
               <TableBody></TableBody>
             </Table>

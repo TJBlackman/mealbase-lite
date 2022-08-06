@@ -1,6 +1,6 @@
-import { MealPlanPermissions } from '@src/types';
-import { networkRequest } from '@src/utils/network-request';
-import { useMutation } from 'react-query';
+import { MealPlanPermissions } from "@src/types";
+import { networkRequest } from "@src/utils/network-request";
+import { useMutation } from "react-query";
 
 /**
  * A user can invite another user to this mealplan.
@@ -9,7 +9,7 @@ import { useMutation } from 'react-query';
 type Payload = {
   mealplanId: string;
   email: string;
-  permission: MealPlanPermissions;
+  permissions: MealPlanPermissions[];
 };
 
 type Response = {
@@ -20,8 +20,8 @@ type Response = {
 export function useInviteUserToMealplanMutation() {
   return useMutation((payload: Payload) =>
     networkRequest<Response>({
-      method: 'POST',
-      url: '/api/meal-plans/invite-user',
+      method: "POST",
+      url: "/api/meal-plans/invite-user",
       body: payload,
     })
   );

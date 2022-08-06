@@ -7,17 +7,10 @@ import {
   Button,
   CircularProgress,
   Toolbar,
-} from '@mui/material';
-import { useInviteUserToMealplanMutation } from '@src/mutations/meal-plans/invite-user';
-import { MealPlanPermissions } from '@src/types/index.d';
-import React, { FormEvent, useState } from 'react';
-
-const permissionOptions = [
-  { label: 'Read Only', value: MealPlanPermissions.ReadOnly },
-  { label: 'Complete Recipes', value: MealPlanPermissions.CompleteRecipes },
-  { label: 'Edit Recipes', value: MealPlanPermissions.EditRecipes },
-  { label: 'Edit Users', value: MealPlanPermissions.EditUsers },
-];
+} from "@mui/material";
+import { useInviteUserToMealplanMutation } from "@src/mutations/meal-plans/invite-user";
+import { MealPlanPermissions } from "@src/types/index.d";
+import React, { FormEvent, useState } from "react";
 
 type Props = {
   mealplanId: string;
@@ -25,16 +18,16 @@ type Props = {
 };
 
 export const InviteUserToMealPlanForm = (props: Props) => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [permissions, setPermissions] = useState<MealPlanPermissions[]>([]);
   const mutation = useInviteUserToMealplanMutation();
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     mutation.mutate({
-      email: '',
-      mealplanId: '',
-      permission: MealPlanPermissions.ReadOnly,
+      email: "",
+      mealplanId: "",
+      permissions: permissions,
     });
   }
 
@@ -51,7 +44,7 @@ export const InviteUserToMealPlanForm = (props: Props) => {
     }
   }
 
-  console.log('permissions', permissions);
+  console.log("permissions", permissions);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -74,7 +67,7 @@ export const InviteUserToMealPlanForm = (props: Props) => {
             onChange={handleCheckbox}
           />
         }
-        sx={{ display: 'block' }}
+        sx={{ display: "block" }}
         label="Can mark recipes as complete."
       />
       <FormControlLabel
@@ -84,7 +77,7 @@ export const InviteUserToMealPlanForm = (props: Props) => {
             onChange={handleCheckbox}
           />
         }
-        sx={{ display: 'block' }}
+        sx={{ display: "block" }}
         label="Can add/remove recipes."
       />
       <FormControlLabel
@@ -94,7 +87,7 @@ export const InviteUserToMealPlanForm = (props: Props) => {
             onChange={handleCheckbox}
           />
         }
-        sx={{ display: 'block' }}
+        sx={{ display: "block" }}
         label="Can add/remove users."
       />
       <Toolbar disableGutters>
@@ -107,7 +100,7 @@ export const InviteUserToMealPlanForm = (props: Props) => {
           {mutation.isLoading ? (
             <CircularProgress size={20} color="primary" />
           ) : (
-            'Save'
+            "Save"
           )}
         </Button>
         {props.onCancel && <Button onClick={props.onCancel}>Cancel</Button>}

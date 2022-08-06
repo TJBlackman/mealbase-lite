@@ -1,4 +1,3 @@
-import { RefreshToken } from "@src/types";
 import mongoose, { Schema, model } from "mongoose";
 
 type Invitation = {
