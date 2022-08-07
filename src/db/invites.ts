@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
 
-type Invitation = {
+export type Invitation = {
   email: string;
   createdAt: string | Date;
 };
@@ -18,10 +18,12 @@ const InvitationSchema = new Schema<Invitation>({
   },
 });
 
+export const InvitationCollectionName = "Invitations";
+
 export const InvitationModel =
-  (mongoose.models["Refresh Tokens"] as mongoose.Model<
+  (mongoose.models[InvitationCollectionName] as mongoose.Model<
     Invitation,
     {},
     {},
     {}
-  >) || model<Invitation>("PendingInvites", InvitationSchema);
+  >) || model<Invitation>(InvitationCollectionName, InvitationSchema);

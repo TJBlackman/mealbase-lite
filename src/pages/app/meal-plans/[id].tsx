@@ -15,20 +15,24 @@ import {
 } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { MealPlansModel } from "@src/db/meal-plans";
-import { MealPlanDocument } from "@src/types/index.d";
+import { MealPlanPermissions, RecipeDocument } from "@src/types/index.d";
 import { RecipeTableRow } from "@src/components/meal-plans/recipe-table-row";
 import { useRefreshServerSideProps } from "@src/hooks/refresh-serverside-props";
 import { useState } from "react";
 import { InviteUserToMealPlanForm } from "@src/forms/meal-plans/invite-user";
+import { RecipeModel } from "@src/db/recipes";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const props: Record<string, any> = { mealplan: null };
     if (context.params && context.params.id) {
-      const mealplan = await MealPlansModel.findById(context.params.id)
+      const mealplan = await MealPlansModel.findById<MealPlan>(
+        context.params.id
+      )
         .populate({
           path: "recipes",
           populate: "recipe",
+          model: RecipeModel,
         })
         .lean()
         .catch((err) => {
@@ -56,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 type Props = {
-  mealplan?: MealPlanDocument;
+  mealplan?: MealPlan;
   error?: string;
 };
 
@@ -133,4 +137,33 @@ export default function MealPlanDetailsPage(props: Props) {
       )}
     </>
   );
+}
+
+/**
+ * Describes the shape of the data returned by getServerSideProps
+ */
+interface MealPlan {
+  _id: string;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
+  recipes: {
+    recipe: RecipeDocument;
+    isCooked: boolean;
+  }[];
+  members: {
+    member: {
+      _id: string;
+      email: string;
+    };
+    permissions: MealPlanPermissions[];
+  }[];
+  invites: {
+    email: string;
+    _id: string;
+  }[];
+  owner: {
+    _id: string;
+    email: string;
+  };
 }

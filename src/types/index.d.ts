@@ -92,7 +92,7 @@ type DomainHashSelector = {
 export enum MealPlanPermissions {
   CompleteRecipes = "CompleteRecipes",
   EditRecipes = "EditRecipes",
-  EditUsers = "EditUsers",
+  EditMembers = "EditMembers",
 }
 
 interface MealPlan {

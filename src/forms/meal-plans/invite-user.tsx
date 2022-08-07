@@ -83,7 +83,7 @@ export const InviteUserToMealPlanForm = (props: Props) => {
       <FormControlLabel
         control={
           <Checkbox
-            value={MealPlanPermissions.EditUsers}
+            value={MealPlanPermissions.EditMembers}
             onChange={handleCheckbox}
           />
         }
