@@ -44,7 +44,7 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
       {
         recipe: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Recipes',
+          ref: 'recipes',
           required: true,
         },
         isCooked: {

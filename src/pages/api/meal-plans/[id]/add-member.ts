@@ -5,6 +5,7 @@ import { MealPlansModel } from '@src/db/meal-plans';
 import { UserModel } from '@src/db/users';
 import { mongoDbConnection } from '@src/db/connection';
 import { inviteUserToMealPlan } from '@src/validation/schemas/meal-plans/invite-user';
+import { isObjectIdOrHexString } from 'mongoose';
 
 /**
  * Count the number of meal plans the currently logged in user has created
@@ -17,24 +18,31 @@ const handler: NextApiHandler = async (req, res) => {
     }
 
     // required user to be logged in
-    const user = await getUserJWT(req.cookies);
-    if (!user) {
-      return res.status(401).send('Unauthorized');
-    }
+    // const user = await getUserJWT(req.cookies);
+    // if (!user) {
+    //   return res.status(401).send('Unauthorized');
+    // }
 
     // validate request body
-    const validationResult = inviteUserToMealPlan.validate(req.body);
-    if (validationResult.error) {
-      return res.status(400).send(validationResult.error.message);
+    // const validationResult = inviteUserToMealPlan.validate(req.body);
+    // if (validationResult.error) {
+    //   return res.status(400).send(validationResult.error.message);
+    // }
+
+    // validate mealplan id
+    const isObjectId = isObjectIdOrHexString(req.query.id);
+    if (!isObjectId) {
+      return res.status(400).send('Meal plan ID is invalid.');
     }
 
     // connect to db
     await mongoDbConnection();
 
     // find mealplan
-    const mealplan = await MealPlansModel.findById(
-      req.body.mealplanId
-    ).populate({
+
+    console.log('req.query.id', req.query.id);
+
+    const mealplan = await MealPlansModel.findById(req.query.id).populate({
       path: 'members',
       select: { email: 1, _id: 0 },
     });
@@ -61,7 +69,7 @@ const handler: NextApiHandler = async (req, res) => {
 
     // await mealplan.save({});
 
-    return res.json({ data: 1 });
+    return res.json(JSON.parse(JSON.stringify(mealplan)));
   } catch (err) {
     console.log(err);
     let msg = 'An unknown error occurred.';
