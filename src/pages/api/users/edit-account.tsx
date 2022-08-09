@@ -1,17 +1,10 @@
-import cookie from "cookie";
 import { UserModel } from "@src/db/users";
-import { Roles, UserJwt } from "@src/types/index.d";
+import { UserJwt } from "@src/types/index.d";
 import type { NextApiHandler } from "next";
-import { createJwt, verifyJwt } from "@src/utils/jwt-helpers";
+import { verifyJwt } from "@src/utils/jwt-helpers";
 import { createHash, compareHash } from "@src/utils/hash-helpers";
 import { mongoDbConnection } from "@src/db/connection";
-import {
-  registerUserSchema,
-  PasswordSchema,
-  EmailSchema,
-} from "@src/validation/schemas/users";
-import { RefreshTokenModel } from "@src/db/refresh-tokens";
-import { getFutureDate } from "@src/utils/get-expires-date";
+import { PasswordSchema, EmailSchema } from "@src/validation/schemas/users";
 
 const handler: NextApiHandler = async (req, res) => {
   try {

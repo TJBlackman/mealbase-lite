@@ -1,6 +1,6 @@
 import { cleanUrl } from "@src/utils/clean-url";
 import { mongoDbConnection } from "@src/db/connection";
-import { ScrapedRecipeDate, UserJwt } from "@src/types";
+import { UserJwt } from "@src/types";
 import { verifyJwt } from "@src/utils/jwt-helpers";
 import { addRecipeSchema } from "@src/validation/schemas/recipes";
 import type { NextApiHandler } from "next";
@@ -117,3 +117,12 @@ const handler: NextApiHandler = async (req, res) => {
 };
 
 export default handler;
+
+type ScrapedRecipeDate = {
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+  siteName: string;
+  hash?: string | undefined;
+};

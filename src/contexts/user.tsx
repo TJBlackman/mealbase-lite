@@ -1,4 +1,4 @@
-import { Roles } from "@src/types/index.d";
+import { Roles } from "@src/db/users";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
 interface IUserContext {

@@ -2,7 +2,7 @@ import { getUserJWT } from "@src/validation/server-requests";
 import { DomainHashSelectorsModel } from "@src/db/domain-hash-selectors";
 import { mongoDbConnection } from "@src/db/connection";
 import { NextApiHandler } from "next";
-import { Roles } from "@src/types/index.d";
+import { Roles } from "@src/db/users";
 import { editDomainHashSchema } from "@src/validation/schemas/domain-hashes";
 
 const handler: NextApiHandler = async (req, res) => {

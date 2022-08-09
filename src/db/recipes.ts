@@ -1,6 +1,5 @@
-import { Recipe } from '@src/types';
-import mongoose from 'mongoose';
-import { usersCollectionName } from './users';
+import mongoose from "mongoose";
+import { usersCollectionName } from "./users";
 
 const RecipeSchema = new mongoose.Schema<Recipe>({
   createdAt: {
@@ -52,7 +51,7 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
   hash: {
     type: String,
     required: false,
-    default: '',
+    default: "",
   },
 });
 
@@ -60,12 +59,26 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
 RecipeSchema.index({ title: 1 });
 RecipeSchema.index({ siteName: 1 });
 
-export const recipeCollectionName = 'Recipes';
+export const recipeCollectionName = "Recipes";
 
 export const RecipeModel =
-  (mongoose.models[recipeCollectionName] as mongoose.Model<
+  (mongoose.models?.[recipeCollectionName] as mongoose.Model<
     Recipe,
     {},
     {},
     {}
   >) || mongoose.model<Recipe>(recipeCollectionName, RecipeSchema);
+
+export interface Recipe {
+  createdAt: Date;
+  updatedAt: Date;
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+  siteName: string;
+  likes: number;
+  deleted: boolean;
+  addedByUser: mongoose.Schema.Types.ObjectId;
+  hash?: string;
+}

@@ -1,6 +1,6 @@
 import cookie from "cookie";
 import { UserModel } from "@src/db/users";
-import { Roles } from "@src/types/index.d";
+import { Roles } from "@src/db/users";
 import type { NextApiHandler } from "next";
 import { createJwt } from "@src/utils/jwt-helpers";
 import { createHash } from "@src/utils/hash-helpers";

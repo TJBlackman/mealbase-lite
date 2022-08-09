@@ -1,10 +1,9 @@
-import { RefreshToken } from '@src/types';
-import mongoose, { Schema, model } from 'mongoose';
-import { usersCollectionName } from './users';
+import mongoose from "mongoose";
+import { usersCollectionName } from "./users";
 
-const RefreshTokenSchema = new Schema<RefreshToken>({
+const RefreshTokenSchema = new mongoose.Schema<RefreshToken>({
   userId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: usersCollectionName,
     required: true,
   },
@@ -15,12 +14,18 @@ const RefreshTokenSchema = new Schema<RefreshToken>({
   },
 });
 
-const refreshTokenCollectionName = 'Refresh Tokens';
+const refreshTokenCollectionName = "Refresh Tokens";
 
 export const RefreshTokenModel =
-  (mongoose.models[refreshTokenCollectionName] as mongoose.Model<
+  (mongoose.models?.[refreshTokenCollectionName] as mongoose.Model<
     RefreshToken,
     {},
     {},
     {}
-  >) || model<RefreshToken>(refreshTokenCollectionName, RefreshTokenSchema);
+  >) ||
+  mongoose.model<RefreshToken>(refreshTokenCollectionName, RefreshTokenSchema);
+
+interface RefreshToken {
+  userId: mongoose.Schema.Types.ObjectId;
+  createdAt: Date;
+}

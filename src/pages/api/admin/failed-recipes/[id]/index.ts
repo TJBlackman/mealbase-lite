@@ -1,6 +1,6 @@
 import { NextApiHandler } from "next";
 import { getUserJWT } from "@src/validation/server-requests";
-import { Roles } from "@src/types/index.d";
+import { Roles } from "@src/db/users";
 import { FailedRecipeModel } from "@src/db/failed-recipes";
 import { mongoDbConnection } from "@src/db/connection";
 import { editFailedRecipesSchema } from "@src/validation/schemas/failed-recipes";

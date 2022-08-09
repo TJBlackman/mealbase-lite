@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextFetchEvent, NextRequest } from "next/server";
 import { getUserJWT } from "@src/validation/server-requests";
-import { Roles } from "@src/types/index.d";
+import { Roles } from "@src/db/users";
 
 // only allow users with the Roles.Admin privilege to access /admin/* routes
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {

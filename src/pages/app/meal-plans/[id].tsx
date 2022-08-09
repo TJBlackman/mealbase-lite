@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { MealPlansModel, MealPlanPermissions } from "@src/db/meal-plans";
-import { RecipeDocument } from "@src/types/index.d";
+import { Recipe } from "@src/db/recipes";
 import { RecipeTableRow } from "@src/components/meal-plans/recipe-table-row";
 import { useRefreshServerSideProps } from "@src/hooks/refresh-serverside-props";
 import { useState } from "react";
@@ -178,7 +178,7 @@ interface MealPlan {
   createdAt: Date;
   updatedAt: Date;
   recipes: {
-    recipe: RecipeDocument;
+    recipe: Recipe & { _id: string };
     isCooked: boolean;
   }[];
   members: {

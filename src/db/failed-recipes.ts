@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { usersCollectionName } from './users';
+import mongoose from "mongoose";
+import { usersCollectionName } from "./users";
 
 const FailedRecipeSchema = new mongoose.Schema<FailedRecipe>({
   url: {
@@ -23,10 +23,10 @@ const FailedRecipeSchema = new mongoose.Schema<FailedRecipe>({
   },
 });
 
-const failedRecipeCollectionName = 'Failed_Recipes';
+const failedRecipeCollectionName = "Failed_Recipes";
 
 export const FailedRecipeModel =
-  (mongoose.models[failedRecipeCollectionName] as mongoose.Model<
+  (mongoose.models?.[failedRecipeCollectionName] as mongoose.Model<
     FailedRecipe,
     {},
     {},

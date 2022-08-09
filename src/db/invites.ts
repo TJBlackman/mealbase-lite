@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const InvitationSchema = new mongoose.Schema<Invitation>({
   email: {
@@ -13,10 +13,10 @@ const InvitationSchema = new mongoose.Schema<Invitation>({
   },
 });
 
-export const InvitationCollectionName = 'invitations';
+export const InvitationCollectionName = "invitations";
 
 export const InvitationModel =
-  (mongoose.models[InvitationCollectionName] as mongoose.Model<
+  (mongoose.models?.[InvitationCollectionName] as mongoose.Model<
     Invitation,
     {},
     {},

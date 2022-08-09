@@ -1,5 +1,4 @@
-import mongoose, { Schema, model } from 'mongoose';
-import { User } from '../types';
+import mongoose, { Schema, model } from "mongoose";
 
 const UserSchema = new Schema<User>({
   createdAt: {
@@ -41,8 +40,27 @@ const UserSchema = new Schema<User>({
   },
 });
 
-export const usersCollectionName = 'Users';
+export const usersCollectionName = "Users";
 
 export const UserModel =
-  (mongoose.models[usersCollectionName] as mongoose.Model<User, {}, {}, {}>) ||
-  model<User>(usersCollectionName, UserSchema);
+  (mongoose.models?.[usersCollectionName] as mongoose.Model<
+    User,
+    {},
+    {},
+    {}
+  >) || model<User>(usersCollectionName, UserSchema);
+
+export enum Roles {
+  User = "User",
+  Admin = "Admin",
+}
+
+export interface User {
+  createdAt: Date;
+  updatedAt: Date;
+  lastActiveDate: Date;
+  email: string;
+  password: string;
+  roles: Roles[];
+  deleted: Boolean;
+}

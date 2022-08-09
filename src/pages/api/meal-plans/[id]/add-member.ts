@@ -1,4 +1,4 @@
-import { MealPlanPermissions } from "@src/types/index.d";
+import { MealPlanPermissions } from "@src/db/meal-plans";
 import { getUserJWT } from "@src/validation/server-requests";
 import { NextApiHandler } from "next";
 import { MealPlansModel } from "@src/db/meal-plans";

@@ -1,6 +1,6 @@
 import { mongoDbConnection } from "@src/db/connection";
 import { RecipeModel } from "@src/db/recipes";
-import { Roles, UserJwt } from "@src/types/index.d";
+import { Roles, UserJwt } from "@src/db/users";
 import { verifyJwt } from "@src/utils/jwt-helpers";
 import { editRecipeSchema } from "@src/validation/schemas/recipes";
 import { NextApiHandler } from "next";

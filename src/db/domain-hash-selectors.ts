@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { DomainHashSelector } from "@src/types";
 
 const DomainHashSelectorsSchema = new mongoose.Schema<DomainHashSelector>({
   domain: {
@@ -38,9 +37,17 @@ DomainHashSelectorsSchema.pre("updateOne", function () {
 });
 
 export const DomainHashSelectorsModel =
-  (mongoose.models[domainHashCollectionName] as mongoose.Model<
+  (mongoose.models?.[domainHashCollectionName] as mongoose.Model<
     DomainHashSelector,
     {},
     {},
     {}
   >) || mongoose.model(domainHashCollectionName, DomainHashSelectorsSchema);
+
+type DomainHashSelector = {
+  domain: string;
+  selector: string;
+  isDynamic: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};

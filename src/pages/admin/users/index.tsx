@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import { User } from "@src/types/index.d";
+import { User } from "@src/db/users";
 import { UserModel } from "@src/db/users";
 import { Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
