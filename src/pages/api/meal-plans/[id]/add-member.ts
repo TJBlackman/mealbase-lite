@@ -94,8 +94,6 @@ const handler: NextApiHandler = async (req, res) => {
         .send("Email address is already a pending invite of this meal plan.");
     }
 
-    console.log("permissions", req.body.permissions);
-
     // if requested member is already a user of mealbase, use their _id
     const existingUser = await UserModel.findOne({ email: req.body.email });
     if (existingUser) {
@@ -127,7 +125,10 @@ const handler: NextApiHandler = async (req, res) => {
       mealplan._id,
       {
         $push: {
-          invites: inviteRecord._id,
+          invites: {
+            invitee: inviteRecord._id,
+            permissions: req.body.permissions,
+          },
         },
       },
       {

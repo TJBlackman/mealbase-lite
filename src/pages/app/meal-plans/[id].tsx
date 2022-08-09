@@ -39,31 +39,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         .populate({
           path: "recipes.recipe",
           model: RecipeModel,
-          options: {
-            sort: {
-              isCooked: 1,
-            },
-          },
         })
         .populate({
           path: "members.member",
-          populate: "email",
+          select: "email",
           model: UserModel,
-          options: {
-            sort: {
-              email: 1,
-            },
-          },
         })
         .populate({
           path: "invites.invitee",
-          populate: "email",
+          select: "email",
           model: InvitationModel,
-          options: {
-            sort: {
-              email: 1,
-            },
-          },
         })
         .lean()
         .catch((err) => {
@@ -94,7 +79,7 @@ type Props = {
 };
 
 export default function MealPlanDetailsPage(props: Props) {
-  console.log("props", props);
+  console.log("props", JSON.stringify(props.mealplan, null, 2));
   const refreshSSPHook = useRefreshServerSideProps({ data: props.mealplan });
   const [showInviteUserDialog, setShowInviteUserDialog] = useState(true);
 
