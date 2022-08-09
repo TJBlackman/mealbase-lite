@@ -41,6 +41,8 @@ const UserSchema = new Schema<User>({
   },
 });
 
+const usersCollectionName = 'Users';
+
 export const UserModel =
-  (mongoose.models.Users as mongoose.Model<User, {}, {}, {}>) ||
-  model<User>('Users', UserSchema);
+  (mongoose.models[usersCollectionName] as mongoose.Model<User, {}, {}, {}>) ||
+  model<User>(usersCollectionName, UserSchema);
