@@ -1,5 +1,6 @@
 import { Recipe } from '@src/types';
 import mongoose from 'mongoose';
+import { usersCollectionName } from './users';
 
 const RecipeSchema = new mongoose.Schema<Recipe>({
   createdAt: {
@@ -35,7 +36,7 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
   },
   addedByUser: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Users',
+    ref: usersCollectionName,
     required: true,
   },
   likes: {
@@ -59,7 +60,7 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
 RecipeSchema.index({ title: 1 });
 RecipeSchema.index({ siteName: 1 });
 
-const recipeCollectionName = 'Recipes';
+export const recipeCollectionName = 'Recipes';
 
 export const RecipeModel =
   (mongoose.models[recipeCollectionName] as mongoose.Model<

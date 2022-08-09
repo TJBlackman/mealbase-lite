@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import { usersCollectionName } from './users';
 
 const FailedRecipeSchema = new mongoose.Schema<FailedRecipe>({
   url: {
@@ -8,7 +9,7 @@ const FailedRecipeSchema = new mongoose.Schema<FailedRecipe>({
   addedByUser: {
     required: true,
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: usersCollectionName,
   },
   createdAt: {
     type: Date,
@@ -22,7 +23,7 @@ const FailedRecipeSchema = new mongoose.Schema<FailedRecipe>({
   },
 });
 
-const failedRecipeCollectionName = "Failed_Recipes";
+const failedRecipeCollectionName = 'Failed_Recipes';
 
 export const FailedRecipeModel =
   (mongoose.models[failedRecipeCollectionName] as mongoose.Model<

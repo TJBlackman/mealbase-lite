@@ -1,10 +1,11 @@
 import { RefreshToken } from '@src/types';
 import mongoose, { Schema, model } from 'mongoose';
+import { usersCollectionName } from './users';
 
 const RefreshTokenSchema = new Schema<RefreshToken>({
   userId: {
     type: Schema.Types.ObjectId,
-    ref: 'Users',
+    ref: usersCollectionName,
     required: true,
   },
   createdAt: {

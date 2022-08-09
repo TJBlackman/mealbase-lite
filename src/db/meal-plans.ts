@@ -1,5 +1,7 @@
-import mongoose from "mongoose";
-import { InvitationCollectionName } from "./invites";
+import mongoose from 'mongoose';
+import { InvitationCollectionName } from './invites';
+import { usersCollectionName } from './users';
+import { recipeCollectionName } from './recipes';
 
 const MealPlanSchema = new mongoose.Schema<MealPlan>({
   title: {
@@ -18,7 +20,7 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: usersCollectionName,
     required: true,
   },
   members: {
@@ -28,7 +30,7 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
       {
         member: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Users",
+          ref: usersCollectionName,
         },
         permissions: {
           type: [String],
@@ -60,7 +62,7 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
       {
         recipe: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Recipes",
+          ref: recipeCollectionName,
           required: true,
         },
         isCooked: {
@@ -73,7 +75,7 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
   },
 });
 
-export const MealPlansCollectionName = "mealplans";
+export const MealPlansCollectionName = 'mealplans';
 
 export const MealPlansModel =
   (mongoose.models[MealPlansCollectionName] as mongoose.Model<
@@ -84,9 +86,9 @@ export const MealPlansModel =
   >) || mongoose.model<MealPlan>(MealPlansCollectionName, MealPlanSchema);
 
 export enum MealPlanPermissions {
-  CompleteRecipes = "CompleteRecipes",
-  EditRecipes = "EditRecipes",
-  EditMembers = "EditMembers",
+  CompleteRecipes = 'CompleteRecipes',
+  EditRecipes = 'EditRecipes',
+  EditMembers = 'EditMembers',
 }
 
 export interface MealPlan {

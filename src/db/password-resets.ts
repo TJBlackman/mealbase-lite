@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import { usersCollectionName } from './users';
 
 const EXPIRES_MINUTES = Number(
   process.env.RESET_PASSWORD_TOKEN_EXPIRES_MINUTES!
@@ -7,7 +8,7 @@ const EXPIRES_MINUTES = Number(
 const PasswordResetSchema = new mongoose.Schema<PasswordResetRecord>({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: usersCollectionName,
     required: true,
   },
   expires: {
@@ -24,7 +25,7 @@ const PasswordResetSchema = new mongoose.Schema<PasswordResetRecord>({
   },
 });
 
-const passwordResetCollectionName = "Password-Resets";
+const passwordResetCollectionName = 'Password-Resets';
 export const PasswordResetModel =
   (mongoose.models[passwordResetCollectionName] as mongoose.Model<
     PasswordResetRecord,

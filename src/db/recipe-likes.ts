@@ -1,19 +1,22 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+
+import { usersCollectionName } from './users';
+import { recipeCollectionName } from './recipes';
 
 const RecipeLikeSchema = new mongoose.Schema<RecipeLikeRecord>({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: usersCollectionName,
     required: true,
   },
   recipeId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Recipes",
+    ref: recipeCollectionName,
     required: true,
   },
 });
 
-const recipeLikesCollectionName = "Recipe Likes";
+const recipeLikesCollectionName = 'Recipe Likes';
 
 export const RecipeLikesModel =
   (mongoose.models[recipeLikesCollectionName] as mongoose.Model<
