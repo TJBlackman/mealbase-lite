@@ -1,21 +1,30 @@
-import { RecipeLikeRecord } from '@src/types';
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const RecipeLikeSchema = new mongoose.Schema<RecipeLikeRecord>({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Users',
+    ref: "Users",
     required: true,
   },
   recipeId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Recipes',
+    ref: "Recipes",
     required: true,
   },
 });
 
-const name = 'Recipe Likes';
+const recipeLikesCollectionName = "Recipe Likes";
 
 export const RecipeLikesModel =
-  (mongoose.models[name] as mongoose.Model<RecipeLikeRecord, {}, {}, {}>) ||
-  mongoose.model<RecipeLikeRecord>(name, RecipeLikeSchema);
+  (mongoose.models[recipeLikesCollectionName] as mongoose.Model<
+    RecipeLikeRecord,
+    {},
+    {},
+    {}
+  >) ||
+  mongoose.model<RecipeLikeRecord>(recipeLikesCollectionName, RecipeLikeSchema);
+
+type RecipeLikeRecord = {
+  userId: mongoose.Schema.Types.ObjectId;
+  recipeId: mongoose.Schema.Types.ObjectId;
+};

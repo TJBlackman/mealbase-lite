@@ -58,7 +58,7 @@ const handler: NextApiHandler = async (req, res) => {
 
     // check if requesting user is meal plan owner
     // OR, if they're a member with permission to edit members
-    const isMealplanOwner = user._id === mealplan.owner;
+    const isMealplanOwner = user._id === mealplan.owner.toString();
     const isMemberWithPermissionToEditMembers = (() => {
       const member = mealplan.members.find(
         (m) => m.member.email === user.email
@@ -70,7 +70,7 @@ const handler: NextApiHandler = async (req, res) => {
     })();
 
     // if not owner or member with permission, then you are forbidden!
-    if (!isMealplanOwner || !isMemberWithPermissionToEditMembers) {
+    if (!isMealplanOwner && !isMemberWithPermissionToEditMembers) {
       return res.status(403).send("Forbidden.");
     }
 
@@ -93,6 +93,8 @@ const handler: NextApiHandler = async (req, res) => {
         .status(409)
         .send("Email address is already a pending invite of this meal plan.");
     }
+
+    console.log("permissions", req.body.permissions);
 
     // if requested member is already a user of mealbase, use their _id
     const existingUser = await UserModel.findOne({ email: req.body.email });

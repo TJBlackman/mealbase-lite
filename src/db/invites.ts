@@ -1,11 +1,6 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-export type Invitation = {
-  email: string;
-  createdAt: string | Date;
-};
-
-const InvitationSchema = new Schema<Invitation>({
+const InvitationSchema = new mongoose.Schema<Invitation>({
   email: {
     type: String,
     required: true,
@@ -18,7 +13,9 @@ const InvitationSchema = new Schema<Invitation>({
   },
 });
 
-export const InvitationCollectionName = "Invitations";
+export const InvitationCollectionName = "invitations";
+
+console.log(11, mongoose.models);
 
 export const InvitationModel =
   (mongoose.models[InvitationCollectionName] as mongoose.Model<
@@ -26,4 +23,9 @@ export const InvitationModel =
     {},
     {},
     {}
-  >) || model<Invitation>(InvitationCollectionName, InvitationSchema);
+  >) || mongoose.model<Invitation>(InvitationCollectionName, InvitationSchema);
+
+export type Invitation = {
+  email: string;
+  createdAt: string | Date;
+};

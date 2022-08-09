@@ -1,5 +1,5 @@
-import { MealPlan } from "@src/types";
 import mongoose from "mongoose";
+import { InvitationCollectionName } from "./invites";
 
 const MealPlanSchema = new mongoose.Schema<MealPlan>({
   title: {
@@ -42,8 +42,14 @@ const MealPlanSchema = new mongoose.Schema<MealPlan>({
     default: () => [],
     type: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Invitations",
+        invitee: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: InvitationCollectionName,
+        },
+        permissions: {
+          type: [String],
+          required: true,
+        },
       },
     ],
   },
@@ -76,3 +82,28 @@ export const MealPlansModel =
     {},
     {}
   >) || mongoose.model<MealPlan>(MealPlansCollectionName, MealPlanSchema);
+
+export enum MealPlanPermissions {
+  CompleteRecipes = "CompleteRecipes",
+  EditRecipes = "EditRecipes",
+  EditMembers = "EditMembers",
+}
+
+export interface MealPlan {
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
+  recipes: {
+    recipe: mongoose.Schema.Types.ObjectId;
+    isCooked: boolean;
+  }[];
+  members: {
+    member: mongoose.Schema.Types.ObjectId;
+    permissions: MealPlanPermissions[];
+  }[];
+  invites: {
+    invitee: mongoose.Schema.Types.ObjectId;
+    permissions: MealPlanPermissions[];
+  }[];
+  owner: mongoose.Schema.Types.ObjectId;
+}

@@ -61,25 +61,6 @@ type ScrapedRecipeDate = Pick<
   "description" | "image" | "siteName" | "title" | "url" | "hash"
 >;
 
-type FailedRecipe = {
-  url: string;
-  addedByUser: ObjectIdString;
-  createdAt: Date;
-  resolvedDate: Date;
-  resolved: boolean;
-};
-
-type RecipeLikeRecord = {
-  userId: ObjectIdString;
-  recipeId: string;
-};
-
-type PasswordResetRecord = {
-  user: ObjectIdString;
-  expires: Date;
-  createdAt: Date;
-};
-
 type DomainHashSelector = {
   domain: string;
   selector: string;
@@ -88,29 +69,3 @@ type DomainHashSelector = {
   updatedAt: Date;
   isDynamic: boolean;
 };
-
-export enum MealPlanPermissions {
-  CompleteRecipes = "CompleteRecipes",
-  EditRecipes = "EditRecipes",
-  EditMembers = "EditMembers",
-}
-
-interface MealPlan {
-  title: string;
-  createdAt: Date;
-  updatedAt: Date;
-  recipes: {
-    recipe: ObjectIdString;
-    isCooked: boolean;
-  }[];
-  members: {
-    member: ObjectIdString;
-    permissions: MealPlanPermissions[];
-  }[];
-  pendingMembers: {
-    _id: ObjectIdString;
-  }[];
-  owner: ObjectIdString;
-}
-
-type MealPlanDocument = With_Id<MealPlan>;

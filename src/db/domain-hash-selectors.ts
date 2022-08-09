@@ -28,7 +28,7 @@ const DomainHashSelectorsSchema = new mongoose.Schema<DomainHashSelector>({
   },
 });
 
-const collectionName = "DomainHashSelectors";
+const domainHashCollectionName = "DomainHashSelectors";
 
 DomainHashSelectorsSchema.pre("save", function () {
   this.set({ updatedAt: new Date() });
@@ -38,9 +38,9 @@ DomainHashSelectorsSchema.pre("updateOne", function () {
 });
 
 export const DomainHashSelectorsModel =
-  (mongoose.models[collectionName] as mongoose.Model<
+  (mongoose.models[domainHashCollectionName] as mongoose.Model<
     DomainHashSelector,
     {},
     {},
     {}
-  >) || mongoose.model(collectionName, DomainHashSelectorsSchema);
+  >) || mongoose.model(domainHashCollectionName, DomainHashSelectorsSchema);

@@ -1,4 +1,3 @@
-import { FailedRecipe } from "@src/types";
 import mongoose from "mongoose";
 
 const FailedRecipeSchema = new mongoose.Schema<FailedRecipe>({
@@ -23,12 +22,20 @@ const FailedRecipeSchema = new mongoose.Schema<FailedRecipe>({
   },
 });
 
-const collectionName = "Failed_Recipes";
+const failedRecipeCollectionName = "Failed_Recipes";
 
 export const FailedRecipeModel =
-  (mongoose.models[collectionName] as mongoose.Model<
+  (mongoose.models[failedRecipeCollectionName] as mongoose.Model<
     FailedRecipe,
     {},
     {},
     {}
-  >) || mongoose.model(collectionName, FailedRecipeSchema);
+  >) || mongoose.model(failedRecipeCollectionName, FailedRecipeSchema);
+
+type FailedRecipe = {
+  url: string;
+  addedByUser: mongoose.Schema.Types.ObjectId;
+  createdAt: Date;
+  resolvedDate: Date;
+  resolved: boolean;
+};

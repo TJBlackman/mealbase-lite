@@ -18,11 +18,13 @@ type Response = {
 };
 
 export function useInviteUserToMealplanMutation() {
-  return useMutation((payload: Payload) =>
-    networkRequest<Response>({
+  return useMutation((payload: Payload) => {
+    console.log(payload);
+    const { mealplanId, ...body } = payload;
+    return networkRequest<Response>({
       method: "POST",
-      url: "/api/meal-plans/invite-user",
-      body: payload,
-    })
-  );
+      url: `/api/meal-plans/${mealplanId}/add-member`,
+      body,
+    });
+  });
 }

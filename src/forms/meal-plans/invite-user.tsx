@@ -9,7 +9,7 @@ import {
   Toolbar,
 } from "@mui/material";
 import { useInviteUserToMealplanMutation } from "@src/mutations/meal-plans/invite-user";
-import { MealPlanPermissions } from "@src/types/index.d";
+import { MealPlanPermissions } from "@src/db/meal-plans";
 import React, { FormEvent, useState } from "react";
 
 type Props = {
@@ -25,8 +25,8 @@ export const InviteUserToMealPlanForm = (props: Props) => {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     mutation.mutate({
-      email: "",
-      mealplanId: "",
+      email,
+      mealplanId: props.mealplanId,
       permissions: permissions,
     });
   }

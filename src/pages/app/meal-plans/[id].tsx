@@ -14,13 +14,15 @@ import {
   DialogContent,
 } from "@mui/material";
 import { GetServerSideProps } from "next";
-import { MealPlansModel } from "@src/db/meal-plans";
-import { MealPlanPermissions, RecipeDocument } from "@src/types/index.d";
+import { MealPlansModel, MealPlanPermissions } from "@src/db/meal-plans";
+import { RecipeDocument } from "@src/types/index.d";
 import { RecipeTableRow } from "@src/components/meal-plans/recipe-table-row";
 import { useRefreshServerSideProps } from "@src/hooks/refresh-serverside-props";
 import { useState } from "react";
 import { InviteUserToMealPlanForm } from "@src/forms/meal-plans/invite-user";
 import { RecipeModel } from "@src/db/recipes";
+import { UserModel } from "@src/db/users";
+import { InvitationModel } from "@src/db/invites";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -30,17 +32,44 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         context.params.id
       )
         .populate({
-          path: "recipes",
-          populate: "recipe",
+          path: "owner",
+          select: { email: 1 },
+          model: UserModel,
+        })
+        .populate({
+          path: "recipes.recipe",
           model: RecipeModel,
+          options: {
+            sort: {
+              isCooked: 1,
+            },
+          },
+        })
+        .populate({
+          path: "members.member",
+          populate: "email",
+          model: UserModel,
+          options: {
+            sort: {
+              email: 1,
+            },
+          },
+        })
+        .populate({
+          path: "invites.invitee",
+          populate: "email",
+          model: InvitationModel,
+          options: {
+            sort: {
+              email: 1,
+            },
+          },
         })
         .lean()
         .catch((err) => {
           console.log(err);
         });
       if (mealplan) {
-        // sort recipes so uncooked recipes are first
-        mealplan.recipes.sort((item) => (item.isCooked ? 1 : -1));
         props.mealplan = JSON.parse(JSON.stringify(mealplan));
       }
     }
@@ -65,6 +94,7 @@ type Props = {
 };
 
 export default function MealPlanDetailsPage(props: Props) {
+  console.log("props", props);
   const refreshSSPHook = useRefreshServerSideProps({ data: props.mealplan });
   const [showInviteUserDialog, setShowInviteUserDialog] = useState(true);
 
@@ -159,8 +189,11 @@ interface MealPlan {
     permissions: MealPlanPermissions[];
   }[];
   invites: {
-    email: string;
-    _id: string;
+    invitee: {
+      email: string;
+      _id: string;
+    };
+    permissions: MealPlanPermissions[];
   }[];
   owner: {
     _id: string;
