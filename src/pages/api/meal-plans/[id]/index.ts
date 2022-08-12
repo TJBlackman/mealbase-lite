@@ -18,10 +18,10 @@ const handler: NextApiHandler = async (req, res) => {
     }
 
     // required user to be logged in admin
-    // const user = await getUserJWT(req.cookies);
-    // if (!user) {
-    //   return res.status(401).send('Unauthorized');
-    // }
+    const user = await getUserJWT(req.cookies);
+    if (!user) {
+      return res.status(401).send("Unauthorized");
+    }
 
     // validate mealplan id
     const isObjectId = isObjectIdOrHexString(req.query.id);
@@ -34,6 +34,7 @@ const handler: NextApiHandler = async (req, res) => {
 
     // get all this users mealplans, reverse chronologically
     const mealplans = await MealPlansModel.findById(req.query.id)
+      .sort({ createdAt: 1 })
       .populate({
         path: "owner",
         select: { email: 1 },
@@ -48,9 +49,11 @@ const handler: NextApiHandler = async (req, res) => {
         model: UserModel,
       })
       .populate({
-        path: "invites",
+        path: "invites.invitee",
+        select: { email: 1 },
         model: InvitationModel,
-      });
+      })
+      .lean();
 
     return res.json(JSON.parse(JSON.stringify(mealplans)));
   } catch (err) {

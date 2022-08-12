@@ -2,14 +2,12 @@ import { MealPlanPermissions } from "@src/db/meal-plans";
 import { getUserJWT } from "@src/validation/server-requests";
 import { NextApiHandler } from "next";
 import { MealPlansModel } from "@src/db/meal-plans";
-import { UserModel } from "@src/db/users";
 import { mongoDbConnection } from "@src/db/connection";
 import Joi from "joi";
 import { isObjectIdOrHexString, ObjectId } from "mongoose";
-import { InvitationModel } from "@src/db/invites";
 
 // validates the URL params for this route
-export const validationSchema = Joi.object({
+export const queryValidationSchema = Joi.object({
   id: Joi.string()
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
@@ -28,6 +26,13 @@ export const validationSchema = Joi.object({
     .required(),
 });
 
+// validate request body
+export const bodyValidationSchema = Joi.object({
+  permissions: Joi.array().items(
+    Joi.string().valid(...Object.values(MealPlanPermissions))
+  ),
+});
+
 /**
  * Add an email address to a mealplan as a member, permissions can be added later.
  * If the email address is registered with mealbase, add that user.
@@ -35,25 +40,36 @@ export const validationSchema = Joi.object({
  */
 const handler: NextApiHandler = async (req, res) => {
   try {
-    // use DELETE method
-    if (req.method !== "DELETE") {
+    // use PUT method
+    if (req.method !== "PUT") {
       return res.status(404).send("Not Found");
     }
 
-    // required user to be logged in
+    // require user to be logged in
     const user = await getUserJWT(req.cookies);
     if (!user) {
       return res.status(401).send("Unauthorized");
     }
 
     // validate URL params
-    const validationResult = validationSchema.validate(req.query);
-    if (validationResult.error) {
+    const queryValidationResult = queryValidationSchema.validate(req.query);
+    if (queryValidationResult.error) {
       return res
         .status(400)
         .send(
-          (validationResult.error as Error)?.message ||
-            "A validation error occurred."
+          (queryValidationResult.error as Error)?.message ||
+            "A query validation error occurred."
+        );
+    }
+
+    // validate request body
+    const bodyValidationResult = bodyValidationSchema.validate(req.body);
+    if (bodyValidationResult.error) {
+      return res
+        .status(400)
+        .send(
+          (bodyValidationResult.error as Error)?.message ||
+            "A request body validation error occurred."
         );
     }
 
@@ -61,16 +77,21 @@ const handler: NextApiHandler = async (req, res) => {
     await mongoDbConnection();
 
     // find mealplan
-    const mealplan = await MealPlansModel.findById<MealPlan>(
-      req.query.id
-    ).populate({
-      path: "members.member",
-      select: { email: 1 },
-      model: UserModel,
-    });
+    const mealplan = await MealPlansModel.findById<MealPlan>(req.query.id);
 
     if (!mealplan) {
       return res.status(404).send("Meal plan not found.");
+    }
+
+    const hasMember = Boolean(
+      mealplan.members.find((m) => m.member.toString() === req.query.memberId)
+    );
+    const hasInvitee = Boolean(
+      mealplan.invites.find((i) => i.invitee.toString() === req.query.memberId)
+    );
+
+    if (!hasMember && !hasInvitee) {
+      return res.status(404).send("Member not found.");
     }
 
     // check if requesting user is meal plan owner
@@ -82,7 +103,7 @@ const handler: NextApiHandler = async (req, res) => {
       }
       const isMemberWithPermissionToEditMembers = (() => {
         const member = mealplan.members.find(
-          (m) => m.member._id.toString() === user._id
+          (m) => m.member.toString() === user._id
         );
         if (!member) {
           return false;
@@ -97,36 +118,31 @@ const handler: NextApiHandler = async (req, res) => {
       return res.status(403).send("Forbidden.");
     }
 
-    // remove the member or invite
-    const result = await MealPlansModel.findByIdAndUpdate(
-      req.query.id,
-      {
-        $pull: {
-          members: {
-            member: req.query.memberId,
+    // edit member permissions
+    if (hasMember) {
+      const memberResult = await MealPlansModel.updateOne(
+        { _id: req.query.id, "members.member": req.query.memberId },
+        {
+          $set: {
+            "members.$.permissions": req.body.permissions,
           },
-          invites: {
-            invitee: req.query.memberId,
-          },
-        },
-      },
-      {
-        new: true,
-      }
-    )
-      .populate({
-        path: "members.member",
-        select: { email: 1 },
-        model: UserModel,
-      })
-      .populate({
-        path: "invites.invitee",
-        select: { email: 1 },
-        model: InvitationModel,
-      })
-      .lean();
+        }
+      );
+    }
 
-    return res.status(200).send(JSON.parse(JSON.stringify(result)));
+    // edit invite permissions
+    if (hasInvitee) {
+      const inviteResult = await MealPlansModel.updateOne(
+        { _id: req.query.id, "invites.invitee": req.query.memberId },
+        {
+          $set: {
+            "invites.$.permissions": req.body.permissions,
+          },
+        }
+      );
+    }
+
+    return res.status(200).send({});
   } catch (err) {
     console.log(err);
     let msg = "An unknown error occurred.";
@@ -146,19 +162,16 @@ interface MealPlan {
   createdAt: Date;
   updatedAt: Date;
   recipes: {
-    recipe: string;
+    recipe: ObjectId;
     isCooked: boolean;
   }[];
   members: {
-    member: {
-      _id: ObjectId;
-      email: string;
-    };
+    member: ObjectId;
     permissions: MealPlanPermissions[];
   }[];
   invites: {
-    email: string;
-    _id: ObjectId;
+    invitee: ObjectId;
+    permissions: MealPlanPermissions[];
   }[];
   owner: ObjectId;
 }

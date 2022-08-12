@@ -18,19 +18,19 @@ import {
   Alert,
   CircularProgress,
   IconButton,
-} from '@mui/material';
-import { GetServerSideProps } from 'next';
-import { MealPlansModel } from '@src/db/meal-plans';
-import { RecipeTableRow } from '@src/components/meal-plans/recipe-table-row';
-import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
-import { FormEvent, useState } from 'react';
-import { MealPlanPermissions } from '@src/db/meal-plans';
-import { Recipe, RecipeModel } from '@src/db/recipes';
-import { UserModel } from '@src/db/users';
-import { InvitationModel } from '@src/db/invites';
-import { useMutation } from 'react-query';
-import { networkRequest } from '@src/utils/network-request';
-import DeleteIcon from '@mui/icons-material/Delete';
+} from "@mui/material";
+import { GetServerSideProps } from "next";
+import { MealPlansModel } from "@src/db/meal-plans";
+import { RecipeTableRow } from "@src/components/meal-plans/recipe-table-row";
+import { useRefreshServerSideProps } from "@src/hooks/refresh-serverside-props";
+import { FormEvent, useState } from "react";
+import { MealPlanPermissions } from "@src/db/meal-plans";
+import { Recipe, RecipeModel } from "@src/db/recipes";
+import { UserModel } from "@src/db/users";
+import { InvitationModel } from "@src/db/invites";
+import { useMutation } from "react-query";
+import { networkRequest } from "@src/utils/network-request";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 /**
  * Get page data on the server before the page is rendered
@@ -43,22 +43,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         context.params.id
       )
         .populate({
-          path: 'owner',
+          path: "owner",
           select: { email: 1 },
           model: UserModel,
         })
         .populate({
-          path: 'recipes.recipe',
+          path: "recipes.recipe",
           model: RecipeModel,
         })
         .populate({
-          path: 'members.member',
-          select: 'email',
+          path: "members.member",
+          select: "email",
           model: UserModel,
         })
         .populate({
-          path: 'invites.invitee',
-          select: 'email',
+          path: "invites.invitee",
+          select: "email",
           model: InvitationModel,
         })
         .lean()
@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return { props };
   } catch (error) {
-    let msg = 'An unknown error occurred.';
+    let msg = "An unknown error occurred.";
     if (error instanceof Error) {
       msg = error.message;
     }
@@ -95,7 +95,7 @@ export default function MealPlanDetailsPage(props: Props) {
   return (
     <>
       <Typography variant="h5" component="h1" paragraph color="primary">
-        {props.mealplan?.title || 'Meal Plan Details'}
+        {props.mealplan?.title || "Meal Plan Details"}
       </Typography>
 
       {!props.mealplan && (
@@ -105,8 +105,8 @@ export default function MealPlanDetailsPage(props: Props) {
       {props.mealplan && (
         <>
           <Divider />
-          <TableContainer sx={{ maxWidth: '100vw', overflow: 'scroll' }}>
-            <Table sx={{ minWidth: '500px' }}>
+          <TableContainer sx={{ maxWidth: "100vw" }}>
+            <Table sx={{ minWidth: "500px" }} size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Recipes</TableCell>
@@ -128,15 +128,28 @@ export default function MealPlanDetailsPage(props: Props) {
             </Table>
           </TableContainer>
           <br />
-          <TableContainer sx={{ maxWidth: '100vw', overflow: 'scroll' }}>
-            <Table sx={{ minWidth: '500px' }}>
+          <br />
+          <Typography>Members</Typography>
+          <Typography variant="body2" paragraph>
+            Add users to this meal plan.
+          </Typography>
+          <TableContainer sx={{ maxWidth: "100vw" }}>
+            <Table sx={{ minWidth: "500px" }} size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Email Address</TableCell>
-                  <TableCell>Complete Recipes</TableCell>
-                  <TableCell>Add/Remove Recipes</TableCell>
-                  <TableCell>Add/Remove Members</TableCell>
-                  <TableCell>Remove Member</TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    Complete Recipes
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    Add/Remove Recipes
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    Add/Remove Members
+                  </TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
+                    Remove Member
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -210,20 +223,20 @@ interface MealPlan {
 }
 
 /**
- * Invite new member to meal plan form
+ * Invite email address to meal plan
  */
 function InviteMemberForm(props: {
   mealplanId: string;
   onSuccess: () => void;
 }) {
-  const [emailInput, setEmailInput] = useState('');
+  const [emailInput, setEmailInput] = useState("");
 
   // mutatin to add email address to mealplan
   const mutation = useMutation(
     (email: string) =>
       networkRequest({
         url: `/api/meal-plans/${props.mealplanId}/add-member`,
-        method: 'POST',
+        method: "POST",
         body: {
           email,
         },
@@ -232,7 +245,7 @@ function InviteMemberForm(props: {
       onSuccess: () => {
         setTimeout(() => {
           props.onSuccess?.();
-          setEmailInput('');
+          setEmailInput("");
           mutation.reset();
         }, 3000);
       },
@@ -268,7 +281,7 @@ function InviteMemberForm(props: {
       )}
       {mutation.isError && (
         <Alert severity="error">
-          {(mutation.error as Error).message || 'An unknown error occurred.'}
+          {(mutation.error as Error).message || "An unknown error occurred."}
         </Alert>
       )}
     </>
@@ -292,7 +305,7 @@ function MemberRow(props: {
     () =>
       networkRequest({
         url: `/api/meal-plans/${props.mealplanId}/remove-member/${props.member._id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     {
       onSuccess: () => {
@@ -302,18 +315,36 @@ function MemberRow(props: {
     }
   );
 
+  // mutation to set a user's permissions
+  const editPermissionsMutation = useMutation(
+    (permissions: MealPlanPermissions[]) =>
+      networkRequest({
+        url: `/api/meal-plans/${props.mealplanId}/edit-member/${props.member._id}`,
+        method: "PUT",
+        body: {
+          permissions,
+        },
+      }),
+    {
+      onSuccess: props.refreshSSP,
+    }
+  );
+
+  // make the permission array a Set; easier to use
+  const permissionSet = new Set(props.permissions);
+
   /**
    * Toggle a user's ability to mark recipes as Cooked (or completed)
    */
-  function toggleCompleteRecipes() {}
-  /**
-   * Toggle a user's ability to mark recipes as Cooked (or completed)
-   */
-  function toggleAddRemoveRecipes() {}
-  /**
-   * Toggle a user's ability to mark recipes as Cooked (or completed)
-   */
-  function toggleAddRemoveUsers() {}
+  function togglePermission(permission: MealPlanPermissions) {
+    if (permissionSet.has(permission)) {
+      editPermissionsMutation.mutate(
+        props.permissions.filter((p) => p !== permission)
+      );
+    } else {
+      editPermissionsMutation.mutate([...props.permissions, permission]);
+    }
+  }
 
   return (
     <>
@@ -321,19 +352,21 @@ function MemberRow(props: {
         <TableCell>
           <ListItemText
             primary={props.member.email}
-            secondary={props.isInvitee ? 'Invite Pending' : ''}
+            secondary={props.isInvitee ? "Invite Pending" : ""}
           />
         </TableCell>
-        <TableCell sx={{}}>
-          <Checkbox />
-        </TableCell>
-        <TableCell sx={{}}>
-          <Checkbox />
-        </TableCell>
-        <TableCell sx={{}}>
-          <Checkbox />
-        </TableCell>
-        <TableCell sx={{}}>
+        {Object.values(MealPlanPermissions).map((value) => (
+          <TableCell key={value} sx={{ textAlign: "center" }}>
+            <Checkbox
+              disabled={
+                deleteMutation.isLoading || editPermissionsMutation.isLoading
+              }
+              onChange={(e) => togglePermission(value)}
+              checked={permissionSet.has(value)}
+            />
+          </TableCell>
+        ))}
+        <TableCell sx={{ textAlign: "center" }}>
           <IconButton onClick={() => setShowModal(true)}>
             <DeleteIcon />
           </IconButton>
@@ -343,13 +376,13 @@ function MemberRow(props: {
         <DialogTitle>Remove Member</DialogTitle>
         <DialogContent>
           <Typography paragraph>
-            Do you want to remove the member{' '}
+            Do you want to remove the member{" "}
             <Typography
               component="code"
-              sx={{ fontFamily: 'monospace', color: 'primary.main' }}
+              sx={{ fontFamily: "monospace", color: "primary.main" }}
             >
               {props.member.email}
-            </Typography>{' '}
+            </Typography>{" "}
             from this meal plan?
           </Typography>
           <Toolbar disableGutters>
@@ -363,7 +396,7 @@ function MemberRow(props: {
               {deleteMutation.isLoading ? (
                 <CircularProgress color="error" size={22} />
               ) : (
-                'Remove'
+                "Remove"
               )}
             </Button>
             <Button variant="outlined" onClick={() => setShowModal(false)}>
