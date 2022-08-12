@@ -15,14 +15,14 @@ import {
   Button,
 } from '@mui/material';
 import { useToggleRecipeIsCookedMutation } from '@src/mutations/meal-plans/toggle-recipe-is-cooked';
-import { RecipeDocument } from '@src/types';
+import { Recipe } from '@src/db/recipes';
 import React, { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDeleteRecipeFromMealpanMutation } from '@src/mutations/meal-plans/delete-recipe';
 
 type Props = {
   mealplanId: string;
-  recipe: RecipeDocument;
+  recipe: Recipe & { _id: string };
   isCooked: boolean;
   refreshSSP: () => void;
 };

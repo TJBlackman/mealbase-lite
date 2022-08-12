@@ -8,9 +8,24 @@ import Joi from 'joi';
 import { isObjectIdOrHexString, ObjectId } from 'mongoose';
 import { InvitationModel } from '@src/db/invites';
 
-// validation
+// validates the URL params for this route
 export const validationSchema = Joi.object({
-  email: Joi.string().email().required(),
+  id: Joi.string()
+    .custom((value) => {
+      const isValid = isObjectIdOrHexString(value);
+      if (!isValid) {
+        throw Error('Not a valid objectId.');
+      }
+    }, 'Not a valid objectId.')
+    .required(),
+  memberId: Joi.string()
+    .custom((value) => {
+      const isValid = isObjectIdOrHexString(value);
+      if (!isValid) {
+        throw Error('Not a valid objectId.');
+      }
+    }, 'Not a valid objectId.')
+    .required(),
 });
 
 /**
@@ -20,8 +35,8 @@ export const validationSchema = Joi.object({
  */
 const handler: NextApiHandler = async (req, res) => {
   try {
-    // use GET method
-    if (req.method !== 'POST') {
+    // use DELETE method
+    if (req.method !== 'DELETE') {
       return res.status(404).send('Not Found');
     }
 
@@ -31,33 +46,28 @@ const handler: NextApiHandler = async (req, res) => {
       return res.status(401).send('Unauthorized');
     }
 
-    // validate request body
-    const validationResult = validationSchema.validate(req.body);
+    // validate URL params
+    const validationResult = validationSchema.validate(req.query);
     if (validationResult.error) {
-      return res.status(400).send(validationResult.error.message);
-    }
-
-    // validate mealplan id
-    const isObjectId = isObjectIdOrHexString(req.query.id);
-    if (!isObjectId) {
-      return res.status(400).send('Meal plan ID is invalid.');
+      return res
+        .status(400)
+        .send(
+          (validationResult.error as Error)?.message ||
+            'A validation error occurred.'
+        );
     }
 
     // connect to db
     await mongoDbConnection();
 
     // find mealplan
-    const mealplan = await MealPlansModel.findById<MealPlan>(req.query.id)
-      .populate({
-        path: 'members.member',
-        select: { email: 1 },
-        model: UserModel,
-      })
-      .populate({
-        path: 'invites.invitee',
-        select: { email: 1 },
-        model: InvitationModel,
-      });
+    const mealplan = await MealPlansModel.findById<MealPlan>(
+      req.query.id
+    ).populate({
+      path: 'members.member',
+      select: { email: 1 },
+      model: UserModel,
+    });
 
     if (!mealplan) {
       return res.status(404).send('Meal plan not found.');
@@ -87,67 +97,37 @@ const handler: NextApiHandler = async (req, res) => {
       return res.status(403).send('Forbidden.');
     }
 
-    // if requested member is already a member, return error
-    const existingMember = mealplan.members.find(
-      (item) => item.member.email === req.body.email
-    );
-    if (existingMember) {
-      return res
-        .status(409)
-        .send('Email address is already a member of this meal plan.');
-    }
+    console.log(req.query);
 
-    // if requested member is already a pending invite, return error
-    const existingInvite = mealplan.invites.find(
-      (item) => item.email === req.body.email
-    );
-    if (existingInvite) {
-      return res
-        .status(409)
-        .send('Email address is already a pending invite of this meal plan.');
-    }
-
-    // if requested member is already a user of mealbase, use their _id
-    const existingUser = await UserModel.findOne({ email: req.body.email });
-    if (existingUser) {
-      const result = await MealPlansModel.findByIdAndUpdate(
-        mealplan._id,
-        {
-          $push: {
-            members: {
-              member: existingUser._id,
-              permissions: [],
-            },
-          },
-        },
-        {
-          new: true,
-        }
-      );
-      return res.status(200).send(JSON.parse(JSON.stringify(result)));
-    }
-
-    // finally, if the requested member is unknown, create an invite record
-    const inviteRecord = new InvitationModel({
-      email: req.body.email,
-    });
-    await inviteRecord.save();
-
-    // push invite record id into invites array of this mealplan
+    // remove the member or invite
     const result = await MealPlansModel.findByIdAndUpdate(
-      mealplan._id,
+      req.query.id,
       {
-        $push: {
+        $pull: {
+          members: {
+            member: req.query.memberId,
+          },
           invites: {
-            invitee: inviteRecord._id,
-            permissions: [],
+            invitee: req.query.memberId,
           },
         },
       },
       {
         new: true,
       }
-    );
+    )
+      .populate({
+        path: 'members.member',
+        select: { email: 1 },
+        model: UserModel,
+      })
+      .populate({
+        path: 'invites.invitee',
+        select: { email: 1 },
+        model: InvitationModel,
+      })
+      .lean();
+
     return res.status(200).send(JSON.parse(JSON.stringify(result)));
   } catch (err) {
     console.log(err);
