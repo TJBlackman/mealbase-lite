@@ -1,11 +1,25 @@
-import { getUserJWT } from "@src/validation/server-requests";
-import { NextApiHandler } from "next";
-import { MealPlansModel } from "@src/db/meal-plans";
-import { mongoDbConnection } from "@src/db/connection";
 import Joi from "joi";
+import { NextApiHandler } from "next";
 import { isObjectIdOrHexString } from "mongoose";
+import { MealPlanPermissions, MealPlansModel } from "@src/db/meal-plans";
+import { RecipeModel } from "@src/db/recipes";
+import { mongoDbConnection } from "@src/db/connection";
+import { getUserJWT } from "@src/validation/server-requests";
 
-const requestBodySchema = Joi.object({
+// validates the URL params for this route
+export const queryValidationSchema = Joi.object({
+  id: Joi.string()
+    .custom((value) => {
+      const isValid = isObjectIdOrHexString(value);
+      if (!isValid) {
+        throw Error("Not a valid objectId.");
+      }
+    }, "Not a valid objectId.")
+    .required(),
+});
+
+// validates the req.body for this route
+export const bodyValidationSchema = Joi.object({
   recipeId: Joi.string()
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
@@ -17,10 +31,8 @@ const requestBodySchema = Joi.object({
 });
 
 /**
- * A user can add a recipe to an existing meal plan.
- * Alternatively, they can add the recipe to a new meal plan, which needs to be created here also.
+ * Add recipe to meal plan.
  */
-
 const handler: NextApiHandler = async (req, res) => {
   try {
     // require POST request
@@ -34,49 +46,61 @@ const handler: NextApiHandler = async (req, res) => {
       return res.status(401).send("Unauthorized");
     }
 
-    // validate req.body
-    const validationResult = requestBodySchema.validate(req.body);
-    if (validationResult.error) {
-      return res.status(400).send(validationResult.error.message);
+    // validate req.query for url params
+    const validateUrlParamsResult = queryValidationSchema.validate(req.query);
+    if (validateUrlParamsResult.error) {
+      return res.status(400).send(validateUrlParamsResult.error.message);
+    }
+
+    // validate req.body for url params
+    const bodyValidationResult = bodyValidationSchema.validate(req.query);
+    if (bodyValidationResult.error) {
+      return res.status(400).send(bodyValidationResult.error.message);
     }
 
     // connect to db
     await mongoDbConnection();
 
-    let savedMealplan: any;
-
-    // if req.body.mealplanTitle is present, create new mealplan with recipe
-    if (req.body.mealplanTitle) {
-      const mealplan = new MealPlansModel({
-        title: req.body.mealplanTitle,
-        owner: user._id,
-        recipes: [
-          {
-            recipe: req.body.recipeId,
-          },
-        ],
-      });
-      await mealplan.save();
-      savedMealplan = mealplan.toObject();
-    }
-
     // if req.body.mealplanId, add recipe to existing mealplan
-    if (req.body.mealplanId) {
-      const mealplan = await MealPlansModel.findById(req.body.mealplanId);
-      if (!mealplan) {
-        return res.status(404).send("Not Found");
-      }
-      // filter out this recipe, if it already exists.
-      mealplan.recipes = mealplan.recipes.filter(
-        (item) => item.recipe.toString() !== req.body.recipeId
-      );
-      // add requested recipe id
-      mealplan.recipes.push({ recipe: req.body.recipeId, isCooked: false });
-      await mealplan.save();
-      savedMealplan = mealplan.toObject();
+    const mealplan = await MealPlansModel.findById(req.query.id);
+    if (!mealplan) {
+      return res.status(404).send("Meal plan not found.");
     }
 
-    return res.json(JSON.parse(JSON.stringify(savedMealplan)));
+    // check if requesting user is meal plan owner
+    // OR, if they're a member with permission to edit recipes
+    const hasPermissionToEditRecipes = (() => {
+      const isMealplanOwner = user._id === mealplan.owner.toString();
+      if (isMealplanOwner) {
+        return true;
+      }
+
+      const isMemberWithPermissionToEditMembers = (() => {
+        const member = mealplan.members.find(
+          (m) => m.member.toString() === user._id
+        );
+        if (!member) {
+          return false;
+        }
+        return member.permissions.includes(MealPlanPermissions.EditRecipes);
+      })();
+      return isMemberWithPermissionToEditMembers;
+    })();
+    if (!hasPermissionToEditRecipes) {
+      return res.status(403).send("Forbidden.");
+    }
+
+    // check the recipe exists
+    const recipe = await RecipeModel.findById(req.body.recipeId);
+    if (!recipe) {
+      return res.status(404).send("Recipe not found.");
+    }
+
+    // add recipe to meal plan
+    mealplan.recipes.push(req.body.recipeId);
+    await mealplan.save();
+
+    return res.json("ok");
   } catch (err) {
     console.log(err);
     let msg = "An unknown error occurred.";
