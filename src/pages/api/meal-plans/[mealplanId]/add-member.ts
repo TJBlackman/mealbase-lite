@@ -38,7 +38,7 @@ const handler: NextApiHandler = async (req, res) => {
     }
 
     // validate mealplan id
-    const isObjectId = isObjectIdOrHexString(req.query.id);
+    const isObjectId = isObjectIdOrHexString(req.query.mealplanId);
     if (!isObjectId) {
       return res.status(400).send('Meal plan ID is invalid.');
     }
@@ -47,7 +47,9 @@ const handler: NextApiHandler = async (req, res) => {
     await mongoDbConnection();
 
     // find mealplan
-    const mealplan = await MealPlansModel.findById<MealPlan>(req.query.id)
+    const mealplan = await MealPlansModel.findById<MealPlan>(
+      req.query.mealplanId
+    )
       .populate({
         path: 'members.member',
         select: { email: 1 },

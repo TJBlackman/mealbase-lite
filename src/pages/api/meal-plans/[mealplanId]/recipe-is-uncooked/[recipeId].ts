@@ -2,15 +2,13 @@ import { MealPlanPermissions } from '@src/db/meal-plans';
 import { getUserJWT } from '@src/validation/server-requests';
 import { NextApiHandler } from 'next';
 import { MealPlansModel } from '@src/db/meal-plans';
-import { UserModel } from '@src/db/users';
 import { mongoDbConnection } from '@src/db/connection';
 import Joi from 'joi';
-import { isObjectIdOrHexString, ObjectId } from 'mongoose';
-import { InvitationModel } from '@src/db/invites';
+import { isObjectIdOrHexString } from 'mongoose';
 
 // validates the URL params for this route
 export const validationSchema = Joi.object({
-  id: Joi.string()
+  mealplanId: Joi.string()
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
       if (!isValid) {
@@ -29,14 +27,12 @@ export const validationSchema = Joi.object({
 });
 
 /**
- * Add an email address to a mealplan as a member, permissions can be added later.
- * If the email address is registered with mealbase, add that user.
- * If the email address is NOT registered with mealbase, create an invite record and add that user.
+ * In a given mealplan, mark a specific recipe as "cooked"
  */
 const handler: NextApiHandler = async (req, res) => {
   try {
-    // use DELETE method
-    if (req.method !== 'DELETE') {
+    // use PUT method
+    if (req.method !== 'PUT') {
       return res.status(404).send('Not Found');
     }
 
@@ -61,8 +57,7 @@ const handler: NextApiHandler = async (req, res) => {
     await mongoDbConnection();
 
     // find mealplan
-    const mealplan = await MealPlansModel.findById<MealPlan>(req.query.id);
-
+    const mealplan = await MealPlansModel.findById(req.query.mealplanId);
     if (!mealplan) {
       return res.status(404).send('Meal plan not found.');
     }
@@ -76,7 +71,7 @@ const handler: NextApiHandler = async (req, res) => {
       }
       const isMemberWithPermissionToEditMembers = (() => {
         const member = mealplan.members.find(
-          (m) => m.member._id.toString() === user._id
+          (m) => m.member.toString() === user._id
         );
         if (!member) {
           return false;
@@ -91,33 +86,17 @@ const handler: NextApiHandler = async (req, res) => {
       return res.status(403).send('Forbidden.');
     }
 
-    // remove the member or invite
-    const result = await MealPlansModel.findByIdAndUpdate(
-      req.query.id,
-      {
-        $pull: {
-          recipes: {
-            recipe: req.query.recipeId,
-          },
-        },
-      },
-      {
-        new: true,
-      }
-    )
-      .populate({
-        path: 'members.member',
-        select: { email: 1 },
-        model: UserModel,
-      })
-      .populate({
-        path: 'invites.invitee',
-        select: { email: 1 },
-        model: InvitationModel,
-      })
-      .lean();
+    // mark recipe as "cooked" :D
+    const recipe = mealplan.recipes.find(
+      (r) => r.recipe.toString() === req.query.recipeId
+    );
+    if (!recipe) {
+      return res.status(404).send('Recipe not found.');
+    }
+    recipe.isCooked = false;
+    await mealplan.save();
 
-    return res.status(200).send(JSON.parse(JSON.stringify(result)));
+    return res.status(200).send(JSON.parse(JSON.stringify(recipe)));
   } catch (err) {
     console.log(err);
     let msg = 'An unknown error occurred.';
@@ -129,27 +108,3 @@ const handler: NextApiHandler = async (req, res) => {
 };
 
 export default handler;
-
-// data queried in this API
-interface MealPlan {
-  _id: ObjectId;
-  title: string;
-  createdAt: Date;
-  updatedAt: Date;
-  recipes: {
-    recipe: string;
-    isCooked: boolean;
-  }[];
-  members: {
-    member: {
-      _id: ObjectId;
-      email: string;
-    };
-    permissions: MealPlanPermissions[];
-  }[];
-  invites: {
-    email: string;
-    _id: ObjectId;
-  }[];
-  owner: ObjectId;
-}

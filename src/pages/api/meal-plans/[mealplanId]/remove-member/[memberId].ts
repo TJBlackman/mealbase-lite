@@ -1,30 +1,30 @@
-import { MealPlanPermissions } from "@src/db/meal-plans";
-import { getUserJWT } from "@src/validation/server-requests";
-import { NextApiHandler } from "next";
-import { MealPlansModel } from "@src/db/meal-plans";
-import { UserModel } from "@src/db/users";
-import { mongoDbConnection } from "@src/db/connection";
-import Joi from "joi";
-import { isObjectIdOrHexString, ObjectId } from "mongoose";
-import { InvitationModel } from "@src/db/invites";
+import { MealPlanPermissions } from '@src/db/meal-plans';
+import { getUserJWT } from '@src/validation/server-requests';
+import { NextApiHandler } from 'next';
+import { MealPlansModel } from '@src/db/meal-plans';
+import { UserModel } from '@src/db/users';
+import { mongoDbConnection } from '@src/db/connection';
+import Joi from 'joi';
+import { isObjectIdOrHexString, ObjectId } from 'mongoose';
+import { InvitationModel } from '@src/db/invites';
 
 // validates the URL params for this route
 export const validationSchema = Joi.object({
-  id: Joi.string()
+  mealplanId: Joi.string()
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
       if (!isValid) {
-        throw Error("Not a valid objectId.");
+        throw Error('Not a valid objectId.');
       }
-    }, "Not a valid objectId.")
+    }, 'Not a valid objectId.')
     .required(),
   memberId: Joi.string()
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
       if (!isValid) {
-        throw Error("Not a valid objectId.");
+        throw Error('Not a valid objectId.');
       }
-    }, "Not a valid objectId.")
+    }, 'Not a valid objectId.')
     .required(),
 });
 
@@ -36,14 +36,14 @@ export const validationSchema = Joi.object({
 const handler: NextApiHandler = async (req, res) => {
   try {
     // use DELETE method
-    if (req.method !== "DELETE") {
-      return res.status(404).send("Not Found");
+    if (req.method !== 'DELETE') {
+      return res.status(404).send('Not Found');
     }
 
     // required user to be logged in
     const user = await getUserJWT(req.cookies);
     if (!user) {
-      return res.status(401).send("Unauthorized");
+      return res.status(401).send('Unauthorized');
     }
 
     // validate URL params
@@ -53,7 +53,7 @@ const handler: NextApiHandler = async (req, res) => {
         .status(400)
         .send(
           (validationResult.error as Error)?.message ||
-            "A validation error occurred."
+            'A validation error occurred.'
         );
     }
 
@@ -62,15 +62,15 @@ const handler: NextApiHandler = async (req, res) => {
 
     // find mealplan
     const mealplan = await MealPlansModel.findById<MealPlan>(
-      req.query.id
+      req.query.mealplanId
     ).populate({
-      path: "members.member",
+      path: 'members.member',
       select: { email: 1 },
       model: UserModel,
     });
 
     if (!mealplan) {
-      return res.status(404).send("Meal plan not found.");
+      return res.status(404).send('Meal plan not found.');
     }
 
     // check if requesting user is meal plan owner
@@ -94,12 +94,12 @@ const handler: NextApiHandler = async (req, res) => {
 
     // if not owner or member with permission, then you are forbidden!
     if (!hasPermissionToInviteMembers) {
-      return res.status(403).send("Forbidden.");
+      return res.status(403).send('Forbidden.');
     }
 
     // remove the member or invite
     const result = await MealPlansModel.findByIdAndUpdate(
-      req.query.id,
+      req.query.mealplanId,
       {
         $pull: {
           members: {
@@ -115,12 +115,12 @@ const handler: NextApiHandler = async (req, res) => {
       }
     )
       .populate({
-        path: "members.member",
+        path: 'members.member',
         select: { email: 1 },
         model: UserModel,
       })
       .populate({
-        path: "invites.invitee",
+        path: 'invites.invitee',
         select: { email: 1 },
         model: InvitationModel,
       })
@@ -129,7 +129,7 @@ const handler: NextApiHandler = async (req, res) => {
     return res.status(200).send(JSON.parse(JSON.stringify(result)));
   } catch (err) {
     console.log(err);
-    let msg = "An unknown error occurred.";
+    let msg = 'An unknown error occurred.';
     if (err instanceof Error) {
       msg = err.message;
     }

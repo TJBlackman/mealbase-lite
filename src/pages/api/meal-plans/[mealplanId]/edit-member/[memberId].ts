@@ -1,28 +1,28 @@
-import { MealPlanPermissions } from "@src/db/meal-plans";
-import { getUserJWT } from "@src/validation/server-requests";
-import { NextApiHandler } from "next";
-import { MealPlansModel } from "@src/db/meal-plans";
-import { mongoDbConnection } from "@src/db/connection";
-import Joi from "joi";
-import { isObjectIdOrHexString, ObjectId } from "mongoose";
+import { MealPlanPermissions } from '@src/db/meal-plans';
+import { getUserJWT } from '@src/validation/server-requests';
+import { NextApiHandler } from 'next';
+import { MealPlansModel } from '@src/db/meal-plans';
+import { mongoDbConnection } from '@src/db/connection';
+import Joi from 'joi';
+import { isObjectIdOrHexString, ObjectId } from 'mongoose';
 
 // validates the URL params for this route
 export const queryValidationSchema = Joi.object({
-  id: Joi.string()
+  mealplanId: Joi.string()
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
       if (!isValid) {
-        throw Error("Not a valid objectId.");
+        throw Error('Not a valid objectId.');
       }
-    }, "Not a valid objectId.")
+    }, 'Not a valid objectId.')
     .required(),
   memberId: Joi.string()
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
       if (!isValid) {
-        throw Error("Not a valid objectId.");
+        throw Error('Not a valid objectId.');
       }
-    }, "Not a valid objectId.")
+    }, 'Not a valid objectId.')
     .required(),
 });
 
@@ -34,21 +34,19 @@ export const bodyValidationSchema = Joi.object({
 });
 
 /**
- * Add an email address to a mealplan as a member, permissions can be added later.
- * If the email address is registered with mealbase, add that user.
- * If the email address is NOT registered with mealbase, create an invite record and add that user.
+ * Edit the meal plan permissions of a member (or invitee)
  */
 const handler: NextApiHandler = async (req, res) => {
   try {
     // use PUT method
-    if (req.method !== "PUT") {
-      return res.status(404).send("Not Found");
+    if (req.method !== 'PUT') {
+      return res.status(404).send('Not Found');
     }
 
     // require user to be logged in
     const user = await getUserJWT(req.cookies);
     if (!user) {
-      return res.status(401).send("Unauthorized");
+      return res.status(401).send('Unauthorized');
     }
 
     // validate URL params
@@ -58,7 +56,7 @@ const handler: NextApiHandler = async (req, res) => {
         .status(400)
         .send(
           (queryValidationResult.error as Error)?.message ||
-            "A query validation error occurred."
+            'A query validation error occurred.'
         );
     }
 
@@ -69,7 +67,7 @@ const handler: NextApiHandler = async (req, res) => {
         .status(400)
         .send(
           (bodyValidationResult.error as Error)?.message ||
-            "A request body validation error occurred."
+            'A request body validation error occurred.'
         );
     }
 
@@ -77,10 +75,12 @@ const handler: NextApiHandler = async (req, res) => {
     await mongoDbConnection();
 
     // find mealplan
-    const mealplan = await MealPlansModel.findById<MealPlan>(req.query.id);
+    const mealplan = await MealPlansModel.findById<MealPlan>(
+      req.query.mealplanId
+    );
 
     if (!mealplan) {
-      return res.status(404).send("Meal plan not found.");
+      return res.status(404).send('Meal plan not found.');
     }
 
     const hasMember = Boolean(
@@ -91,7 +91,7 @@ const handler: NextApiHandler = async (req, res) => {
     );
 
     if (!hasMember && !hasInvitee) {
-      return res.status(404).send("Member not found.");
+      return res.status(404).send('Member not found.');
     }
 
     // check if requesting user is meal plan owner
@@ -115,16 +115,16 @@ const handler: NextApiHandler = async (req, res) => {
 
     // if not owner or member with permission, then you are forbidden!
     if (!hasPermissionToInviteMembers) {
-      return res.status(403).send("Forbidden.");
+      return res.status(403).send('Forbidden.');
     }
 
     // edit member permissions
     if (hasMember) {
       const memberResult = await MealPlansModel.updateOne(
-        { _id: req.query.id, "members.member": req.query.memberId },
+        { _id: req.query.mealplanId, 'members.member': req.query.memberId },
         {
           $set: {
-            "members.$.permissions": req.body.permissions,
+            'members.$.permissions': req.body.permissions,
           },
         }
       );
@@ -133,10 +133,10 @@ const handler: NextApiHandler = async (req, res) => {
     // edit invite permissions
     if (hasInvitee) {
       const inviteResult = await MealPlansModel.updateOne(
-        { _id: req.query.id, "invites.invitee": req.query.memberId },
+        { _id: req.query.mealplanId, 'invites.invitee': req.query.memberId },
         {
           $set: {
-            "invites.$.permissions": req.body.permissions,
+            'invites.$.permissions': req.body.permissions,
           },
         }
       );
@@ -145,7 +145,7 @@ const handler: NextApiHandler = async (req, res) => {
     return res.status(200).send({});
   } catch (err) {
     console.log(err);
-    let msg = "An unknown error occurred.";
+    let msg = 'An unknown error occurred.';
     if (err instanceof Error) {
       msg = err.message;
     }

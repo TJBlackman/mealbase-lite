@@ -1,20 +1,20 @@
-import Joi from "joi";
-import { NextApiHandler } from "next";
-import { isObjectIdOrHexString } from "mongoose";
-import { MealPlanPermissions, MealPlansModel } from "@src/db/meal-plans";
-import { RecipeModel } from "@src/db/recipes";
-import { mongoDbConnection } from "@src/db/connection";
-import { getUserJWT } from "@src/validation/server-requests";
+import Joi from 'joi';
+import { NextApiHandler } from 'next';
+import { isObjectIdOrHexString } from 'mongoose';
+import { MealPlanPermissions, MealPlansModel } from '@src/db/meal-plans';
+import { RecipeModel } from '@src/db/recipes';
+import { mongoDbConnection } from '@src/db/connection';
+import { getUserJWT } from '@src/validation/server-requests';
 
 // validates the URL params for this route
 export const queryValidationSchema = Joi.object({
-  id: Joi.string()
+  mealplanId: Joi.string()
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
       if (!isValid) {
-        throw Error("Not a valid objectId.");
+        throw Error('Not a valid objectId.');
       }
-    }, "Not a valid objectId.")
+    }, 'Not a valid objectId.')
     .required(),
 });
 
@@ -24,9 +24,9 @@ export const bodyValidationSchema = Joi.object({
     .custom((value) => {
       const isValid = isObjectIdOrHexString(value);
       if (!isValid) {
-        throw Error("Not a valid objectId.");
+        throw Error('Not a valid objectId.');
       }
-    }, "Not a valid objectId.")
+    }, 'Not a valid objectId.')
     .required(),
 });
 
@@ -36,14 +36,14 @@ export const bodyValidationSchema = Joi.object({
 const handler: NextApiHandler = async (req, res) => {
   try {
     // require POST request
-    if (req.method !== "POST") {
-      return res.status(404).send("Not Found");
+    if (req.method !== 'POST') {
+      return res.status(404).send('Not Found');
     }
 
     // required user to be logged in
     const user = await getUserJWT(req.cookies);
     if (!user) {
-      return res.status(401).send("Unauthorized");
+      return res.status(401).send('Unauthorized');
     }
 
     // validate req.query for url params
@@ -62,9 +62,9 @@ const handler: NextApiHandler = async (req, res) => {
     await mongoDbConnection();
 
     // if req.body.mealplanId, add recipe to existing mealplan
-    const mealplan = await MealPlansModel.findById(req.query.id);
+    const mealplan = await MealPlansModel.findById(req.query.mealplanId);
     if (!mealplan) {
-      return res.status(404).send("Meal plan not found.");
+      return res.status(404).send('Meal plan not found.');
     }
 
     // check if requesting user is meal plan owner
@@ -87,23 +87,23 @@ const handler: NextApiHandler = async (req, res) => {
       return isMemberWithPermissionToEditMembers;
     })();
     if (!hasPermissionToEditRecipes) {
-      return res.status(403).send("Forbidden.");
+      return res.status(403).send('Forbidden.');
     }
 
     // check the recipe exists
     const recipe = await RecipeModel.findById(req.body.recipeId);
     if (!recipe) {
-      return res.status(404).send("Recipe not found.");
+      return res.status(404).send('Recipe not found.');
     }
 
     // add recipe to meal plan
     mealplan.recipes.push(req.body.recipeId);
     await mealplan.save();
 
-    return res.json("ok");
+    return res.json('ok');
   } catch (err) {
     console.log(err);
-    let msg = "An unknown error occurred.";
+    let msg = 'An unknown error occurred.';
     if (err instanceof Error) {
       msg = err.message;
     }
