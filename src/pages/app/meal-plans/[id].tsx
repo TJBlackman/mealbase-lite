@@ -385,11 +385,11 @@ function MemberRow(props: {
             </Typography>{' '}
             from this meal plan?
           </Typography>
-          <Toolbar disableGutters>
+          <Toolbar disableGutters sx={{ flexDirection: 'row-reverse' }}>
             <Button
               variant="contained"
               color="error"
-              sx={{ mr: 2 }}
+              sx={{ ml: 2 }}
               onClick={() => deleteMutation.mutate()}
               disabled={deleteMutation.isLoading || deleteMutation.isSuccess}
             >

@@ -14,11 +14,12 @@ import {
   Toolbar,
   Button,
 } from '@mui/material';
-import { useToggleRecipeIsCookedMutation } from '@src/mutations/meal-plans/toggle-recipe-is-cooked';
 import { Recipe } from '@src/db/recipes';
 import React, { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDeleteRecipeFromMealpanMutation } from '@src/mutations/meal-plans/delete-recipe';
+import { useMutation } from 'react-query';
+import { networkRequest } from '@src/utils/network-request';
 
 type Props = {
   mealplanId: string;
@@ -30,18 +31,23 @@ type Props = {
 export const RecipeTableRow = (props: Props) => {
   const [dialogIsVisible, setDialogIsVisible] = useState(false);
   const [isCooked, setIsCooked] = useState(props.isCooked);
-  const toggleRecipeMutation = useToggleRecipeIsCookedMutation();
   const deleteRecipeMutation = useDeleteRecipeFromMealpanMutation();
 
+  // recipe is cooked mutation
+  const recipeIsCookedMutation = useMutation(() => {
+    const status = isCooked ? 'uncooked' : 'cooked';
+    return networkRequest<{ isCooked: boolean }>({
+      method: 'PUT',
+      url: `/api/meal-plans/${props.mealplanId}/recipe-is-${status}/${props.recipe._id}`,
+    });
+  });
+
   function toggleRecipe() {
-    toggleRecipeMutation.mutate(
-      { mealplanId: props.mealplanId, recipeId: props.recipe._id },
-      {
-        onSuccess: (response) => {
-          setIsCooked(response.isCooked);
-        },
-      }
-    );
+    recipeIsCookedMutation.mutate(void 0, {
+      onSuccess: (response) => {
+        setIsCooked(response.isCooked);
+      },
+    });
   }
 
   function deleteRecipe() {
@@ -87,7 +93,7 @@ export const RecipeTableRow = (props: Props) => {
           </Grid>
         </TableCell>
         <TableCell>
-          {toggleRecipeMutation.isLoading ? (
+          {recipeIsCookedMutation.isLoading ? (
             <span style={{ marginLeft: '10px' }}>
               <CircularProgress size={24} />
             </span>

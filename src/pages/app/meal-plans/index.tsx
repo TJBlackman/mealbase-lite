@@ -7,15 +7,14 @@ import {
   Stack,
   LinearProgress,
   Link as MuiLink,
+  Grid,
 } from '@mui/material';
-import { MealPlan } from '@src/types/index.d';
-import { MealPlansModel } from '@src/db/meal-plans';
+import { MealPlansModel, MealPlan } from '@src/db/meal-plans';
 import { useState } from 'react';
 import { CreateMealPlanForm } from '@src/forms/meal-plans/create';
 import { mongoDbConnection } from '@src/db/connection';
 import { getUserJWT } from '@src/validation/server-requests';
 import { GetServerSideProps } from 'next';
-import error from 'next/error';
 import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
@@ -38,27 +37,45 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // connect to db
     await mongoDbConnection();
 
-    const mealplans = await MealPlansModel.find({ owner: user._id }).sort({
-      createdAt: -1,
-    });
+    // get mealplans this user owns
+    const mealplans = await MealPlansModel.find({ owner: user._id })
+      .sort({
+        createdAt: -1,
+      })
+      .lean();
     const count = await MealPlansModel.count({ ownder: user._id });
 
+    // get meal plans this user is a member of
+    const memberMealplans = await MealPlansModel.find({
+      'members.member': user._id,
+    }).lean();
+    const memberMealplansCount = await MealPlansModel.find({
+      'members.member': user._id,
+    }).count();
+
     return {
-      props: { mealplans: JSON.parse(JSON.stringify(mealplans)), count },
+      props: {
+        mealplans: JSON.parse(JSON.stringify(mealplans)),
+        count,
+        memberMealplans: JSON.parse(JSON.stringify(memberMealplans)),
+        memberMealplansCount,
+      },
     };
   } catch (err) {
-    console.log(error);
+    console.log(err);
     let msg = 'An unknown error occurred.';
-    if (error instanceof Error) {
-      msg = error.message;
+    if (err instanceof Error) {
+      msg = err.message;
     }
     return { props: { mealplans: [], count: 0, error: msg } };
   }
 };
 
 type Props = {
-  mealplans: MealPlan[];
+  mealplans: MealPlan & { _id: string }[];
   count: number;
+  memberMealplans: MealPlan & { _id: string }[];
+  memberMealplansCount: number;
   error?: string;
 };
 
@@ -120,15 +137,24 @@ export default function MealPlansPage(props: Props) {
 
   return (
     <>
-      <Typography variant="h5" component="h1">
-        Meal Plans
-      </Typography>
-      <Typography sx={{ maxWidth: 'md' }}>
-        A meal plan is a small collection of the recipes to help you plan what
-        meals you want to cook in the near future. Use this page to create and
-        manage all your Meal plans!
-      </Typography>
-      <Button onClick={() => setIsVisible(true)}>Create New Meal Plan</Button>
+      <Grid container spacing={2} alignItems="flex-end" sx={{ mb: 2 }}>
+        <Grid item>
+          <Typography variant="h5" component="h1">
+            Meal Plans
+          </Typography>
+          <Typography sx={{ maxWidth: 'md' }}>
+            A meal plan is a small collection of the recipes to help you plan
+            what meals you want to cook in the near future. Use this page to
+            create and manage all your Meal plans!
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Button onClick={() => setIsVisible(true)} variant="outlined">
+            Create New Meal Plan
+          </Button>
+        </Grid>
+      </Grid>
+
       {props.error && (
         <Typography color="error">Error: {props.error}</Typography>
       )}
