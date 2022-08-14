@@ -16,11 +16,10 @@ type Response = {
 };
 
 export function useDeleteRecipeFromMealpanMutation() {
-  return useMutation((payload: Payload) =>
+  return useMutation(({ mealplanId, recipeId }: Payload) =>
     networkRequest<Response>({
       method: 'DELETE',
-      url: '/api/meal-plans/delete-recipe',
-      body: payload,
+      url: `/api/meal-plans/${mealplanId}/remove-recipe/${recipeId}`,
     })
   );
 }

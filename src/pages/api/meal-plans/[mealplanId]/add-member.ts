@@ -99,11 +99,11 @@ const handler: NextApiHandler = async (req, res) => {
         .send('Email address is already a member of this meal plan.');
     }
 
-    // if requested member is already a pending invite, return error
-    const existingInvite = mealplan.invites.find(
+    // if requested member is already a pending invitee of this meal plan, return error
+    const existingInvitee = mealplan.invites.find(
       (item) => item.email === req.body.email
     );
-    if (existingInvite) {
+    if (existingInvitee) {
       return res
         .status(409)
         .send('Email address is already a pending invite of this meal plan.');
@@ -125,7 +125,29 @@ const handler: NextApiHandler = async (req, res) => {
         {
           new: true,
         }
-      );
+      ).lean();
+      return res.status(200).send(JSON.parse(JSON.stringify(result)));
+    }
+
+    // if requested member is already an invite of mealbase, use their _id
+    const existingInvite = await InvitationModel.findOne({
+      email: req.body.email,
+    });
+    if (existingInvite) {
+      const result = await MealPlansModel.findByIdAndUpdate(
+        mealplan._id,
+        {
+          $push: {
+            invites: {
+              invitee: existingInvite._id,
+              permissions: [],
+            },
+          },
+        },
+        {
+          new: true,
+        }
+      ).lean();
       return res.status(200).send(JSON.parse(JSON.stringify(result)));
     }
 

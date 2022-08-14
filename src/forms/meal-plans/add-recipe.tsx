@@ -8,20 +8,15 @@ import {
   Alert,
 } from '@mui/material';
 import { useMealPlansQuery } from '@src/queries/meal-plans';
-import { RecipeDocument } from '@src/types';
+import { Recipe } from '@src/db/recipes';
 import { networkRequest } from '@src/utils/network-request';
 import { FormEvent, useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 
 const CREATE_NEW_MEALPLAN = 'CREATE NEW MEALPLAN';
 
-type RequestBody = { recipeId: string } & (
-  | { mealplanId: string }
-  | { mealplanTitle: string }
-);
-
 type Props = {
-  recipe: RecipeDocument;
+  recipe: Recipe & { _id: string };
   onSuccess?: () => void;
 };
 
@@ -48,13 +43,22 @@ export function AddRecipeToMealPlanForm(props: Props) {
     }
   }, [mealplansQuery.dataUpdatedAt]);
 
-  // mutation
-  const mutation = useMutation(
-    (payload: RequestBody) =>
+  // create new mealplan mutation
+  const postMealplanMutation = useMutation((title: string) =>
+    networkRequest({
+      url: '/api/meal-plans',
+      method: 'POST',
+      body: { title },
+    })
+  );
+
+  // add recipe to existing meal plan
+  const addRecipeToMealplanMutation = useMutation(
+    (options: { recipeId: string; mealplanId: string }) =>
       networkRequest({
-        url: '/api/meal-plans/add-recipe',
+        url: `/api/meal-plans/${options.mealplanId}/add-recipe`,
         method: 'POST',
-        body: payload,
+        body: { recipeId: options.recipeId },
       }),
     {
       onSuccess: props.onSuccess,
@@ -65,20 +69,27 @@ export function AddRecipeToMealPlanForm(props: Props) {
     e.preventDefault();
     if (selectedMealplan === CREATE_NEW_MEALPLAN) {
       // create a new mealplan
-      mutation.mutate({
-        recipeId: props.recipe._id,
-        mealplanTitle: mealplanTitle,
+      postMealplanMutation.mutate(mealplanTitle, {
+        onSuccess: (response: any) => {
+          addRecipeToMealplanMutation.mutate({
+            recipeId: props.recipe._id,
+            mealplanId: response._id,
+          });
+        },
       });
     } else {
       // add recipe to existing mealplan
-      mutation.mutate({
+      addRecipeToMealplanMutation.mutate({
         recipeId: props.recipe._id,
         mealplanId: selectedMealplan,
       });
     }
   }
 
-  const disabled = mealplansQuery.isLoading || mutation.isLoading;
+  const disabled =
+    mealplansQuery.isLoading ||
+    postMealplanMutation.isLoading ||
+    addRecipeToMealplanMutation.isLoading;
 
   // return loading state while loading
   if (mealplansQuery.isLoading) {
@@ -135,15 +146,19 @@ export function AddRecipeToMealPlanForm(props: Props) {
           type="submit"
           variant="contained"
           sx={{ mr: 2, mb: 1 }}
-          disabled={disabled || mutation.isSuccess}
+          disabled={disabled || addRecipeToMealplanMutation.isSuccess}
         >
           {disabled ? <CircularProgress size={20} color="primary" /> : 'Save'}
         </Button>
       </Toolbar>
-      {mutation.isError && (
-        <Alert severity="error">{mutation.error as string}</Alert>
+      {addRecipeToMealplanMutation.isError && (
+        <Alert severity="error">
+          {(addRecipeToMealplanMutation.error as Error).message}
+        </Alert>
       )}
-      {mutation.isSuccess && <Alert severity="success">Recipe Added!</Alert>}
+      {addRecipeToMealplanMutation.isSuccess && (
+        <Alert severity="success">Recipe Added!</Alert>
+      )}
     </form>
   );
 }

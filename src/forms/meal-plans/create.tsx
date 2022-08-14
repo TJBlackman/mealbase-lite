@@ -4,6 +4,7 @@ import {
   Toolbar,
   Button,
   CircularProgress,
+  Alert,
 } from '@mui/material';
 import { useMealPlanCountQuery } from '@src/queries/meal-plan-count';
 import { networkRequest } from '@src/utils/network-request';
@@ -21,7 +22,7 @@ export function CreateMealPlanForm(props: Props) {
   const mutation = useMutation(
     (payload: { title: string }) =>
       networkRequest({
-        url: '/api/meal-plans/new',
+        url: '/api/meal-plans',
         method: 'POST',
         body: payload,
       }),
@@ -60,6 +61,9 @@ export function CreateMealPlanForm(props: Props) {
         disabled={disabled}
         sx={{ mb: 2 }}
       />
+      {mutation.isError && (
+        <Alert severity="error">{(mutation.error as Error).message}</Alert>
+      )}
       <Toolbar disableGutters>
         <Button
           type="submit"

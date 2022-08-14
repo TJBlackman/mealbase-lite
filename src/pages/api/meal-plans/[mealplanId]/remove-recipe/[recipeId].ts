@@ -7,6 +7,7 @@ import { mongoDbConnection } from '@src/db/connection';
 import Joi from 'joi';
 import { isObjectIdOrHexString, ObjectId } from 'mongoose';
 import { InvitationModel } from '@src/db/invites';
+import { RecipeModel } from '@src/db/recipes';
 
 // validates the URL params for this route
 export const validationSchema = Joi.object({
@@ -107,6 +108,10 @@ const handler: NextApiHandler = async (req, res) => {
         new: true,
       }
     )
+      .populate({
+        path: 'recipes.recipe',
+        model: RecipeModel,
+      })
       .populate({
         path: 'members.member',
         select: { email: 1 },

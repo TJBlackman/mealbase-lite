@@ -53,7 +53,7 @@ const handler: NextApiHandler = async (req, res) => {
     }
 
     // validate req.body for url params
-    const bodyValidationResult = bodyValidationSchema.validate(req.query);
+    const bodyValidationResult = bodyValidationSchema.validate(req.body);
     if (bodyValidationResult.error) {
       return res.status(400).send(bodyValidationResult.error.message);
     }
@@ -97,10 +97,10 @@ const handler: NextApiHandler = async (req, res) => {
     }
 
     // add recipe to meal plan
-    mealplan.recipes.push(req.body.recipeId);
+    mealplan.recipes.push({ recipe: req.body.recipeId, isCooked: false });
     await mealplan.save();
 
-    return res.json('ok');
+    return res.json(JSON.parse(JSON.stringify(mealplan.toObject())));
   } catch (err) {
     console.log(err);
     let msg = 'An unknown error occurred.';
