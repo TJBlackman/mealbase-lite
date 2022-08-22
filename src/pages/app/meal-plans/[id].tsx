@@ -33,12 +33,15 @@ import { networkRequest } from '@src/utils/network-request';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNotificationsContext } from '@src/contexts/notifications';
 import { useUserContext } from '@src/contexts/user';
+import { getUserJWT } from '@src/validation/server-requests';
 
 /**
  * Get page data on the server before the page is rendered
  */
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
+    // TODO: if the requesting user is not owner/member of meal plan, redirect them.
+
     const props: Record<string, any> = { mealplan: null };
     if (context.params && context.params.id) {
       const mealplan = await MealPlansModel.findById<MealPlan>(
@@ -68,6 +71,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           console.log(err);
         });
       if (mealplan) {
+        const user = await getUserJWT(context.req.cookies);
+        if (!user) {
+          return {
+            redirect: {
+              permanent: false,
+              destination: '/login',
+            },
+          };
+        }
+        const isOwner = mealplan.owner.email === user.email;
+        const isMember = mealplan.members.find(
+          (m) => m.member.email === user.email
+        );
+        if (!isOwner && !isMember) {
+          return {
+            redirect: {
+              permanent: false,
+              destination: '/app/meal-plans',
+            },
+          };
+        }
         props.mealplan = JSON.parse(JSON.stringify(mealplan));
       }
     }
