@@ -13,20 +13,22 @@ import {
   DialogContent,
   Toolbar,
   Button,
-} from "@mui/material";
-import { Recipe } from "@src/db/recipes";
-import React, { useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { useDeleteRecipeFromMealpanMutation } from "@src/mutations/meal-plans/delete-recipe";
-import { useMutation } from "react-query";
-import { networkRequest } from "@src/utils/network-request";
-import { useNotificationsContext } from "@src/contexts/notifications";
+} from '@mui/material';
+import { Recipe } from '@src/db/recipes';
+import React, { useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useDeleteRecipeFromMealpanMutation } from '@src/mutations/meal-plans/delete-recipe';
+import { useMutation } from 'react-query';
+import { networkRequest } from '@src/utils/network-request';
+import { useNotificationsContext } from '@src/contexts/notifications';
 
 type Props = {
   mealplanId: string;
   recipe: Recipe & { _id: string };
   isCooked: boolean;
   refreshSSP: () => void;
+  canEditRecipes: boolean;
+  canCompleteRecipes: boolean;
 };
 
 export const RecipeTableRow = (props: Props) => {
@@ -37,33 +39,35 @@ export const RecipeTableRow = (props: Props) => {
 
   // recipe is cooked mutation
   const recipeIsCookedMutation = useMutation(() => {
-    const status = isCooked ? "uncooked" : "cooked";
+    const status = isCooked ? 'uncooked' : 'cooked';
     return networkRequest<{ isCooked: boolean }>({
-      method: "PUT",
+      method: 'PUT',
       url: `/api/meal-plans/${props.mealplanId}/recipe-is-${status}/${props.recipe._id}`,
     });
   });
 
+  // handle the checkbox click for when recipe is marked as (un)cooked
   function toggleRecipe() {
     recipeIsCookedMutation.mutate(void 0, {
       onSuccess: (response) => {
         setIsCooked(response.isCooked);
         notificationsContext.new({
-          message: "Recipe status updated!",
-          severity: "success",
-          title: "Recipe Updated",
+          message: 'Recipe status updated!',
+          severity: 'success',
+          title: 'Recipe Updated',
         });
       },
       onError: (err) => {
         notificationsContext.new({
           message: (err as Error)?.message || 'An unknown error occurred.',
-          severity: "error",
-          title: "Error",
+          severity: 'error',
+          title: 'Error',
         });
       },
     });
   }
 
+  // delete recipe
   function deleteRecipe() {
     deleteRecipeMutation.mutate(
       { mealplanId: props.mealplanId, recipeId: props.recipe._id },
@@ -84,7 +88,7 @@ export const RecipeTableRow = (props: Props) => {
             container
             spacing={1}
             wrap="nowrap"
-            sx={{ filter: isCooked ? "grayscale(1)" : "none" }}
+            sx={{ filter: isCooked ? 'grayscale(1)' : 'none' }}
           >
             <Grid item>
               <Avatar
@@ -108,15 +112,22 @@ export const RecipeTableRow = (props: Props) => {
         </TableCell>
         <TableCell>
           {recipeIsCookedMutation.isLoading ? (
-            <span style={{ marginLeft: "10px" }}>
+            <span style={{ marginLeft: '10px' }}>
               <CircularProgress size={24} />
             </span>
           ) : (
-            <Checkbox checked={isCooked} onChange={toggleRecipe} />
+            <Checkbox
+              checked={isCooked}
+              onChange={toggleRecipe}
+              disabled={!props.canCompleteRecipes}
+            />
           )}
         </TableCell>
         <TableCell>
-          <IconButton onClick={() => setDialogIsVisible(true)}>
+          <IconButton
+            onClick={() => setDialogIsVisible(true)}
+            disabled={!props.canEditRecipes}
+          >
             <DeleteIcon />
           </IconButton>
         </TableCell>
@@ -148,7 +159,7 @@ export const RecipeTableRow = (props: Props) => {
             </Grid>
           </Grid>
           <br />
-          <Toolbar disableGutters sx={{ flexDirection: "row-reverse" }}>
+          <Toolbar disableGutters sx={{ flexDirection: 'row-reverse' }}>
             <Button
               color="error"
               variant="contained"
@@ -159,7 +170,7 @@ export const RecipeTableRow = (props: Props) => {
               {deleteRecipeMutation.isLoading ? (
                 <CircularProgress size={20} color="error" />
               ) : (
-                "Delete"
+                'Delete'
               )}
             </Button>
             <Button onClick={() => setDialogIsVisible(false)}>Cancel</Button>
