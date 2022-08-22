@@ -40,9 +40,10 @@ import { getUserJWT } from '@src/validation/server-requests';
  */
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    // TODO: if the requesting user is not owner/member of meal plan, redirect them.
-
+    // define props to return at the end of the function
     const props: Record<string, any> = { mealplan: null };
+
+    // populate mealplan from db
     if (context.params && context.params.id) {
       const mealplan = await MealPlansModel.findById<MealPlan>(
         context.params.id
@@ -70,6 +71,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         .catch((err) => {
           console.log(err);
         });
+
+      // if mealplan is returned, validate the user is the owner or a member of the meal plan
       if (mealplan) {
         const user = await getUserJWT(context.req.cookies);
         if (!user) {

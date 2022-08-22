@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         createdAt: -1,
       })
       .lean();
-    const count = await MealPlansModel.count({ ownder: user._id });
+    const count = await MealPlansModel.count({ owner: user._id });
 
     // get meal plans this user is a member of
     const memberMealplans = await MealPlansModel.find({
