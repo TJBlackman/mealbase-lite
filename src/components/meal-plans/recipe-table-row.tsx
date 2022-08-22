@@ -13,13 +13,14 @@ import {
   DialogContent,
   Toolbar,
   Button,
-} from '@mui/material';
-import { Recipe } from '@src/db/recipes';
-import React, { useState } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useDeleteRecipeFromMealpanMutation } from '@src/mutations/meal-plans/delete-recipe';
-import { useMutation } from 'react-query';
-import { networkRequest } from '@src/utils/network-request';
+} from "@mui/material";
+import { Recipe } from "@src/db/recipes";
+import React, { useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useDeleteRecipeFromMealpanMutation } from "@src/mutations/meal-plans/delete-recipe";
+import { useMutation } from "react-query";
+import { networkRequest } from "@src/utils/network-request";
+import { useNotificationsContext } from "@src/contexts/notifications";
 
 type Props = {
   mealplanId: string;
@@ -29,15 +30,16 @@ type Props = {
 };
 
 export const RecipeTableRow = (props: Props) => {
+  const notificationsContext = useNotificationsContext();
   const [dialogIsVisible, setDialogIsVisible] = useState(false);
   const [isCooked, setIsCooked] = useState(props.isCooked);
   const deleteRecipeMutation = useDeleteRecipeFromMealpanMutation();
 
   // recipe is cooked mutation
   const recipeIsCookedMutation = useMutation(() => {
-    const status = isCooked ? 'uncooked' : 'cooked';
+    const status = isCooked ? "uncooked" : "cooked";
     return networkRequest<{ isCooked: boolean }>({
-      method: 'PUT',
+      method: "PUT",
       url: `/api/meal-plans/${props.mealplanId}/recipe-is-${status}/${props.recipe._id}`,
     });
   });
@@ -46,6 +48,18 @@ export const RecipeTableRow = (props: Props) => {
     recipeIsCookedMutation.mutate(void 0, {
       onSuccess: (response) => {
         setIsCooked(response.isCooked);
+        notificationsContext.new({
+          message: "Recipe status updated!",
+          severity: "success",
+          title: "Recipe Updated",
+        });
+      },
+      onError: (err) => {
+        notificationsContext.new({
+          message: (err as Error)?.message || 'An unknown error occurred.',
+          severity: "error",
+          title: "Error",
+        });
       },
     });
   }
@@ -70,7 +84,7 @@ export const RecipeTableRow = (props: Props) => {
             container
             spacing={1}
             wrap="nowrap"
-            sx={{ filter: isCooked ? 'grayscale(1)' : 'none' }}
+            sx={{ filter: isCooked ? "grayscale(1)" : "none" }}
           >
             <Grid item>
               <Avatar
@@ -94,7 +108,7 @@ export const RecipeTableRow = (props: Props) => {
         </TableCell>
         <TableCell>
           {recipeIsCookedMutation.isLoading ? (
-            <span style={{ marginLeft: '10px' }}>
+            <span style={{ marginLeft: "10px" }}>
               <CircularProgress size={24} />
             </span>
           ) : (
@@ -134,7 +148,7 @@ export const RecipeTableRow = (props: Props) => {
             </Grid>
           </Grid>
           <br />
-          <Toolbar disableGutters sx={{ flexDirection: 'row-reverse' }}>
+          <Toolbar disableGutters sx={{ flexDirection: "row-reverse" }}>
             <Button
               color="error"
               variant="contained"
@@ -145,7 +159,7 @@ export const RecipeTableRow = (props: Props) => {
               {deleteRecipeMutation.isLoading ? (
                 <CircularProgress size={20} color="error" />
               ) : (
-                'Delete'
+                "Delete"
               )}
             </Button>
             <Button onClick={() => setDialogIsVisible(false)}>Cancel</Button>

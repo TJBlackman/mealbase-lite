@@ -32,6 +32,7 @@ import { useMutation } from "react-query";
 import { networkRequest } from "@src/utils/network-request";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNotificationsContext } from "@src/contexts/notifications";
+import { useUserContext } from "@src/contexts/user";
 
 /**
  * Get page data on the server before the page is rendered
@@ -91,8 +92,10 @@ type Props = {
 };
 
 export default function MealPlanDetailsPage(props: Props) {
+  const userContext = useUserContext();
   const refreshSSPHook = useRefreshServerSideProps({ data: props.mealplan });
 
+  const isOWner = props.mealplan?.owner.email === userContext.email;
   return (
     <>
       <Typography variant="h5" component="h1" paragraph color="primary">
@@ -116,15 +119,17 @@ export default function MealPlanDetailsPage(props: Props) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {props.mealplan.recipes.map((item) => (
-                  <RecipeTableRow
-                    key={item.recipe._id}
-                    recipe={item.recipe}
-                    isCooked={item.isCooked}
-                    mealplanId={props.mealplan!._id}
-                    refreshSSP={refreshSSPHook.refreshSSP}
-                  />
-                ))}
+                {props.mealplan.recipes.map((item) => {
+                  return (
+                    <RecipeTableRow
+                      key={item.recipe._id}
+                      recipe={item.recipe}
+                      isCooked={item.isCooked}
+                      mealplanId={props.mealplan!._id}
+                      refreshSSP={refreshSSPHook.refreshSSP}
+                    />
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -342,7 +347,6 @@ function MemberRow(props: {
     {
       onSuccess: () => {
         props.refreshSSP();
-
         notificationContext.new({
           title: "Success",
           severity: "success",

@@ -54,7 +54,9 @@ export function NotificationsContextProvider(props: PropsWithChildren<{}>) {
 
   // remove notification by it's ID
   function removeNotification(id: Notification["id"]) {
-    setNotifications(notifications.filter((n) => n.id !== id));
+    setNotifications((_notifications) =>
+      _notifications.filter((n) => n.id !== id)
+    );
   }
 
   // set the value of the context
