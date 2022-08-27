@@ -19,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
 import Link from 'next/link';
+import { UserModel } from '@src/db/users';
 
 // get server side data
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -37,28 +38,26 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // connect to db
     await mongoDbConnection();
 
-    // get mealplans this user owns
-    const mealplans = await MealPlansModel.find({ owner: user._id })
-      .sort({
-        createdAt: -1,
-      })
-      .lean();
-    const count = await MealPlansModel.count({ owner: user._id });
-
     // get meal plans this user is a member of
-    const memberMealplans = await MealPlansModel.find({
-      'members.member': user._id,
-    }).lean();
-    const memberMealplansCount = await MealPlansModel.find({
-      'members.member': user._id,
+    const mealplans = await MealPlansModel.find({
+      $or: [{ owner: user._id }, { 'members.member': user._id }],
+    })
+      .populate({
+        path: 'owner',
+        select: { email: 1 },
+        model: UserModel,
+      })
+      .sort({ createdAt: -1 })
+      .limit(25)
+      .lean();
+    const count = await MealPlansModel.find({
+      $or: [{ owner: user._id }, { 'members.member': user._id }],
     }).count();
 
     return {
       props: {
         mealplans: JSON.parse(JSON.stringify(mealplans)),
         count,
-        memberMealplans: JSON.parse(JSON.stringify(memberMealplans)),
-        memberMealplansCount,
       },
     };
   } catch (err) {
@@ -74,66 +73,50 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 type Props = {
   mealplans: MealPlan & { _id: string }[];
   count: number;
-  memberMealplans: MealPlan & { _id: string }[];
-  memberMealplansCount: number;
   error?: string;
 };
+
+/**
+ * Define table columns
+ */
+const columns: GridColDef[] = [
+  {
+    field: '_id',
+    headerName: '_id',
+    width: 230,
+  },
+  {
+    field: 'title',
+    headerName: 'Title',
+    minWidth: 250,
+    flex: 1,
+    renderCell: (props) => {
+      return (
+        <Link href={`/app/meal-plans/${props.row._id}`}>
+          <MuiLink sx={{ cursor: 'pointer' }}>{props.value}</MuiLink>
+        </Link>
+      );
+    },
+  },
+  {
+    field: 'recipes',
+    headerName: 'Recipes',
+    width: 100,
+    valueGetter: (data) => data.value.length,
+  },
+  {
+    field: 'createdAt',
+    headerName: 'Created',
+    width: 180,
+    renderCell: (data) => {
+      return new Date(data.value).toLocaleString();
+    },
+  },
+];
 
 export default function MealPlansPage(props: Props) {
   const [isVisible, setIsVisible] = useState(false);
   const { refreshSSP, isLoading } = useRefreshServerSideProps({ data: props });
-
-  /**
-   * Define table columns
-   */
-  const columns: GridColDef[] = [
-    {
-      field: '_id',
-      headerName: '_id',
-      width: 230,
-    },
-    {
-      field: 'title',
-      headerName: 'Title',
-      minWidth: 250,
-      flex: 1,
-      renderCell: (props) => {
-        return (
-          <Link href={`/app/meal-plans/${props.row._id}`}>
-            <MuiLink sx={{ cursor: 'pointer' }}>{props.value}</MuiLink>
-          </Link>
-        );
-      },
-    },
-    {
-      field: 'recipes',
-      headerName: 'Recipes',
-      width: 100,
-      valueGetter: (data) => data.value.length,
-    },
-    {
-      field: 'createdAt',
-      headerName: 'Created',
-      width: 180,
-      renderCell: (data) => {
-        return new Date(data.value).toLocaleString();
-      },
-    },
-    {
-      field: 'edit',
-      headerName: 'Edit',
-      width: 80,
-      renderCell: (value) => {
-        return (
-          <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Edit"
-            // onClick={() => setEditRecordId(value.row._id)}
-          />
-        );
-      },
-    },
-  ];
 
   return (
     <>
@@ -158,6 +141,7 @@ export default function MealPlansPage(props: Props) {
       {props.error && (
         <Typography color="error">Error: {props.error}</Typography>
       )}
+
       <Dialog open={isVisible} onClose={() => setIsVisible(false)}>
         <DialogTitle>Create a New Meal Plan</DialogTitle>
         <DialogContent>
@@ -169,6 +153,7 @@ export default function MealPlansPage(props: Props) {
           />
         </DialogContent>
       </Dialog>
+
       <DataGrid
         pageSize={100}
         columns={columns}
