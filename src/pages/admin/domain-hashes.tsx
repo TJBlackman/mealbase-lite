@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { DomainHashSelectorsModel } from '@src/db/domain-hash-selectors';
-import { DomainHashSelector } from '@src/types';
+import { DomainHashSelector } from '@src/db/domain-hash-selectors';
 import { GetServerSideProps } from 'next';
 import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';

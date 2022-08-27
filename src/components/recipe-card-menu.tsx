@@ -5,7 +5,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import LinkIcon from '@mui/icons-material/Link';
 import { Dialog, DialogContent, Menu, Typography } from '@mui/material';
-import { Recipe } from '@src/types';
+import { Recipe } from '@src/db/recipes';
 import { useUserContext } from '@src/contexts/user';
 import { copyTextToClipboard } from '@src/utils/copy-to-clipboard';
 import CheckIcon from '@mui/icons-material/Check';

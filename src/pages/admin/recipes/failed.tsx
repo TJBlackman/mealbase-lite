@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 import EditIcon from '@mui/icons-material/Edit';
-import { User } from '@src/types/index.d';
+import { User } from '@src/db/users';
 import { FailedRecipeModel } from '@src/db/failed-recipes';
 import {
   Dialog,

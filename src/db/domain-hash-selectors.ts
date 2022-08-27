@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const DomainHashSelectorsSchema = new mongoose.Schema<DomainHashSelector>({
   domain: {
@@ -8,7 +8,7 @@ const DomainHashSelectorsSchema = new mongoose.Schema<DomainHashSelector>({
   selector: {
     type: String,
     required: true,
-    default: "",
+    default: '',
   },
   isDynamic: {
     type: Boolean,
@@ -27,12 +27,12 @@ const DomainHashSelectorsSchema = new mongoose.Schema<DomainHashSelector>({
   },
 });
 
-const domainHashCollectionName = "DomainHashSelectors";
+const domainHashCollectionName = 'DomainHashSelectors';
 
-DomainHashSelectorsSchema.pre("save", function () {
+DomainHashSelectorsSchema.pre('save', function () {
   this.set({ updatedAt: new Date() });
 });
-DomainHashSelectorsSchema.pre("updateOne", function () {
+DomainHashSelectorsSchema.pre('updateOne', function () {
   this.set({ updatedAt: new Date() });
 });
 
@@ -44,7 +44,7 @@ export const DomainHashSelectorsModel =
     {}
   >) || mongoose.model(domainHashCollectionName, DomainHashSelectorsSchema);
 
-type DomainHashSelector = {
+export type DomainHashSelector = {
   domain: string;
   selector: string;
   isDynamic: boolean;

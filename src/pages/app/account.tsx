@@ -2,7 +2,7 @@ import { Container, Typography } from '@mui/material';
 import { UserModel } from '@src/db/users';
 import { ChangeEmailForm } from '@src/forms/users/change-email';
 import { ChangePasswordForm } from '@src/forms/users/change-password';
-import { User } from '@src/types';
+import { User } from '@src/db/users';
 import { getUserJWT } from '@src/validation/server-requests';
 import { GetServerSidePropsContext } from 'next';
 

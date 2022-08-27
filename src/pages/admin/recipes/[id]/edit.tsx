@@ -1,5 +1,5 @@
 import { RecipeModel } from '@src/db/recipes';
-import { Recipe } from '@src/types';
+import { Recipe } from '@src/db/recipes';
 import { GetServerSideProps } from 'next';
 import {
   Typography,

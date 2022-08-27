@@ -6,31 +6,31 @@ import {
   Toolbar,
   Button,
   CircularProgress,
-} from "@mui/material";
-import { Roles } from "@src/types";
-import { networkRequest } from "@src/utils/network-request";
-import { EmailSchema } from "@src/validation/schemas/users";
-import { FormEvent, useState } from "react";
-import { useMutation } from "react-query";
+} from '@mui/material';
+import { Roles } from '@src/db/users';
+import { networkRequest } from '@src/utils/network-request';
+import { EmailSchema } from '@src/validation/schemas/users';
+import { FormEvent, useState } from 'react';
+import { useMutation } from 'react-query';
 
 export default function RequestPwResetPage() {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const mutation = useMutation(
     (email: string) =>
       networkRequest<{ email: string; roles: Roles[] }>({
-        url: "/api/auth/reset-password/request",
-        method: "POST",
+        url: '/api/auth/reset-password/request',
+        method: 'POST',
         body: { email },
       }),
     {
       onSuccess: () => {
-        setSuccess("A Reset Password email has been sent to this account!");
+        setSuccess('A Reset Password email has been sent to this account!');
       },
       onError: (err) => {
-        let msg = "An unknown error occurred.";
+        let msg = 'An unknown error occurred.';
         if (err instanceof Error) {
           msg = err.message;
         }
@@ -41,8 +41,8 @@ export default function RequestPwResetPage() {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
     const validationResult = EmailSchema.validate(email);
     if (validationResult.error) {
       return setError(validationResult.error.message);
@@ -51,8 +51,8 @@ export default function RequestPwResetPage() {
   }
 
   function reset() {
-    setEmail("");
-    setError("");
+    setEmail('');
+    setError('');
   }
 
   return (
@@ -84,7 +84,7 @@ export default function RequestPwResetPage() {
             {mutation.isLoading ? (
               <CircularProgress size={20} color="primary" />
             ) : (
-              "Submit"
+              'Submit'
             )}
           </Button>
           <Button type="button" onClick={reset} disabled={mutation.isLoading}>

@@ -3,7 +3,7 @@ import { RecipeCard } from '@src/components/recipe-card';
 import { SearchAndPage } from '@src/components/search-and-pagination';
 import { RecipeLikesModel } from '@src/db/recipe-likes';
 import { RecipeModel } from '@src/db/recipes';
-import { Recipe } from '@src/types';
+import { Recipe } from '@src/db/recipes';
 import { getUserJWT } from '@src/validation/server-requests';
 import { GetServerSidePropsContext } from 'next';
 import { Pagination } from '@src/components/pagination';

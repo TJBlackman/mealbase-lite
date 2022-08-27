@@ -1,5 +1,5 @@
 import { GetServerSideProps } from 'next';
-import { User } from '@src/types/index.d';
+import { User } from '@src/db/users';
 import { RefreshTokenModel } from '@src/db/refresh-tokens';
 import { Toolbar, Typography, Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';

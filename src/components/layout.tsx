@@ -1,4 +1,4 @@
-import { Roles } from '@src/types';
+import { Roles } from '@src/db/users';
 import { useQuery } from 'react-query';
 import { useUserContext } from '@src/contexts/user';
 import { PropsWithChildren, useEffect, useState } from 'react';

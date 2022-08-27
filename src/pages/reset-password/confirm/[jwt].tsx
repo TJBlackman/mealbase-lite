@@ -6,38 +6,38 @@ import {
   Toolbar,
   Button,
   CircularProgress,
-} from "@mui/material";
-import { Roles } from "@src/types";
-import { networkRequest } from "@src/utils/network-request";
-import { EmailSchema } from "@src/validation/schemas/users";
-import { FormEvent, useState } from "react";
-import { useMutation } from "react-query";
+} from '@mui/material';
+import { Roles } from '@src/db/users';
+import { networkRequest } from '@src/utils/network-request';
+import { EmailSchema } from '@src/validation/schemas/users';
+import { FormEvent, useState } from 'react';
+import { useMutation } from 'react-query';
 
 export function getServerSideProps() {
   return { props: {} };
 }
 
 export default function ResetPwPage() {
-  const [password, setPassword] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPw, setConfirmPw] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const mutation = useMutation(
     (email: string) =>
       networkRequest<{ email: string; roles: Roles[] }>({
-        url: "/api/auth/reset-password/confirm",
-        method: "POST",
+        url: '/api/auth/reset-password/confirm',
+        method: 'POST',
         body: { email },
       }),
     {
       onSuccess: () => {
         setSuccess(
-          "Your password has been updated! You may now login using your new password."
+          'Your password has been updated! You may now login using your new password.'
         );
       },
       onError: (err) => {
-        let msg = "An unknown error occurred.";
+        let msg = 'An unknown error occurred.';
         if (err instanceof Error) {
           msg = err.message;
         }
@@ -48,8 +48,8 @@ export default function ResetPwPage() {
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
     const validationResult = EmailSchema.validate(password);
     if (validationResult.error) {
       return setError(validationResult.error.message);
@@ -58,8 +58,8 @@ export default function ResetPwPage() {
   }
 
   function reset() {
-    setPassword("");
-    setError("");
+    setPassword('');
+    setError('');
   }
 
   return (
@@ -100,7 +100,7 @@ export default function ResetPwPage() {
             {mutation.isLoading ? (
               <CircularProgress size={20} color="primary" />
             ) : (
-              "Submit"
+              'Submit'
             )}
           </Button>
           <Button type="button" onClick={reset} disabled={mutation.isLoading}>

@@ -17,7 +17,7 @@ import { networkRequest } from '@src/utils/network-request';
 import { addRecipeSchema } from '@src/validation/schemas/recipes';
 import Link from 'next/link';
 import { RecipeCard } from '@src/components/recipe-card';
-import { Recipe } from '@src/types';
+import { Recipe } from '@src/db/recipes';
 
 export default function AddRecipePage() {
   const userContext = useUserContext();

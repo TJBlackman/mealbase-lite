@@ -3,7 +3,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
-import { Recipe } from '@src/types';
+import { Recipe } from '@src/db/recipes';
 import { Link as MuiLink } from '@mui/material';
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
