@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 // defined schema for cloudinary image shape
 const CloudinaryImageSchema = new mongoose.Schema<CloudinaryImage>({
@@ -51,18 +51,21 @@ const PhotoRecipeSchema = new mongoose.Schema<PhotoRecipe>({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Users',
+    ref: "Users",
     required: true,
   },
 });
 
-export const SlideshowsModel =
-  (mongoose.models.Slideshows as mongoose.Model<
-    SlideshowDocument,
+export const PhotoRecipeCollectionName = "photo-recipes";
+
+export const PhotoRecipeModel =
+  (mongoose.models[PhotoRecipeCollectionName] as mongoose.Model<
+    PhotoRecipe,
     {},
     {},
     {}
-  >) || model<SlideshowDocument>('Slideshows', SlideshowSchema);
+  >) ||
+  mongoose.model<PhotoRecipe>("PhotoRecipeCollectionName", PhotoRecipeSchema);
 
 export interface CloudinaryImage {
   asset_id: string;
@@ -93,4 +96,6 @@ export interface PhotoRecipe {
   description?: string;
   owner: mongoose.Schema.Types.ObjectId;
   images: CloudinaryImage[];
+  createdAt: Date;
+  updatedAt: Date;
 }
