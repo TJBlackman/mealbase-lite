@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { InvitationCollectionName } from "./invites";
+import { usersCollectionName } from "./users";
 
 // defined schema for cloudinary image shape
 const CloudinaryImageSchema = new mongoose.Schema<CloudinaryImage>({
@@ -51,8 +53,24 @@ const PhotoRecipeSchema = new mongoose.Schema<PhotoRecipe>({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Users",
+    ref: usersCollectionName,
     required: true,
+  },
+  isPrivate: {
+    type: Boolean,
+    required: true,
+  },
+  members: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: usersCollectionName,
+    required: true,
+    default: () => [],
+  },
+  invitees: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: InvitationCollectionName,
+    required: true,
+    default: () => [],
   },
 });
 
@@ -65,7 +83,7 @@ export const PhotoRecipeModel =
     {},
     {}
   >) ||
-  mongoose.model<PhotoRecipe>("PhotoRecipeCollectionName", PhotoRecipeSchema);
+  mongoose.model<PhotoRecipe>(PhotoRecipeCollectionName, PhotoRecipeSchema);
 
 export interface CloudinaryImage {
   asset_id: string;
@@ -98,4 +116,7 @@ export interface PhotoRecipe {
   images: CloudinaryImage[];
   createdAt: Date;
   updatedAt: Date;
+  isPrivate: boolean;
+  members: mongoose.Schema.Types.ObjectId[];
+  invitees: mongoose.Schema.Types.ObjectId[];
 }
