@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { CloudinaryImage } from "@src/db/photo-recipes";
-import { useDropzone } from "react-dropzone";
+import React, { useState, useEffect } from 'react';
+import { CloudinaryImage } from '@src/db/photo-recipes';
+import { useDropzone } from 'react-dropzone';
 import {
   Box,
   Typography,
@@ -13,18 +13,49 @@ import {
   Toolbar,
   Button,
   Dialog,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { uploadToCloudinary } from "@src/utils/cloudinary/unsigned-upload";
-import { useMutation } from "react-query";
-import { networkRequest } from "@src/utils/network-request";
+  DialogTitle,
+  DialogContent,
+  ListItemText,
+  Collapse,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { uploadToCloudinary } from '@src/utils/cloudinary/unsigned-upload';
+import { useMutation } from 'react-query';
+import { networkRequest } from '@src/utils/network-request';
+import Joi from 'joi';
+
+const emailSchema = Joi.string()
+  .email({ tlds: { allow: false } })
+  .required();
 
 export function PhotoRecipeForm() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [isPrivate, setIsPrivate] = useState<"private" | "public">("public");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [isPrivate, setIsPrivate] = useState<'private' | 'public'>('public');
   const [images, setImages] = useState<(File | CloudinaryImage)[]>([]);
   const [deletedImages, setDeletedImages] = useState<string[]>([]); // images hosted on cloudinary, that need to be deleted
+  const [memberInput, setMemberInput] = useState('');
+  const [members, setMembers] = useState<{ email: string; _id: string }[]>([]);
+
+  // add member to the members list
+  function addMember() {
+    const _id = Math.floor(Math.random() * 1e15).toString();
+    const filteredMembers = members.filter(
+      (i) => i.email.toLowerCase() !== memberInput.toLowerCase()
+    );
+    setMembers([...filteredMembers, { email: memberInput, _id }]);
+    setMemberInput('');
+  }
+
+  // remove member by id
+  function removeMember(_id: string) {
+    const filteredMembers = members.filter((m) => m._id !== _id);
+    setMembers(filteredMembers);
+  }
 
   const mutation = useMutation(
     (payload: {
@@ -34,8 +65,8 @@ export function PhotoRecipeForm() {
       isPrivate: boolean;
     }) =>
       networkRequest({
-        url: "/api/photo-recipes",
-        method: "POST",
+        url: '/api/photo-recipes',
+        method: 'POST',
         body: payload,
       })
   );
@@ -118,10 +149,10 @@ export function PhotoRecipeForm() {
     onDrop: addLocalImages,
     multiple: true,
     accept: {
-      "image/jpeg": [".jpg", ".jpeg"],
-      "image/png": [".png"],
-      "image/heic": [".heic", ".heif"],
-      "image/webp": [".webp"],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/png': ['.png'],
+      'image/heic': ['.heic', '.heif'],
+      'image/webp': ['.webp'],
     },
   });
 
@@ -135,6 +166,10 @@ export function PhotoRecipeForm() {
       const images = await uploadCloudinaryImages();
     } catch (err) {}
   }
+
+  const validationResult = emailSchema.validate(memberInput);
+  console.log(validationResult.error);
+  const addMemberBtnIsDisabled = Boolean(validationResult.error);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -157,9 +192,44 @@ export function PhotoRecipeForm() {
         />
       </Box>
       <Box sx={{ mb: 2 }}>
+        <Box
+          {...getRootProps()}
+          sx={{
+            backgroundColor: 'rgba(0,0,0,0.05)',
+            p: 2,
+            mb: 2,
+          }}
+        >
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+              Drop the files here!
+            </Typography>
+          ) : (
+            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+              Drag-n-drop pictures here, or click to select files.
+            </Typography>
+          )}
+        </Box>
+        <Grid container spacing={1}>
+          {images.map((file) => {
+            const key = 'name' in file ? file.name : file.public_id;
+            return (
+              <Grid item key={key}>
+                <FileThumbnail
+                  file={file}
+                  onDelete={(filename) => deleteImage(filename)}
+                />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </Box>
+
+      <Box sx={{ mb: 2 }}>
         <RadioGroup
           value={isPrivate}
-          onChange={(e) => setIsPrivate(e.target.value as "private" | "public")}
+          onChange={(e) => setIsPrivate(e.target.value as 'private' | 'public')}
         >
           <FormControlLabel
             value="public"
@@ -173,40 +243,31 @@ export function PhotoRecipeForm() {
           />
         </RadioGroup>
       </Box>
-      <Box sx={{ mb: 2 }}>
-        <Box
-          {...getRootProps()}
-          sx={{
-            backgroundColor: "rgba(0,0,0,0.05)",
-            p: 2,
-            mb: 2,
-          }}
-        >
-          <input {...getInputProps()} />
-          {isDragActive ? (
-            <Typography variant="body2" sx={{ textAlign: "center" }}>
-              Drop the files here!
-            </Typography>
-          ) : (
-            <Typography variant="body2" sx={{ textAlign: "center" }}>
-              Drag-n-drop pictures here, or click to select files.
-            </Typography>
-          )}
+      <Collapse in={isPrivate === 'private'}>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body1">
+            This photo recipe is shared with {members.length} user
+            {members.length === 1 ? '' : 's'}.
+          </Typography>
+          <MembersTable members={members} onRemoveMember={removeMember} />
+          <Toolbar disableGutters>
+            <TextField
+              label="Email Address"
+              value={memberInput}
+              size="small"
+              onChange={(e) => setMemberInput(e.target.value)}
+              sx={{ mr: 2 }}
+            />
+            <Button
+              variant="contained"
+              onClick={addMember}
+              disabled={addMemberBtnIsDisabled}
+            >
+              Add
+            </Button>
+          </Toolbar>
         </Box>
-        <Grid container spacing={1}>
-          {images.map((file) => {
-            const key = "name" in file ? file.name : file.public_id;
-            return (
-              <Grid item key={key}>
-                <FileThumbnail
-                  file={file}
-                  onDelete={(filename) => deleteImage(filename)}
-                />
-              </Grid>
-            );
-          })}
-        </Grid>
-      </Box>
+      </Collapse>
       <Box>
         <Toolbar disableGutters>
           <Button variant="contained" type="submit">
@@ -219,9 +280,7 @@ export function PhotoRecipeForm() {
 }
 
 /**
- *
- * @param props
- * @returns
+ * Renders an image.
  */
 export function FileThumbnail(props: {
   file: File | CloudinaryImage;
@@ -229,7 +288,7 @@ export function FileThumbnail(props: {
   disabled?: boolean;
 }) {
   const [showPreview, setShowPreview] = useState(false);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState('');
 
   // on mount, set URL, or create ObjectUrl
   useEffect(() => {
@@ -251,16 +310,16 @@ export function FileThumbnail(props: {
 
   return (
     <>
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: 'relative' }}>
         {props.onDelete && !props.disabled && (
           <IconButton
             onClick={onDelete}
             sx={{
-              position: "absolute",
+              position: 'absolute',
               top: 0,
               left: 0,
               zIndex: 99,
-              color: "common.white",
+              color: 'common.white',
             }}
           >
             <CloseIcon />
@@ -271,10 +330,10 @@ export function FileThumbnail(props: {
           src={url}
           alt="User provided image"
           sx={{
-            display: "block",
-            width: "auto",
-            height: "200px",
-            cursor: "pointer",
+            display: 'block',
+            width: 'auto',
+            height: '200px',
+            cursor: 'pointer',
           }}
           onClick={() => setShowPreview(true)}
         />
@@ -286,21 +345,21 @@ export function FileThumbnail(props: {
           justifyContent="center"
           alignItems="center"
           sx={{
-            height: "100%",
-            position: "relative",
-            backgroundColor: "rgba(0,0,0,0.92)",
+            height: '100%',
+            position: 'relative',
+            backgroundColor: 'rgba(0,0,0,0.92)',
           }}
         >
-          <Grid item sx={{ maxHeight: "100%" }}>
+          <Grid item sx={{ maxHeight: '100%' }}>
             <Box
               component="img"
               src={url}
               alt="User provided image"
               sx={{
-                maxHeight: "100%",
-                maxWidth: "100%",
-                display: "block",
-                margin: "0 auto",
+                maxHeight: '100%',
+                maxWidth: '100%',
+                display: 'block',
+                margin: '0 auto',
               }}
             />
           </Grid>
@@ -308,16 +367,89 @@ export function FileThumbnail(props: {
             onClick={() => setShowPreview(false)}
             size="large"
             sx={{
-              position: "absolute",
+              position: 'absolute',
               bottom: 10,
-              left: "45%",
-              backgroundColor: "rgba(0,0,0,0.6)",
-              color: "common.white",
+              left: '45%',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              color: 'common.white',
             }}
           >
             <CloseIcon />
           </IconButton>
         </Grid>
+      </Dialog>
+    </>
+  );
+}
+
+/**
+ * Render a table of members of a PhotoMealplan
+ */
+function MembersTable(props: {
+  members: { _id: string; email: string }[];
+  onRemoveMember: (id) => void;
+}) {
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+  const [memberToDelete, setMemberToDelete] = useState<null | {
+    _id: string;
+    email: string;
+  }>(null);
+
+  function dismissModal() {
+    setModalIsVisible(false);
+    setTimeout(() => {
+      setMemberToDelete(null);
+    }, 250);
+  }
+
+  function showModalWithUserToDelete(m: { _id: string; email: string }) {
+    setMemberToDelete(m);
+    setModalIsVisible(true);
+  }
+
+  function deleteUser() {
+    props.onRemoveMember(memberToDelete?._id);
+    dismissModal();
+  }
+
+  return (
+    <>
+      <List>
+        {props.members.map((m) => (
+          <ListItem key={m._id} divider>
+            <ListItemText primary={m.email} />
+            <ListItemSecondaryAction>
+              <IconButton>
+                <DeleteIcon onClick={() => showModalWithUserToDelete(m)} />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
+      </List>
+
+      <Dialog open={modalIsVisible}>
+        <DialogTitle color="error">
+          Delete User from this Photo Recipe?
+        </DialogTitle>
+        <DialogContent>
+          <Typography paragraph>
+            Do you want to revoke {memberToDelete?.email}'s access to this photo
+            recipe?
+          </Typography>
+          <Toolbar sx={{ flexDirection: 'row-reverse' }} disableGutters>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={deleteUser}
+              sx={{ ml: 2 }}
+            >
+              Remove User
+            </Button>
+            <Button variant="contained" onClick={dismissModal} color="inherit">
+              Cancel
+            </Button>
+          </Toolbar>
+        </DialogContent>
       </Dialog>
     </>
   );
