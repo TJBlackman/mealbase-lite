@@ -23,7 +23,6 @@ const CloudinaryImageSchema = new mongoose.Schema<CloudinaryImage>({
   secure_url: String,
   folder: String,
   access_mode: String,
-  existing: Boolean,
   original_filename: String,
 });
 
@@ -52,7 +51,7 @@ const PhotoRecipeSchema = new mongoose.Schema<PhotoRecipe>({
     default: () => Date.now(),
   },
   owner: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: usersCollectionName,
     required: true,
   },
@@ -61,13 +60,13 @@ const PhotoRecipeSchema = new mongoose.Schema<PhotoRecipe>({
     required: true,
   },
   members: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: [mongoose.Types.ObjectId],
     ref: usersCollectionName,
     required: true,
     default: () => [],
   },
   invitees: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: [mongoose.Types.ObjectId],
     ref: InvitationCollectionName,
     required: true,
     default: () => [],
@@ -105,7 +104,6 @@ export interface CloudinaryImage {
   secure_url: string;
   folder: string;
   access_mode: string;
-  existing: boolean;
   original_filename: string;
 }
 
