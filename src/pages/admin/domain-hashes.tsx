@@ -4,21 +4,21 @@ import {
   DialogTitle,
   Typography,
   DialogContent,
-} from '@mui/material';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { DomainHashSelectorsModel } from '@src/db/domain-hash-selectors';
-import { DomainHashSelector } from '@src/db/domain-hash-selectors';
-import { GetServerSideProps } from 'next';
-import EditIcon from '@mui/icons-material/Edit';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { EditDomainHashForm } from '@src/forms/recipes/edit-domain-hash';
+} from "@mui/material";
+import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
+import { DomainHashSelectorsModel } from "@src/db/domain-hash-selectors";
+import { DomainHashSelector } from "@src/db/domain-hash-selectors";
+import { GetServerSideProps } from "next";
+import EditIcon from "@mui/icons-material/Edit";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { EditDomainHashForm } from "@src/forms/recipes/edit-domain-hash";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const result = {
     props: {
       records: [],
-      error: '',
+      error: "",
     },
   };
 
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const records = await DomainHashSelectorsModel.find({}).lean();
     result.props.records = JSON.parse(JSON.stringify(records));
   } catch (err) {
-    let msg = 'An unknown error has occurred.';
+    let msg = "An unknown error has occurred.";
     if (err instanceof Error) {
       msg = err.message;
     }
@@ -59,27 +59,27 @@ export default function DomainHashesPage(props: Props) {
    */
   const columns: GridColDef[] = [
     {
-      field: '_id',
-      headerName: '_id',
+      field: "_id",
+      headerName: "_id",
       width: 230,
       hide: true,
     },
     {
-      field: 'domain',
-      headerName: 'Domain',
+      field: "domain",
+      headerName: "Domain",
       renderCell: (value) => {
         return value.row.domain;
       },
       minWidth: 200,
     },
     {
-      field: 'selector',
-      headerName: 'Selector',
+      field: "selector",
+      headerName: "Selector",
       flex: 1,
       renderCell: (value) => {
         return (
           value.row.selector || (
-            <Typography component="span" sx={{ fontStyle: 'italic' }}>
+            <Typography component="span" sx={{ fontStyle: "italic" }}>
               None
             </Typography>
           )
@@ -87,29 +87,32 @@ export default function DomainHashesPage(props: Props) {
       },
     },
     {
-      field: 'isDynamic',
-      headerName: 'Dynamic',
+      field: "isDynamic",
+      headerName: "Dynamic",
       renderCell: (value) => {
-        return value.row.isDynamic ? 'true' : 'false';
+        return value.row.isDynamic ? "true" : "false";
       },
     },
     {
-      field: 'updatedAt',
-      headerName: 'Updated At',
+      field: "updatedAt",
+      headerName: "Updated At",
       minWidth: 180,
       renderCell: (value) => {
         return value.row.updatedAt
           ? new Date(value.row.updatedAt).toLocaleString()
-          : 'N/A';
+          : "N/A";
       },
     },
     {
-      field: 'edit',
-      headerName: 'Edit',
+      field: "edit",
+      headerName: "Edit",
       width: 100,
       renderCell: (value) => {
         return (
           <GridActionsCellItem
+            nonce={value.row._id}
+            onResize={() => void 0}
+            onResizeCapture={() => void 0}
             icon={<EditIcon />}
             label="Edit"
             onClick={() => setRecordId(value.row._id)}
@@ -138,7 +141,7 @@ export default function DomainHashesPage(props: Props) {
         rowsPerPageOptions={[5]}
         disableSelectionOnClick
         getRowId={(data) => data._id}
-        sx={{ height: '65vh', overflowX: 'scroll' }}
+        sx={{ height: "65vh", overflowX: "scroll" }}
       />
       <Dialog
         fullWidth
@@ -149,7 +152,7 @@ export default function DomainHashesPage(props: Props) {
         <DialogTitle>Edit Domain Hash</DialogTitle>
         <DialogContent>
           <EditDomainHashForm
-            domainHashId={recordId || ''}
+            domainHashId={recordId || ""}
             onSuccess={refreshPage}
           />
         </DialogContent>

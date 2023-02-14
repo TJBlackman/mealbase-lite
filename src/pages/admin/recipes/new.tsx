@@ -25,12 +25,18 @@ export default function AdminCreateRecipe() {
   const [siteName, setSiteName] = useState("");
 
   // API mutation
-  const mutation = useMutation((payload: Recipe) =>
-    networkRequest({
-      url: `/api/admin/recipes`,
-      method: "POST",
-      body: payload,
-    })
+  const mutation = useMutation(
+    (
+      payload: Pick<
+        Recipe,
+        "title" | "description" | "image" | "url" | "hash" | "siteName"
+      >
+    ) =>
+      networkRequest({
+        url: `/api/admin/recipes`,
+        method: "POST",
+        body: payload,
+      })
   );
 
   // handle form submit
@@ -164,6 +170,7 @@ export default function AdminCreateRecipe() {
               createdAt: new Date(),
               updatedAt: new Date(),
               likes: 0,
+              // @ts-ignore
               addedByUser: "",
             }}
             isPreview
