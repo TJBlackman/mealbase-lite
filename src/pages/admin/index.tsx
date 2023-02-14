@@ -16,9 +16,17 @@ export default function Page() {
         Select an Action
       </Typography>
       <List sx={{ maxWidth: "sm" }}>
-        <Link href="/admin/users" passHref>
+        <Link href="/admin/recipes/new" passHref>
           <ListItem button divider>
-            <ListItemText primary="Users" />
+            <ListItemText primary="Add Recipe" />
+            <ListItemSecondaryAction>
+              <ChevronRightIcon />
+            </ListItemSecondaryAction>
+          </ListItem>
+        </Link>
+        <Link href="/admin/domain-hashes" passHref>
+          <ListItem button divider>
+            <ListItemText primary="Domain Hashes" />
             <ListItemSecondaryAction>
               <ChevronRightIcon />
             </ListItemSecondaryAction>
@@ -40,9 +48,9 @@ export default function Page() {
             </ListItemSecondaryAction>
           </ListItem>
         </Link>
-        <Link href="/admin/domain-hashes" passHref>
+        <Link href="/admin/users" passHref>
           <ListItem button divider>
-            <ListItemText primary="Domain Hashes" />
+            <ListItemText primary="Users" />
             <ListItemSecondaryAction>
               <ChevronRightIcon />
             </ListItemSecondaryAction>

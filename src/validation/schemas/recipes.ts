@@ -20,3 +20,13 @@ export const editRecipeSchema = Joi.object({
   deleted: Joi.boolean().required(),
   _id: Joi.string().required(),
 });
+
+// req.body for POST /admin/recipes/new
+export const AddRecipeAsAdminSchema = Joi.object({
+  title: Joi.string().required(),
+  description: Joi.string().required(),
+  image: Joi.string().uri().required(),
+  url: Joi.string().uri().required(),
+  hash: Joi.string().optional(),
+  siteName: Joi.string().required(),
+});
