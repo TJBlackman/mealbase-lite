@@ -20,10 +20,10 @@
     "joi": "^17.6.0",
     "jose": "^4.11.4",
     "mongoose": "^6.5.1",
-    "next": "12.1.5",
+    "next": "^14.2.3",
     "playwright": "^1.21.1",
-    "react": "18.1.0",
-    "react-dom": "18.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-query": "^3.39.3"
   },

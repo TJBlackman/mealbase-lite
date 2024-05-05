@@ -1,19 +1,19 @@
-import { GetServerSideProps } from 'next';
-import { User } from '@src/db/users';
-import { RefreshTokenModel } from '@src/db/refresh-tokens';
-import { Toolbar, Typography, Button } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { GetServerSideProps } from "next";
+import { User } from "@src/db/users";
+import { RefreshTokenModel } from "@src/db/refresh-tokens";
+import { Toolbar, Typography, Button } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const tokens = await RefreshTokenModel.find({})
-      .populate('userId', 'email _id')
+      .populate("userId", "email _id")
       .sort({ userId: 1 })
       .lean();
 
     return { props: { tokens: JSON.parse(JSON.stringify(tokens)) } };
   } catch (err) {
-    let msg = 'An unknown error has occurred.';
+    let msg = "An unknown error has occurred.";
     if (err instanceof Error) {
       msg = err.message;
     }
@@ -31,13 +31,13 @@ const currentTimestamp = Date.now();
  */
 const columns: GridColDef[] = [
   {
-    field: '_id',
-    headerName: '_id',
+    field: "_id",
+    headerName: "_id",
     width: 230,
   },
   {
-    field: 'email',
-    headerName: 'Email',
+    field: "email",
+    headerName: "Email",
     minWidth: 250,
     flex: 1,
     renderCell: (value) => {
@@ -45,8 +45,8 @@ const columns: GridColDef[] = [
     },
   },
   {
-    field: 'createdAt',
-    headerName: 'Age',
+    field: "createdAt",
+    headerName: "Age",
     width: 180,
     renderCell: (value) => {
       const tokenDate = new Date(value.row.createdAt).getTime();
@@ -75,11 +75,11 @@ export default function AdminTokensPage(props: Props) {
   return (
     <>
       <Typography>Refresh Tokens</Typography>
-      <Toolbar sx={{ justifyContent: 'space-between' }} disableGutters>
+      <Toolbar sx={{ justifyContent: "space-between" }} disableGutters>
         <Typography variant="body2">{props.tokens.length} Records</Typography>
         <Button
           variant="outlined"
-          onClick={() => alert('TODO: Complete this feature')}
+          onClick={() => alert("TODO: Complete this feature")}
         >
           Delete Old Tokens
         </Button>
@@ -88,10 +88,10 @@ export default function AdminTokensPage(props: Props) {
         rows={props.tokens}
         columns={columns}
         pageSize={100}
-        rowsPerPageOptions={[5]}
+        rowsPerPageOptions={[5, 25, 100]}
         disableSelectionOnClick
         getRowId={(data) => data._id}
-        sx={{ height: '65vh', overflowX: 'scroll' }}
+        sx={{ height: "65vh", overflowX: "scroll" }}
       />
     </>
   );

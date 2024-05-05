@@ -1,5 +1,4 @@
 import { getUserJWT } from "@src/validation/server-requests";
-import { NextApiHandler } from "next";
 import { PhotoRecipeModel } from "@src/db/photo-recipes";
 import { UserModel } from "@src/db/users";
 import { InvitationModel } from "@src/db/invites";
@@ -24,7 +23,7 @@ const bodyValidation = Joi.object({
     .optional(),
 });
 
-const postPhotoRecipe: NextApiHandler = async (req, res) => {
+export default async function (req, res) {
   try {
     // require POST request
     if (req.method !== "POST") {
@@ -104,14 +103,4 @@ const postPhotoRecipe: NextApiHandler = async (req, res) => {
     }
     return res.status(500).send(msg);
   }
-};
-
-/**
- * The request handler will call either the POST or GET method
- */
-export default async (req, res) => {
-  if (req.method === "POST") {
-    return postPhotoRecipe(req, res);
-  }
-  return res.status(404).send("Not found.");
-};
+}

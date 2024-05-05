@@ -8,17 +8,17 @@ import {
   LinearProgress,
   Link as MuiLink,
   Grid,
-} from '@mui/material';
-import { MealPlansModel, MealPlan } from '@src/db/meal-plans';
-import { useState } from 'react';
-import { CreateMealPlanForm } from '@src/forms/meal-plans/create';
-import { mongoDbConnection } from '@src/db/connection';
-import { getUserJWT } from '@src/validation/server-requests';
-import { GetServerSideProps } from 'next';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
-import Link from 'next/link';
-import { UserModel } from '@src/db/users';
+} from "@mui/material";
+import { MealPlansModel, MealPlan } from "@src/db/meal-plans";
+import { useState } from "react";
+import { CreateMealPlanForm } from "@src/forms/meal-plans/create";
+import { mongoDbConnection } from "@src/db/connection";
+import { getUserJWT } from "@src/validation/server-requests";
+import { GetServerSideProps } from "next";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useRefreshServerSideProps } from "@src/hooks/refresh-serverside-props";
+import Link from "next/link";
+import { UserModel } from "@src/db/users";
 
 // get server side data
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (!user) {
       return {
         redirect: {
-          destination: '/login',
+          destination: "/login",
           permanent: false,
         },
       };
@@ -39,10 +39,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     // get meal plans this user is a member of
     const mealplans = await MealPlansModel.find({
-      $or: [{ owner: user._id }, { 'members.member': user._id }],
+      $or: [{ owner: user._id }, { "members.member": user._id }],
     })
       .populate({
-        path: 'owner',
+        path: "owner",
         select: { email: 1 },
         model: UserModel,
       })
@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       .limit(25)
       .lean();
     const count = await MealPlansModel.find({
-      $or: [{ owner: user._id }, { 'members.member': user._id }],
+      $or: [{ owner: user._id }, { "members.member": user._id }],
     }).count();
 
     return {
@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   } catch (err) {
     console.log(err);
-    let msg = 'An unknown error occurred.';
+    let msg = "An unknown error occurred.";
     if (err instanceof Error) {
       msg = err.message;
     }
@@ -80,32 +80,36 @@ type Props = {
  */
 const columns: GridColDef[] = [
   {
-    field: '_id',
-    headerName: '_id',
+    field: "_id",
+    headerName: "_id",
     width: 230,
   },
   {
-    field: 'title',
-    headerName: 'Title',
+    field: "title",
+    headerName: "Title",
     minWidth: 250,
     flex: 1,
     renderCell: (props) => {
       return (
-        <Link href={`/app/meal-plans/${props.row._id}`}>
-          <MuiLink sx={{ cursor: 'pointer' }}>{props.value}</MuiLink>
-        </Link>
+        <MuiLink
+          sx={{ cursor: "pointer" }}
+          component={Link}
+          href={`/app/meal-plans/${props.row._id}`}
+        >
+          {props.value}
+        </MuiLink>
       );
     },
   },
   {
-    field: 'recipes',
-    headerName: 'Recipes',
+    field: "recipes",
+    headerName: "Recipes",
     width: 100,
     valueGetter: (data) => data.value.length,
   },
   {
-    field: 'createdAt',
-    headerName: 'Created',
+    field: "createdAt",
+    headerName: "Created",
     width: 180,
     renderCell: (data) => {
       return new Date(data.value).toLocaleString();
@@ -124,7 +128,7 @@ export default function MealPlansPage(props: Props) {
           <Typography variant="h5" component="h1">
             Meal Plans
           </Typography>
-          <Typography sx={{ maxWidth: 'md' }}>
+          <Typography sx={{ maxWidth: "md" }}>
             A meal plan is a small collection of the recipes to help you plan
             what meals you want to cook in the near future. Use this page to
             create and manage all your Meal plans!
@@ -158,7 +162,7 @@ export default function MealPlansPage(props: Props) {
         columns={columns}
         loading={isLoading}
         rows={props.mealplans}
-        sx={{ height: '65vh' }}
+        sx={{ height: "65vh" }}
         disableSelectionOnClick
         rowsPerPageOptions={[100]}
         getRowId={(data) => data._id}

@@ -32,26 +32,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // connect to db
     await mongoDbConnection();
 
-    // get meal plans this user is a member of
+    // find users photo recipes, or photo recipes they're a member of
     const photoRecipes = await PhotoRecipeModel.find({
-      owner: user._id,
+      $or: [{ owner: user._id }, { members: user._id }],
     })
       .populate({
         path: "owner",
-        select: { email: 1 },
+        select: "email",
         model: UserModel,
       })
-      .sort({ createdAt: -1 })
-      .limit(25)
+      .populate({
+        path: "members",
+        select: "email",
+        model: UserModel,
+      })
       .lean();
-    const count = await PhotoRecipeModel.find({
-      owner: user._id,
-    }).count();
 
     return {
       props: {
         photoRecipes: JSON.parse(JSON.stringify(photoRecipes)),
-        count,
       },
     };
   } catch (err) {
@@ -66,11 +65,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 type Props = {
   photoRecipes: PhotoRecipe & { _id: string }[];
-  count: number;
   error?: string;
 };
 
 export default function MealPlansPage(props: Props) {
+  console.log(props);
   const [isVisible, setIsVisible] = useState(false);
   const { refreshSSP, isLoading } = useRefreshServerSideProps({ data: props });
 
@@ -97,26 +96,6 @@ export default function MealPlansPage(props: Props) {
       {props.error && (
         <Typography color="error">Error: {props.error}</Typography>
       )}
-
-      <DataGrid
-        pageSize={100}
-        columns={columns}
-        loading={isLoading}
-        rows={props.mealplans}
-        sx={{ height: "65vh" }}
-        disableSelectionOnClick
-        rowsPerPageOptions={[100]}
-        getRowId={(data) => data._id}
-        columnVisibilityModel={{ _id: false }}
-        components={{
-          NoRowsOverlay: () => (
-            <Stack height="100%" alignItems="center" justifyContent="center">
-              No meal plans created yet!
-            </Stack>
-          ),
-          LoadingOverlay: LinearProgress,
-        }}
-      />
     </>
   );
 }

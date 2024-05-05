@@ -72,7 +72,7 @@ export default function AdminUsersPage(props: Props) {
         rows={props.users}
         columns={columns}
         pageSize={100}
-        rowsPerPageOptions={[5]}
+        rowsPerPageOptions={[5, 25, 100]}
         disableSelectionOnClick
         getRowId={(data) => data._id}
         sx={{ height: "65vh" }}

@@ -38,3 +38,5 @@ yarn-error.log*
 #misc 
 notes/
 c
+db_dump/
+mongodb/

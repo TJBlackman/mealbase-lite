@@ -2,6 +2,10 @@
 
 A Project for managing your favorite recipes around the web.
 
-TODO:
+### Move DB
 
-- Adding and deleteing recipes from mealplans doesn't include any logic to check that you're the owner of that mealplan. In theory, any logged in user could send a request with any valid mealplan id and recipe id. :(
+Dump DB to directory
+`mongodump --db <DB_NAME> --out <OUT_DIRECTORY>`
+
+Restore
+`mongorestore -d <DB_NAME> <directory>`

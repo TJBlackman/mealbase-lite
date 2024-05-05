@@ -1,13 +1,13 @@
-import { Grid, Box, Typography } from '@mui/material';
-import { RecipeCard } from '@src/components/recipe-card';
-import { SearchAndPage } from '@src/components/search-and-pagination';
-import { RecipeLikesModel } from '@src/db/recipe-likes';
-import { RecipeModel } from '@src/db/recipes';
-import { Recipe } from '@src/db/recipes';
-import { getUserJWT } from '@src/validation/server-requests';
-import { GetServerSidePropsContext } from 'next';
-import { Pagination } from '@src/components/pagination';
-import { mongoDbConnection } from '@src/db/connection';
+import { Grid, Box, Typography } from "@mui/material";
+import { RecipeCard } from "@src/components/recipe-card";
+import { SearchAndPage } from "@src/components/search-and-pagination";
+import { RecipeLikesModel } from "@src/db/recipe-likes";
+import { RecipeModel } from "@src/db/recipes";
+import { Recipe } from "@src/db/recipes";
+import { getUserJWT } from "@src/validation/server-requests";
+import { GetServerSidePropsContext } from "next";
+import { Pagination } from "@src/components/pagination";
+import { mongoDbConnection } from "@src/db/connection";
 
 /** get server side data and SSR page */
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -25,7 +25,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     // And, they are requesting their liked recipes, get them all
     if (user && context.query.likedRecipes) {
       const result = await RecipeLikesModel.find({ userId: user._id })
-        .select('recipeId')
+        .select("recipeId")
         .lean();
 
       result.forEach((r) => likedRecipes.push(r.recipeId.toString()));
@@ -33,7 +33,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     // calculate limit, or use default
     const limit = (() => {
-      let _limit = '25';
+      let _limit = "25";
       const { limit } = context.query;
       if (limit) {
         if (Array.isArray(limit)) {
@@ -60,7 +60,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         deleted: false,
       };
       if (context.query.search) {
-        result.title = { $regex: context.query.search, $options: 'i' };
+        result.title = { $regex: context.query.search, $options: "i" };
       }
       if (context.query.likedRecipes) {
         result._id = { $in: likedRecipes };
@@ -70,7 +70,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     // get recipes from DB
     const recipes = await RecipeModel.find(filter)
-      .select('-addedByUser -deleted -__v')
+      .select("-addedByUser -deleted -__v")
       .limit(limit)
       .skip(skip)
       .sort({ createdAt: -1 })
@@ -83,7 +83,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       const likedRecipes = await RecipeLikesModel.find({
         userId: user._id,
         recipeId: { $in: recipeIds },
-      }).select('recipeId');
+      }).select("recipeId");
 
       likedRecipes.forEach((liked) => {
         const _likedRecipe = recipes.find(
@@ -107,7 +107,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   } catch (error) {
     console.log(error);
-    let msg = 'An unknown error occurred.';
+    let msg = "An unknown error occurred.";
     if (error instanceof Error) {
       msg = error.message;
     }
@@ -142,7 +142,7 @@ export default function BrowsePage(props: Props) {
         <Grid
           container
           spacing={2}
-          justifyContent={{ xs: 'center', sm: 'space-around' }}
+          justifyContent={{ xs: "center", sm: "space-around" }}
         >
           {props.recipes.map((r) => (
             <Grid item key={r._id} sx={{ mb: { sx: 2, sm: 4 } }}>

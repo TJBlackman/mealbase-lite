@@ -138,7 +138,7 @@ export default function DomainHashesPage(props: Props) {
         rows={props.records}
         columns={columns}
         pageSize={100}
-        rowsPerPageOptions={[5]}
+        rowsPerPageOptions={[5, 25, 100]}
         disableSelectionOnClick
         getRowId={(data) => data._id}
         sx={{ height: "65vh", overflowX: "scroll" }}

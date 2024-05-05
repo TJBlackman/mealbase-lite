@@ -7,7 +7,7 @@ import { verifyJwt } from "@src/utils/jwt-helpers";
  * @returns UserJWT | null
  */
 export async function getUserJWT(
-  cookies: Record<string, string>
+  cookies: Partial<{ [key: string]: string }>
 ): Promise<UserJwt | null> {
   // validate request is from a logged in user
   const accessToken = cookies[process.env.ACCESS_TOKEN_COOKIE_NAME!];

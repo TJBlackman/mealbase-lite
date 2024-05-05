@@ -1,0 +1,9 @@
+name: mealbase-lite
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb:/data/db
+      - ./db_dump:/db_dump
