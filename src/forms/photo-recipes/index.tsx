@@ -458,8 +458,8 @@ function MembersTable(props: {
         </DialogTitle>
         <DialogContent>
           <Typography paragraph>
-            Do you want to revoke {memberToDelete?.email}'s access to this photo
-            recipe?
+            Do you want to revoke {memberToDelete?.email}&apos;s access to this
+            photo recipe?
           </Typography>
           <Toolbar sx={{ flexDirection: "row-reverse" }} disableGutters>
             <Button
