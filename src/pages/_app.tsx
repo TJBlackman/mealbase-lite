@@ -16,17 +16,17 @@ const queryClient = new QueryClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <UserContextProvider>
-      <NotificationsContextProvider>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <UserContextProvider>
+        <NotificationsContextProvider>
           <CssBaseline />
           <Layout>
             <Component {...pageProps} />
           </Layout>
           <NotificationRenderer />
-        </QueryClientProvider>
-      </NotificationsContextProvider>
-    </UserContextProvider>
+        </NotificationsContextProvider>
+      </UserContextProvider>
+    </QueryClientProvider>
   );
 }
 

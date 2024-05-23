@@ -6,7 +6,6 @@ https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/uti
 **/
 
 const MONGODB_URI = process.env.MONGO_DB_CONNECTION_STR;
-
 if (!MONGODB_URI) {
   throw new Error(
     "Please define the MONGODB_URI environment variable inside .env.development"
@@ -30,16 +29,13 @@ export async function mongoDbConnection() {
   }
 
   if (!cached.promise) {
-    const opts = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+    cached.promise = mongoose.connect(MONGODB_URI!, {
       bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-      return mongoose;
     });
   }
   cached.conn = await cached.promise;
+  console.log(`MongoDB connected: ${MONGODB_URI}`);
   return cached.conn;
 }
+
+mongoDbConnection();
