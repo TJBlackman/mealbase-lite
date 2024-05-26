@@ -26,5 +26,12 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // redirect home route to recipes
+  if (url.pathname === "/") {
+    const _url = request.nextUrl.clone();
+    _url.pathname = "/recipes";
+    return NextResponse.redirect(_url, 307);
+  }
+
   return response;
 }
