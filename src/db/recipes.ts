@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { usersCollectionName } from "./users";
+import { ingredientCollectionName } from "./ingredients";
+import { recipeNoteCollectionName } from "./recipe-note";
 
 const RecipeSchema = new mongoose.Schema<Recipe>({
   createdAt: {
@@ -20,18 +22,18 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
     type: String,
     required: true,
   },
-  image: {
-    type: String,
+  images: {
+    type: [String],
     required: true,
   },
   url: {
     type: String,
-    required: true,
+    required: false,
     unique: true,
   },
   siteName: {
     type: String,
-    required: true,
+    required: false,
   },
   addedByUser: {
     type: mongoose.Schema.Types.ObjectId,
@@ -52,6 +54,41 @@ const RecipeSchema = new mongoose.Schema<Recipe>({
     type: String,
     required: false,
     default: "",
+  },
+  ingredients: {
+    type: [
+      {
+        sectionTitle: String,
+        sectionIngredients: [
+          {
+            ingredient: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: ingredientCollectionName,
+            },
+            quantity: String,
+          },
+        ],
+      },
+    ],
+    required: false,
+  },
+  instructions: {
+    type: [
+      {
+        sectionTitle: String,
+        sectionInstructions: [String],
+      },
+    ],
+    required: false,
+  },
+  notes: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false,
+    ref: recipeNoteCollectionName,
+  },
+  type: {
+    type: String,
+    required: true,
   },
 });
 
@@ -74,11 +111,24 @@ export interface Recipe {
   updatedAt: Date;
   title: string;
   description: string;
-  image: string;
-  url: string;
-  siteName: string;
+  images: string[];
+  url?: string;
+  siteName?: string;
   likes: number;
   deleted: boolean;
   addedByUser: mongoose.Schema.Types.ObjectId;
   hash?: string;
+  ingredients?: {
+    sectionTitle: string;
+    sectionIngredients: {
+      ingredient: mongoose.Schema.Types.ObjectId;
+      quantity: string;
+    }[];
+  }[];
+  instructions?: {
+    sectionTitle: string;
+    sectionInstructions: string[];
+  }[];
+  notes?: mongoose.Schema.Types.ObjectId;
+  type: "url" | "image" | "full-recipe";
 }
