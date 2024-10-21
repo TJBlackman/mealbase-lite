@@ -2,7 +2,7 @@ import { UserModel } from "@src/db/users";
 import { RefreshTokenModel } from "@src/db/refresh-tokens";
 import { NextApiHandler } from "next";
 import { createJwt, verifyJwt } from "@src/utils/jwt-helpers";
-import cookie from "cookie";
+import { serialize } from "cookie";
 import { getFutureDate } from "@src/utils/get-expires-date";
 import { mongoDbConnection } from "@src/db/connection";
 
@@ -61,21 +61,17 @@ const handler: NextApiHandler = async (req, res) => {
 
     // set access token and refresh token as httpOnly cookies
     res.setHeader("Set-Cookie", [
-      cookie.serialize(process.env.ACCESS_TOKEN_COOKIE_NAME!, accessTokenJwt, {
+      serialize(process.env.ACCESS_TOKEN_COOKIE_NAME!, accessTokenJwt, {
         httpOnly: true,
         secure: true,
         path: "/",
       }),
-      cookie.serialize(
-        process.env.REFRESH_TOKEN_COOKIE_NAME!,
-        newRefreshTokenJwt,
-        {
-          expires: getFutureDate(process.env.REFRESH_TOKEN_COOKIE_EXPIRE_DAYS!),
-          httpOnly: true,
-          secure: true,
-          path: "/",
-        }
-      ),
+      serialize(process.env.REFRESH_TOKEN_COOKIE_NAME!, newRefreshTokenJwt, {
+        expires: getFutureDate(process.env.REFRESH_TOKEN_COOKIE_EXPIRE_DAYS!),
+        httpOnly: true,
+        secure: true,
+        path: "/",
+      }),
     ]);
 
     // send response

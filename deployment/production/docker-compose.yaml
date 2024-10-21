@@ -1,0 +1,67 @@
+version: "3.9"
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - /home/ec2-user/mealbase-lite/mongodb:/data/db
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=${MEALBASE_DB_USER}
+      - MONGODB_INITDB_ROOT_PASSWORD=${MEALBASE_DB_PASSWORD}
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      # SSL certificates
+      - /etc/letsencrypt/live:/etc/nginx/ssl:ro
+      - /etc/letsencrypt/archive:/etc/nginx/archive:ro
+      # map ngninx configuration files
+      - /home/ec2-user/mealbase-lite/production:/etc/nginx/conf.d
+      - /home/ec2-user/mealbase-lite/nginx/settings:/etc/nginx/nginx-settings
+      - /home/ec2-user/mealbase-lite/nginx/nginx.conf:/etc/nginx/nginx.conf
+      # static website files
+      - /home/ec2-user/mealbase-lite/static/:/var/www/static/
+      - /home/ec2-user/mealbase-lite/public/:/var/www/public/
+    depends_on:
+      - app
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
+  app:
+    image: 945603602159.dkr.ecr.us-east-2.amazonaws.com/mealbase-lite:latest
+    volumes:
+      - /home/ec2-user/mealbase-lite/production/.env:/app/.env
+    depends_on:
+      - mongodb
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://0.0.0.0:3000/api/echo || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 1
+      start_period: 3s
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        monitor: 10s
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s

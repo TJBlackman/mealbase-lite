@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import { RefreshTokenModel } from "@src/db/refresh-tokens";
-import cookie from "cookie";
 import { verifyJwt } from "@src/utils/jwt-helpers";
+import { serialize } from "cookie";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // delete refresh token record from db
@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   // set headers to remove cookies from browser
   context.res.setHeader("Set-Cookie", [
-    cookie.serialize(
+    serialize(
       process.env.ACCESS_TOKEN_COOKIE_NAME!,
       "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       {
@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         maxAge: 0,
       }
     ),
-    cookie.serialize(
+    serialize(
       process.env.REFRESH_TOKEN_COOKIE_NAME!,
       "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       {

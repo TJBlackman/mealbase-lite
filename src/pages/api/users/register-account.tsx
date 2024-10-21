@@ -1,4 +1,4 @@
-import cookie from "cookie";
+import { serialize } from "cookie";
 import { UserModel } from "@src/db/users";
 import { Roles } from "@src/db/users";
 import type { NextApiHandler } from "next";
@@ -67,21 +67,17 @@ const handler: NextApiHandler = async (req, res) => {
 
     // set access token and refresh token as httpOnly cookies
     res.setHeader("Set-Cookie", [
-      cookie.serialize(process.env.ACCESS_TOKEN_COOKIE_NAME!, accessTokenJwt, {
+      serialize(process.env.ACCESS_TOKEN_COOKIE_NAME!, accessTokenJwt, {
         httpOnly: true,
         secure: true,
         path: "/",
       }),
-      cookie.serialize(
-        process.env.REFRESH_TOKEN_COOKIE_NAME!,
-        refreshTokenJwt,
-        {
-          expires: getFutureDate(process.env.REFRESH_TOKEN_COOKIE_EXPIRE_DAYS!),
-          httpOnly: true,
-          secure: true,
-          path: "/",
-        }
-      ),
+      serialize(process.env.REFRESH_TOKEN_COOKIE_NAME!, refreshTokenJwt, {
+        expires: getFutureDate(process.env.REFRESH_TOKEN_COOKIE_EXPIRE_DAYS!),
+        httpOnly: true,
+        secure: true,
+        path: "/",
+      }),
     ]);
 
     // send response

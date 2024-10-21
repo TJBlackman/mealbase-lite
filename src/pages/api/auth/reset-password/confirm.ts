@@ -1,10 +1,7 @@
 import { UserModel } from "@src/db/users";
 import { PasswordResetModel } from "@src/db/password-resets";
-import { RefreshTokenModel } from "@src/db/refresh-tokens";
 import { NextApiHandler } from "next";
-import { createJwt, verifyJwt } from "@src/utils/jwt-helpers";
-import cookie from "cookie";
-import { getFutureDate } from "@src/utils/get-expires-date";
+import { verifyJwt } from "@src/utils/jwt-helpers";
 import { mongoDbConnection } from "@src/db/connection";
 import { resetPasswordConfirmSchema } from "@src/validation/schemas/users";
 import { createHash } from "@src/utils/hash-helpers";

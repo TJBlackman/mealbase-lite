@@ -28,6 +28,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env.*
+.env
 
 # vercel
 .vercel
@@ -42,3 +43,4 @@ db_dump/
 mongodb/
 *.tar
 *-lock.json
+deploy.sh

@@ -1,37 +1,24 @@
 # Commands
 # docker build -f Dockerfile -t mealbase-lite .
-
-# Stage 1
-# Install dependencies
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY ./package.json .
-RUN npm i
-
-# Stage 2
-# Build from source
-FROM deps AS builder
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY . .
-ENV NEXT_TELEMETRY_DISABLED 1
-RUN npm run build
+# docker tag mealbase-lite:latest 945603602159.dkr.ecr.us-east-2.amazonaws.com/mealbase-lite:latest
+# aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 945603602159.dkr.ecr.us-east-2.amazonaws.com
+# docker push 945603602159.dkr.ecr.us-east-2.amazonaws.com/mealbase-lite:latest
 
 # Stage 3
 # Run application
-FROM oven/bun:alpine
+FROM node:22-alpine
 WORKDIR /app
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-# COPY --from=builder /app/public ./public
+COPY ./public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY ./.next/standalone ./
+COPY ./.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-CMD ["bun","server.js"]
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+CMD ["node","server.js"]

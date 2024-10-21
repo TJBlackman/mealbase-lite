@@ -5,7 +5,7 @@ import { mongoDbConnection } from "@src/db/connection";
 import { compareHash } from "@src/utils/hash-helpers";
 import { RefreshTokenModel } from "@src/db/refresh-tokens";
 import { createJwt } from "@src/utils/jwt-helpers";
-import cookie from "cookie";
+import { serialize } from "cookie";
 import { getFutureDate } from "@src/utils/get-expires-date";
 
 const handler: NextApiHandler = async (req, res) => {
@@ -62,21 +62,17 @@ const handler: NextApiHandler = async (req, res) => {
 
     // set access token and refresh token as httpOnly cookies
     res.setHeader("Set-Cookie", [
-      cookie.serialize(process.env.ACCESS_TOKEN_COOKIE_NAME!, accessTokenJwt, {
+      serialize(process.env.ACCESS_TOKEN_COOKIE_NAME!, accessTokenJwt, {
         httpOnly: true,
         secure: true,
         path: "/",
       }),
-      cookie.serialize(
-        process.env.REFRESH_TOKEN_COOKIE_NAME!,
-        refreshTokenJwt,
-        {
-          expires: getFutureDate(process.env.REFRESH_TOKEN_COOKIE_EXPIRE_DAYS!),
-          httpOnly: true,
-          secure: true,
-          path: "/",
-        }
-      ),
+      serialize(process.env.REFRESH_TOKEN_COOKIE_NAME!, refreshTokenJwt, {
+        expires: getFutureDate(process.env.REFRESH_TOKEN_COOKIE_EXPIRE_DAYS!),
+        httpOnly: true,
+        secure: true,
+        path: "/",
+      }),
     ]);
 
     // update user.lastActiveDate
@@ -90,6 +86,7 @@ const handler: NextApiHandler = async (req, res) => {
       roles: user.roles,
     });
   } catch (err) {
+    console.log(err);
     let msg = "An unknown error occurred.";
     if (err instanceof Error) {
       msg = err.message;
