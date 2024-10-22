@@ -48,7 +48,7 @@ const handler: NextApiHandler = async (req, res) => {
       { lean: true }
     );
     if (existingRecipe) {
-      const { addedByUser, deleted, __v, ...rest } = existingRecipe;
+      const { addedByUser, deleted, ...rest } = existingRecipe;
       return res.json(rest);
     }
 

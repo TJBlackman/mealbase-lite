@@ -70,7 +70,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     // get recipes from DB
     const recipes = await RecipeModel.find(filter)
-      .select("-addedByUser -deleted -__v")
+      .select("-addedByUser -deleted")
       .limit(limit)
       .skip(skip)
       .sort({ createdAt: -1 })

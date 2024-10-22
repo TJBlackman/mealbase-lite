@@ -18,22 +18,22 @@ import {
   Alert,
   CircularProgress,
   IconButton,
-} from '@mui/material';
-import { GetServerSideProps } from 'next';
-import { MealPlansModel } from '@src/db/meal-plans';
-import { RecipeTableRow } from '@src/components/meal-plans/recipe-table-row';
-import { useRefreshServerSideProps } from '@src/hooks/refresh-serverside-props';
-import { FormEvent, useState } from 'react';
-import { MealPlanPermissions } from '@src/db/meal-plans';
-import { Recipe, RecipeModel } from '@src/db/recipes';
-import { UserModel } from '@src/db/users';
-import { InvitationModel } from '@src/db/invites';
-import { useMutation } from 'react-query';
-import { networkRequest } from '@src/utils/network-request';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useNotificationsContext } from '@src/contexts/notifications';
-import { useUserContext } from '@src/contexts/user';
-import { getUserJWT } from '@src/validation/server-requests';
+} from "@mui/material";
+import { GetServerSideProps } from "next";
+import { MealPlansModel } from "@src/db/meal-plans";
+import { RecipeTableRow } from "@src/components/meal-plans/recipe-table-row";
+import { useRefreshServerSideProps } from "@src/hooks/refresh-serverside-props";
+import { FormEvent, useState } from "react";
+import { MealPlanPermissions } from "@src/db/meal-plans";
+import { Recipe, RecipeModel } from "@src/db/recipes";
+import { UserModel } from "@src/db/users";
+import { InvitationModel } from "@src/db/invites";
+import { useMutation } from "react-query";
+import { networkRequest } from "@src/utils/network-request";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNotificationsContext } from "@src/contexts/notifications";
+import { useUserContext } from "@src/contexts/user";
+import { getUserJWT } from "@src/validation/server-requests";
 
 /**
  * Get page data on the server before the page is rendered
@@ -49,22 +49,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         context.params.id
       )
         .populate({
-          path: 'owner',
+          path: "owner",
           select: { email: 1 },
           model: UserModel,
         })
         .populate({
-          path: 'recipes.recipe',
+          path: "recipes.recipe",
           model: RecipeModel,
         })
         .populate({
-          path: 'members.member',
-          select: 'email',
+          path: "members.member",
+          select: "email",
           model: UserModel,
         })
         .populate({
-          path: 'invites.invitee',
-          select: 'email',
+          path: "invites.invitee",
+          select: "email",
           model: InvitationModel,
         })
         .lean()
@@ -79,19 +79,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           return {
             redirect: {
               permanent: false,
-              destination: '/login',
+              destination: "/login",
             },
           };
         }
+        // @ts-ignore - this works
         const isOwner = mealplan.owner.email === user.email;
         const isMember = mealplan.members.find(
+          // @ts-ignore - this works
           (m) => m.member.email === user.email
         );
         if (!isOwner && !isMember) {
           return {
             redirect: {
               permanent: false,
-              destination: '/app/meal-plans',
+              destination: "/app/meal-plans",
             },
           };
         }
@@ -101,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return { props };
   } catch (error) {
-    let msg = 'An unknown error occurred.';
+    let msg = "An unknown error occurred.";
     if (error instanceof Error) {
       msg = error.message;
     }
@@ -142,7 +144,7 @@ export default function MealPlanDetailsPage(props: Props) {
   return (
     <>
       <Typography variant="h5" component="h1" paragraph color="primary">
-        {props.mealplan?.title || 'Meal Plan Details'}
+        {props.mealplan?.title || "Meal Plan Details"}
       </Typography>
 
       {!props.mealplan && (
@@ -152,8 +154,8 @@ export default function MealPlanDetailsPage(props: Props) {
       {props.mealplan && (
         <>
           <Divider />
-          <TableContainer sx={{ maxWidth: '100vw' }}>
-            <Table sx={{ minWidth: '500px' }} size="small">
+          <TableContainer sx={{ maxWidth: "100vw" }}>
+            <Table sx={{ minWidth: "500px" }} size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Recipes</TableCell>
@@ -184,21 +186,21 @@ export default function MealPlanDetailsPage(props: Props) {
           <Typography variant="body2" paragraph>
             Add users to this meal plan.
           </Typography>
-          <TableContainer sx={{ maxWidth: '100vw' }}>
-            <Table sx={{ minWidth: '500px' }} size="small">
+          <TableContainer sx={{ maxWidth: "100vw" }}>
+            <Table sx={{ minWidth: "500px" }} size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Email Address</TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>
+                  <TableCell sx={{ textAlign: "center" }}>
                     Complete Recipes
                   </TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>
+                  <TableCell sx={{ textAlign: "center" }}>
                     Add/Remove Recipes
                   </TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>
+                  <TableCell sx={{ textAlign: "center" }}>
                     Add/Remove Members
                   </TableCell>
-                  <TableCell sx={{ textAlign: 'center' }}>
+                  <TableCell sx={{ textAlign: "center" }}>
                     Remove Member
                   </TableCell>
                 </TableRow>
@@ -282,14 +284,14 @@ function InviteMemberForm(props: {
   mealplanId: string;
   onSuccess: () => void;
 }) {
-  const [emailInput, setEmailInput] = useState('');
+  const [emailInput, setEmailInput] = useState("");
 
   // mutatin to add email address to mealplan
   const mutation = useMutation(
     (email: string) =>
       networkRequest({
         url: `/api/meal-plans/${props.mealplanId}/add-member`,
-        method: 'POST',
+        method: "POST",
         body: {
           email,
         },
@@ -298,7 +300,7 @@ function InviteMemberForm(props: {
       onSuccess: () => {
         setTimeout(() => {
           props.onSuccess?.();
-          setEmailInput('');
+          setEmailInput("");
           mutation.reset();
         }, 3000);
       },
@@ -334,7 +336,7 @@ function InviteMemberForm(props: {
       )}
       {mutation.isError && (
         <Alert severity="error">
-          {(mutation.error as Error).message || 'An unknown error occurred.'}
+          {(mutation.error as Error).message || "An unknown error occurred."}
         </Alert>
       )}
     </>
@@ -360,23 +362,23 @@ function MemberRow(props: {
     () =>
       networkRequest({
         url: `/api/meal-plans/${props.mealplanId}/remove-member/${props.member._id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     {
       onSuccess: () => {
         setShowModal(false);
         notificationContext.new({
-          title: 'Success',
-          severity: 'success',
-          message: 'User successfully removed from meal plan',
+          title: "Success",
+          severity: "success",
+          message: "User successfully removed from meal plan",
         });
         props.refreshSSP();
       },
       onError: (err) => {
         notificationContext.new({
-          title: 'Error',
-          severity: 'error',
-          message: (err as Error)?.message || 'An unknown error occurred',
+          title: "Error",
+          severity: "error",
+          message: (err as Error)?.message || "An unknown error occurred",
         });
       },
     }
@@ -387,7 +389,7 @@ function MemberRow(props: {
     (permissions: MealPlanPermissions[]) =>
       networkRequest({
         url: `/api/meal-plans/${props.mealplanId}/edit-member/${props.member._id}`,
-        method: 'PUT',
+        method: "PUT",
         body: {
           permissions,
         },
@@ -396,16 +398,16 @@ function MemberRow(props: {
       onSuccess: () => {
         props.refreshSSP();
         notificationContext.new({
-          title: 'Success',
-          severity: 'success',
-          message: 'Permissions successfully updated.',
+          title: "Success",
+          severity: "success",
+          message: "Permissions successfully updated.",
         });
       },
       onError: (err) => {
         notificationContext.new({
-          title: 'Error',
-          severity: 'error',
-          message: (err as Error)?.message || 'An unknown error occurred',
+          title: "Error",
+          severity: "error",
+          message: (err as Error)?.message || "An unknown error occurred",
         });
       },
     }
@@ -433,11 +435,11 @@ function MemberRow(props: {
         <TableCell>
           <ListItemText
             primary={props.member.email}
-            secondary={props.isInvitee ? 'Invite Pending' : ''}
+            secondary={props.isInvitee ? "Invite Pending" : ""}
           />
         </TableCell>
         {Object.values(MealPlanPermissions).map((value) => (
-          <TableCell key={value} sx={{ textAlign: 'center' }}>
+          <TableCell key={value} sx={{ textAlign: "center" }}>
             <Checkbox
               disabled={
                 !props.canEditMembers ||
@@ -449,7 +451,7 @@ function MemberRow(props: {
             />
           </TableCell>
         ))}
-        <TableCell sx={{ textAlign: 'center' }}>
+        <TableCell sx={{ textAlign: "center" }}>
           <IconButton
             onClick={() => setShowModal(true)}
             disabled={!props.canEditMembers}
@@ -462,16 +464,16 @@ function MemberRow(props: {
         <DialogTitle>Remove Member</DialogTitle>
         <DialogContent>
           <Typography paragraph>
-            Do you want to remove the member{' '}
+            Do you want to remove the member{" "}
             <Typography
               component="code"
-              sx={{ fontFamily: 'monospace', color: 'primary.main' }}
+              sx={{ fontFamily: "monospace", color: "primary.main" }}
             >
               {props.member.email}
-            </Typography>{' '}
+            </Typography>{" "}
             from this meal plan?
           </Typography>
-          <Toolbar disableGutters sx={{ flexDirection: 'row-reverse' }}>
+          <Toolbar disableGutters sx={{ flexDirection: "row-reverse" }}>
             <Button
               variant="contained"
               color="error"
@@ -482,7 +484,7 @@ function MemberRow(props: {
               {deleteMutation.isLoading ? (
                 <CircularProgress color="error" size={22} />
               ) : (
-                'Remove'
+                "Remove"
               )}
             </Button>
             <Button variant="outlined" onClick={() => setShowModal(false)}>

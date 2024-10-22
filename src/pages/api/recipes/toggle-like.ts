@@ -43,7 +43,7 @@ const handler: NextApiHandler = async (req, res) => {
       await RecipeModel.findByIdAndUpdate(likeRecord.recipeId, {
         $inc: { likes: -1 },
       });
-      await likeRecord.delete();
+      await likeRecord.deleteOne();
       return res.json({ status: "unliked" });
     } else {
       const newRecord = new RecipeLikesModel({

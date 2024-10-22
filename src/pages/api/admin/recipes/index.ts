@@ -69,7 +69,7 @@ const post: NextApiHandler = async function (req, res) {
     { lean: true }
   );
   if (existingRecipe) {
-    const { addedByUser, deleted, __v, ...rest } = existingRecipe;
+    const { addedByUser, deleted, ...rest } = existingRecipe;
     return res.status(400).send("Recipe already exists;" + existingRecipe._id);
   }
 
