@@ -51,7 +51,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       .lean();
     const count = await MealPlansModel.find({
       $or: [{ owner: user._id }, { "members.member": user._id }],
-    }).count();
+    }).countDocuments();
 
     return {
       props: {
