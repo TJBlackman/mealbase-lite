@@ -6,6 +6,7 @@ https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/uti
 **/
 
 const MONGODB_URI = process.env.MONGO_DB_CONNECTION_STR;
+console.log("MONGODB_URI", MONGODB_URI);
 
 if (!MONGODB_URI) {
   throw new Error(
@@ -36,6 +37,10 @@ export async function mongoDbConnection() {
       })
       .then((mongoose) => {
         return mongoose;
+      })
+      .catch((err) => {
+        console.error("MongoDB connection error:", err);
+        throw new Error("Database is unreachable. Please try again later.");
       });
   }
   cached.conn = await cached.promise;
